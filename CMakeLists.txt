@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(web-rpc)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Werror")
+
 find_package(Boost REQUIRED)
 
 add_executable(server
