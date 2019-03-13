@@ -12,5 +12,6 @@ add_executable(server
 target_link_libraries(server Boost::boost)
 
 target_compile_features(server
-	PRIVATE cxx_std_17
+	# PRIVATE cxx_std_17
+	PRIVATE cxx_nonstatic_member_init
 )
