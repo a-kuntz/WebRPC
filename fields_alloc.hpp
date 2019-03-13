@@ -19,21 +19,21 @@ namespace detail {
 
 struct static_pool
 {
-    std::size_t size_;
-    std::size_t refs_ = 1;
-    std::size_t count_ = 0;
-    char* p_;
+    std::size_t _size;
+    std::size_t _refs = 1;
+    std::size_t _count = 0;
+    char* _p;
 
     char*
     end()
     {
-        return reinterpret_cast<char*>(this + 1) + size_;
+        return reinterpret_cast<char*>(this + 1) + _size;
     }
 
     explicit
     static_pool(std::size_t size)
-        : size_(size)
-        , p_(reinterpret_cast<char*>(this + 1))
+        : _size(size)
+        , _p(reinterpret_cast<char*>(this + 1))
     {
     }
 
@@ -49,14 +49,14 @@ public:
     static_pool&
     share()
     {
-        ++refs_;
+        ++_refs;
         return *this;
     }
 
     void
     destroy()
     {
-        if(refs_--)
+        if(_refs--)
             return;
         this->~static_pool();
         delete[] reinterpret_cast<char*>(this);
@@ -65,21 +65,21 @@ public:
     void*
     alloc(std::size_t n)
     {
-        auto last = p_ + n;
+        auto last = _p + n;
         if(last >= end())
             BOOST_THROW_EXCEPTION(std::bad_alloc{});
-        ++count_;
-        auto p = p_;
-        p_ = last;
+        ++_count;
+        auto p = _p;
+        _p = last;
         return p;
     }
 
     void
     dealloc()
     {
-        if(--count_)
+        if(--_count)
             return;
-        p_ = reinterpret_cast<char*>(this + 1);
+        _p = reinterpret_cast<char*>(this + 1);
     }
 };
 
@@ -104,7 +104,7 @@ public:
 template<class T>
 struct fields_alloc
 {
-    detail::static_pool* pool_;
+    detail::static_pool* _pool;
 
 public:
     using value_type = T;
@@ -131,37 +131,37 @@ public:
 
     explicit
     fields_alloc(std::size_t size)
-        : pool_(&detail::static_pool::construct(size))
+        : _pool(&detail::static_pool::construct(size))
     {
     }
 
     fields_alloc(fields_alloc const& other)
-        : pool_(&other.pool_->share())
+        : _pool(&other._pool->share())
     {
     }
 
     template<class U>
     fields_alloc(fields_alloc<U> const& other)
-        : pool_(&other.pool_->share())
+        : _pool(&other._pool->share())
     {
     }
 
     ~fields_alloc()
     {
-        pool_->destroy();
+        _pool->destroy();
     }
 
     value_type*
     allocate(size_type n)
     {
         return static_cast<value_type*>(
-            pool_->alloc(n * sizeof(T)));
+            _pool->alloc(n * sizeof(T)));
     }
 
     void
     deallocate(value_type*, size_type)
     {
-        pool_->dealloc();
+        _pool->dealloc();
     }
 
 #if defined(BOOST_LIBSTDCXX_VERSION) && BOOST_LIBSTDCXX_VERSION < 60000
@@ -187,7 +187,7 @@ public:
         fields_alloc const& lhs,
         fields_alloc<U> const& rhs)
     {
-        return &lhs.pool_ == &rhs.pool_;
+        return &lhs._pool == &rhs._pool;
     }
 
     template<class U>
