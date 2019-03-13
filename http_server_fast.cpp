@@ -187,10 +187,15 @@ private:
         switch (req.method())
         {
         case http::verb::get:
-            send_file(req.target());
+            std::cout << req.target() << std::endl;
+            send_echo(req.target());
             break;
 
         default:
+            std::cout
+                << "invalid request-method: " << req.method_string()
+                << " request: " << req.target()
+                << std::endl;
             // We return responses indicating an error if
             // we do not recognize the request method.
             send_bad_response(
@@ -214,6 +219,34 @@ private:
         _string_response->set(http::field::server, "Beast");
         _string_response->set(http::field::content_type, "text/plain");
         _string_response->body() = error;
+        _string_response->prepare_payload();
+
+        _string_serializer.emplace(*_string_response);
+
+        http::async_write(
+            _socket,
+            *_string_serializer,
+            [this](boost::beast::error_code ec, std::size_t)
+            {
+                _socket.shutdown(tcp::socket::shutdown_send, ec);
+                _string_serializer.reset();
+                _string_response.reset();
+                accept();
+            });
+    }
+
+    void send_echo(boost::beast::string_view target)
+    {
+        _string_response.emplace(
+            std::piecewise_construct,
+            std::make_tuple(),
+            std::make_tuple(_alloc));
+
+        _string_response->result(http::status::ok);
+        _string_response->keep_alive(false);
+        _string_response->set(http::field::server, "Beast");
+        _string_response->set(http::field::content_type, "text/plain");
+        _string_response->body() = target.to_string() + "\n";
         _string_response->prepare_payload();
 
         _string_serializer.emplace(*_string_response);
