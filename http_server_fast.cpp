@@ -75,8 +75,8 @@ public:
     http_worker& operator=(http_worker const&) = delete;
 
     http_worker(tcp::acceptor& acceptor, const std::string& doc_root) :
-        acceptor_(acceptor),
-        doc_root_(doc_root)
+        _acceptor(acceptor),
+        _doc_root(doc_root)
     {
     }
 
@@ -92,48 +92,48 @@ private:
     using request_body_t = http::string_body;
 
     // The acceptor used to listen for incoming connections.
-    tcp::acceptor& acceptor_;
+    tcp::acceptor& _acceptor;
 
     // The path to the root of the document directory.
-    std::string doc_root_;
+    std::string _doc_root;
 
     // The socket for the currently connected client.
-    tcp::socket socket_{acceptor_.get_executor().context()};
+    tcp::socket _socket{_acceptor.get_executor().context()};
 
     // The buffer for performing reads
-    boost::beast::flat_static_buffer<8192> buffer_;
+    boost::beast::flat_static_buffer<8192> _buffer;
 
     // The allocator used for the fields in the request and reply.
-    alloc_t alloc_{8192};
+    alloc_t _alloc{8192};
 
     // The parser for reading the requests
-    boost::optional<http::request_parser<request_body_t, alloc_t>> parser_;
+    boost::optional<http::request_parser<request_body_t, alloc_t>> _parser;
 
     // The timer putting a time limit on requests.
     boost::asio::basic_waitable_timer<std::chrono::steady_clock> request_deadline_{
-        acceptor_.get_executor().context(), (std::chrono::steady_clock::time_point::max)()};
+        _acceptor.get_executor().context(), (std::chrono::steady_clock::time_point::max)()};
 
     // The string-based response message.
-    boost::optional<http::response<http::string_body, http::basic_fields<alloc_t>>> string_response_;
+    boost::optional<http::response<http::string_body, http::basic_fields<alloc_t>>> _string_response;
 
     // The string-based response serializer.
-    boost::optional<http::response_serializer<http::string_body, http::basic_fields<alloc_t>>> string_serializer_;
+    boost::optional<http::response_serializer<http::string_body, http::basic_fields<alloc_t>>> _string_serializer;
 
     // The file-based response message.
-    boost::optional<http::response<http::file_body, http::basic_fields<alloc_t>>> file_response_;
+    boost::optional<http::response<http::file_body, http::basic_fields<alloc_t>>> _file_response;
 
     // The file-based response serializer.
-    boost::optional<http::response_serializer<http::file_body, http::basic_fields<alloc_t>>> file_serializer_;
+    boost::optional<http::response_serializer<http::file_body, http::basic_fields<alloc_t>>> _file_serializer;
 
     void accept()
     {
         // Clean up any previous connection.
         boost::beast::error_code ec;
-        socket_.close(ec);
-        buffer_.consume(buffer_.size());
+        _socket.close(ec);
+        _buffer.consume(_buffer.size());
 
-        acceptor_.async_accept(
-            socket_,
+        _acceptor.async_accept(
+            _socket,
             [this](boost::beast::error_code ec)
             {
                 if (ec)
@@ -164,21 +164,21 @@ private:
         // We construct the dynamic body with a 1MB limit
         // to prevent vulnerability to buffer attacks.
         //
-        parser_.emplace(
+        _parser.emplace(
             std::piecewise_construct,
             std::make_tuple(),
-            std::make_tuple(alloc_));
+            std::make_tuple(_alloc));
 
         http::async_read(
-            socket_,
-            buffer_,
-            *parser_,
+            _socket,
+            _buffer,
+            *_parser,
             [this](boost::beast::error_code ec, std::size_t)
             {
                 if (ec)
                     accept();
                 else
-                    process_request(parser_->get());
+                    process_request(_parser->get());
             });
     }
 
@@ -204,28 +204,28 @@ private:
         http::status status,
         std::string const& error)
     {
-        string_response_.emplace(
+        _string_response.emplace(
             std::piecewise_construct,
             std::make_tuple(),
-            std::make_tuple(alloc_));
+            std::make_tuple(_alloc));
 
-        string_response_->result(status);
-        string_response_->keep_alive(false);
-        string_response_->set(http::field::server, "Beast");
-        string_response_->set(http::field::content_type, "text/plain");
-        string_response_->body() = error;
-        string_response_->prepare_payload();
+        _string_response->result(status);
+        _string_response->keep_alive(false);
+        _string_response->set(http::field::server, "Beast");
+        _string_response->set(http::field::content_type, "text/plain");
+        _string_response->body() = error;
+        _string_response->prepare_payload();
 
-        string_serializer_.emplace(*string_response_);
+        _string_serializer.emplace(*_string_response);
 
         http::async_write(
-            socket_,
-            *string_serializer_,
+            _socket,
+            *_string_serializer,
             [this](boost::beast::error_code ec, std::size_t)
             {
-                socket_.shutdown(tcp::socket::shutdown_send, ec);
-                string_serializer_.reset();
-                string_response_.reset();
+                _socket.shutdown(tcp::socket::shutdown_send, ec);
+                _string_serializer.reset();
+                _string_response.reset();
                 accept();
             });
     }
@@ -241,7 +241,7 @@ private:
             return;
         }
 
-        std::string full_path = doc_root_;
+        std::string full_path = _doc_root;
         full_path.append(
             target.data(),
             target.size());
@@ -260,28 +260,28 @@ private:
             return;
         }
 
-        file_response_.emplace(
+        _file_response.emplace(
             std::piecewise_construct,
             std::make_tuple(),
-            std::make_tuple(alloc_));
+            std::make_tuple(_alloc));
 
-        file_response_->result(http::status::ok);
-        file_response_->keep_alive(false);
-        file_response_->set(http::field::server, "Beast");
-        file_response_->set(http::field::content_type, mime_type(target.to_string()));
-        file_response_->body() = std::move(file);
-        file_response_->prepare_payload();
+        _file_response->result(http::status::ok);
+        _file_response->keep_alive(false);
+        _file_response->set(http::field::server, "Beast");
+        _file_response->set(http::field::content_type, mime_type(target.to_string()));
+        _file_response->body() = std::move(file);
+        _file_response->prepare_payload();
 
-        file_serializer_.emplace(*file_response_);
+        _file_serializer.emplace(*_file_response);
 
         http::async_write(
-            socket_,
-            *file_serializer_,
+            _socket,
+            *_file_serializer,
             [this](boost::beast::error_code ec, std::size_t)
             {
-                socket_.shutdown(tcp::socket::shutdown_send, ec);
-                file_serializer_.reset();
-                file_response_.reset();
+                _socket.shutdown(tcp::socket::shutdown_send, ec);
+                _file_serializer.reset();
+                _file_response.reset();
                 accept();
             });
     }
@@ -293,7 +293,7 @@ private:
         {
             // Close socket to cancel any outstanding operation.
             boost::beast::error_code ec;
-            socket_.close();
+            _socket.close();
 
             // Sleep indefinitely until we're given a new deadline.
             request_deadline_.expires_at(
