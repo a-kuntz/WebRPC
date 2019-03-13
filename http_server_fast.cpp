@@ -323,11 +323,11 @@ int main(int argc, char* argv[])
             return EXIT_FAILURE;
         }
 
-        auto const address = boost::asio::ip::make_address(argv[1]);
-        unsigned short port = static_cast<unsigned short>(std::atoi(argv[2]));
-        std::string doc_root = argv[3];
-        int num_workers = std::atoi(argv[4]);
-        bool spin = (std::strcmp(argv[5], "spin") == 0);
+        const auto address = boost::asio::ip::make_address(argv[1]);
+        const unsigned short port = static_cast<unsigned short>(std::atoi(argv[2]));
+        const std::string doc_root = argv[3];
+        const int num_workers = std::atoi(argv[4]);
+        const bool spin = (std::strcmp(argv[5], "spin") == 0);
 
         boost::asio::io_context ioc{1};
         tcp::acceptor acceptor{ioc, {address, port}};
