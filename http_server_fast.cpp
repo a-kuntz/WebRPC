@@ -32,41 +32,41 @@ namespace ip = boost::asio::ip;         // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio.hpp>
 namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
 
-// Return a reasonable mime type based on the extension of a file.
-boost::beast::string_view
-mime_type(boost::beast::string_view path)
-{
-    using boost::beast::iequals;
-    auto const ext = [&path]
-    {
-        auto const pos = path.rfind(".");
-        if(pos == boost::beast::string_view::npos)
-            return boost::beast::string_view{};
-        return path.substr(pos);
-    }();
-    if(iequals(ext, ".htm"))  return "text/html";
-    if(iequals(ext, ".html")) return "text/html";
-    if(iequals(ext, ".php"))  return "text/html";
-    if(iequals(ext, ".css"))  return "text/css";
-    if(iequals(ext, ".txt"))  return "text/plain";
-    if(iequals(ext, ".js"))   return "application/javascript";
-    if(iequals(ext, ".json")) return "application/json";
-    if(iequals(ext, ".xml"))  return "application/xml";
-    if(iequals(ext, ".swf"))  return "application/x-shockwave-flash";
-    if(iequals(ext, ".flv"))  return "video/x-flv";
-    if(iequals(ext, ".png"))  return "image/png";
-    if(iequals(ext, ".jpe"))  return "image/jpeg";
-    if(iequals(ext, ".jpeg")) return "image/jpeg";
-    if(iequals(ext, ".jpg"))  return "image/jpeg";
-    if(iequals(ext, ".gif"))  return "image/gif";
-    if(iequals(ext, ".bmp"))  return "image/bmp";
-    if(iequals(ext, ".ico"))  return "image/vnd.microsoft.icon";
-    if(iequals(ext, ".tiff")) return "image/tiff";
-    if(iequals(ext, ".tif"))  return "image/tiff";
-    if(iequals(ext, ".svg"))  return "image/svg+xml";
-    if(iequals(ext, ".svgz")) return "image/svg+xml";
-    return "application/text";
-}
+// // Return a reasonable mime type based on the extension of a file.
+// boost::beast::string_view
+// mime_type(boost::beast::string_view path)
+// {
+//     using boost::beast::iequals;
+//     auto const ext = [&path]
+//     {
+//         auto const pos = path.rfind(".");
+//         if(pos == boost::beast::string_view::npos)
+//             return boost::beast::string_view{};
+//         return path.substr(pos);
+//     }();
+//     if(iequals(ext, ".htm"))  return "text/html";
+//     if(iequals(ext, ".html")) return "text/html";
+//     if(iequals(ext, ".php"))  return "text/html";
+//     if(iequals(ext, ".css"))  return "text/css";
+//     if(iequals(ext, ".txt"))  return "text/plain";
+//     if(iequals(ext, ".js"))   return "application/javascript";
+//     if(iequals(ext, ".json")) return "application/json";
+//     if(iequals(ext, ".xml"))  return "application/xml";
+//     if(iequals(ext, ".swf"))  return "application/x-shockwave-flash";
+//     if(iequals(ext, ".flv"))  return "video/x-flv";
+//     if(iequals(ext, ".png"))  return "image/png";
+//     if(iequals(ext, ".jpe"))  return "image/jpeg";
+//     if(iequals(ext, ".jpeg")) return "image/jpeg";
+//     if(iequals(ext, ".jpg"))  return "image/jpeg";
+//     if(iequals(ext, ".gif"))  return "image/gif";
+//     if(iequals(ext, ".bmp"))  return "image/bmp";
+//     if(iequals(ext, ".ico"))  return "image/vnd.microsoft.icon";
+//     if(iequals(ext, ".tiff")) return "image/tiff";
+//     if(iequals(ext, ".tif"))  return "image/tiff";
+//     if(iequals(ext, ".svg"))  return "image/svg+xml";
+//     if(iequals(ext, ".svgz")) return "image/svg+xml";
+//     return "application/text";
+// }
 
 class http_worker
 {
@@ -120,10 +120,10 @@ private:
     boost::optional<http::response_serializer<http::string_body, http::basic_fields<alloc_t>>> _string_serializer;
 
     // The file-based response message.
-    boost::optional<http::response<http::file_body, http::basic_fields<alloc_t>>> _file_response;
+    // boost::optional<http::response<http::file_body, http::basic_fields<alloc_t>>> _file_response;
 
     // The file-based response serializer.
-    boost::optional<http::response_serializer<http::file_body, http::basic_fields<alloc_t>>> _file_serializer;
+    // boost::optional<http::response_serializer<http::file_body, http::basic_fields<alloc_t>>> _file_serializer;
 
     void accept()
     {
@@ -263,61 +263,61 @@ private:
             });
     }
 
-    void send_file(boost::beast::string_view target)
-    {
-        // Request path must be absolute and not contain "..".
-        if (target.empty() || target[0] != '/' || target.find("..") != std::string::npos)
-        {
-            send_bad_response(
-                http::status::not_found,
-                "File not found\r\n");
-            return;
-        }
+    // void send_file(boost::beast::string_view target)
+    // {
+    //     // Request path must be absolute and not contain "..".
+    //     if (target.empty() || target[0] != '/' || target.find("..") != std::string::npos)
+    //     {
+    //         send_bad_response(
+    //             http::status::not_found,
+    //             "File not found\r\n");
+    //         return;
+    //     }
 
-        std::string full_path = _doc_root;
-        full_path.append(
-            target.data(),
-            target.size());
+    //     std::string full_path = _doc_root;
+    //     full_path.append(
+    //         target.data(),
+    //         target.size());
 
-        http::file_body::value_type file;
-        boost::beast::error_code ec;
-        file.open(
-            full_path.c_str(),
-            boost::beast::file_mode::read,
-            ec);
-        if(ec)
-        {
-            send_bad_response(
-                http::status::not_found,
-                "File not found\r\n");
-            return;
-        }
+    //     http::file_body::value_type file;
+    //     boost::beast::error_code ec;
+    //     file.open(
+    //         full_path.c_str(),
+    //         boost::beast::file_mode::read,
+    //         ec);
+    //     if(ec)
+    //     {
+    //         send_bad_response(
+    //             http::status::not_found,
+    //             "File not found\r\n");
+    //         return;
+    //     }
 
-        _file_response.emplace(
-            std::piecewise_construct,
-            std::make_tuple(),
-            std::make_tuple(_alloc));
+    //     _file_response.emplace(
+    //         std::piecewise_construct,
+    //         std::make_tuple(),
+    //         std::make_tuple(_alloc));
 
-        _file_response->result(http::status::ok);
-        _file_response->keep_alive(false);
-        _file_response->set(http::field::server, "Beast");
-        _file_response->set(http::field::content_type, mime_type(target.to_string()));
-        _file_response->body() = std::move(file);
-        _file_response->prepare_payload();
+    //     _file_response->result(http::status::ok);
+    //     _file_response->keep_alive(false);
+    //     _file_response->set(http::field::server, "Beast");
+    //     _file_response->set(http::field::content_type, mime_type(target.to_string()));
+    //     _file_response->body() = std::move(file);
+    //     _file_response->prepare_payload();
 
-        _file_serializer.emplace(*_file_response);
+    //     _file_serializer.emplace(*_file_response);
 
-        http::async_write(
-            _socket,
-            *_file_serializer,
-            [this](boost::beast::error_code ec, std::size_t)
-            {
-                _socket.shutdown(tcp::socket::shutdown_send, ec);
-                _file_serializer.reset();
-                _file_response.reset();
-                accept();
-            });
-    }
+    //     http::async_write(
+    //         _socket,
+    //         *_file_serializer,
+    //         [this](boost::beast::error_code ec, std::size_t)
+    //         {
+    //             _socket.shutdown(tcp::socket::shutdown_send, ec);
+    //             _file_serializer.reset();
+    //             _file_response.reset();
+    //             accept();
+    //         });
+    // }
 
     void check_deadline()
     {
@@ -348,11 +348,11 @@ int main(int argc, char* argv[])
         // Check command line arguments.
         if (argc != 6)
         {
-            std::cerr << "Usage: http_server_fast <address> <port> <doc_root> <num_workers> {spin|block}\n";
+            std::cerr << "Usage: server <address> <port> <doc_root> <num_workers> {spin|block}\n";
             std::cerr << "  For IPv4, try:\n";
-            std::cerr << "    http_server_fast 0.0.0.0 80 . 100 block\n";
+            std::cerr << "    server 0.0.0.0 80 . 100 block\n";
             std::cerr << "  For IPv6, try:\n";
-            std::cerr << "    http_server_fast 0::0 80 . 100 block\n";
+            std::cerr << "    server 0::0 80 . 100 block\n";
             return EXIT_FAILURE;
         }
 
