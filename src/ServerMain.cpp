@@ -35,13 +35,13 @@ namespace ip = boost::asio::ip;         // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio.hpp>
 namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
 
-class http_worker
+class HttpWorker
 {
 public:
-    http_worker(http_worker const&) = delete;
-    http_worker& operator=(http_worker const&) = delete;
+    HttpWorker(HttpWorker const&) = delete;
+    HttpWorker& operator=(HttpWorker const&) = delete;
 
-    http_worker(tcp::acceptor& acceptor, const std::string& doc_root) :
+    HttpWorker(tcp::acceptor& acceptor, const std::string& doc_root) :
         _acceptor(acceptor),
         _doc_root(doc_root)
     {
@@ -270,7 +270,7 @@ int main(int argc, char* argv[])
         boost::asio::io_context ioc{1};
         tcp::acceptor acceptor{ioc, {address, port}};
 
-        std::list<http_worker> workers;
+        std::list<HttpWorker> workers;
         for (int i = 0; i < num_workers; ++i)
         {
             workers.emplace_back(acceptor, doc_root);
