@@ -7,9 +7,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Werror")
 find_package(Boost REQUIRED)
 
 add_executable(server
-	http_server_fast.cpp
-	fields_alloc.hpp
+	src/ServerMain.cpp
+	src/Method.cpp
+	src/Registry.cpp
 )
+
+target_include_directories(server PRIVATE "./include")
 
 target_link_libraries(server Boost::boost)
 
