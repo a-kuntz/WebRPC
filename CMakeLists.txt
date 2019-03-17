@@ -15,7 +15,22 @@ find_package(Boost REQUIRED)
 
 ## Webrpc::webrpcparser #######################################################
 
-# add_library(webrpcparser)
+# add_library()(webrpcparser
+add_executable(webrpcparser
+	src/SampleParserMain.cpp
+)
+
+target_link_libraries(webrpcparser Boost::boost)
+
+target_include_directories(webrpcparser PUBLIC "./include")
+
+target_compile_features(webrpcparser
+	PUBLIC
+		cxx_deleted_functions
+		cxx_return_type_deduction
+	PRIVATE
+		cxx_nonstatic_member_init
+)
 
 ## Webrpc::webrpcserver #######################################################
 
