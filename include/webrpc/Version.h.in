@@ -1,0 +1,4 @@
+// the configured options and settings for Tutorial
+#define WEBRPC_VERSION_MAJOR @WEBRPC_VERSION_MAJOR@
+#define WEBRPC_VERSION_MINOR @WEBRPC_VERSION_MAJOR@
+#define WEBRPC_VERSION_PATCH @WEBRPC_VERSION_PATCH@

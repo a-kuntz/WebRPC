@@ -13,6 +13,19 @@ find_package(Boost REQUIRED)
 enable_testing()
 find_package(Gtest REQUIRED)
 
+## version info ###############################################################
+
+set(WEBRPC_VERSION_MAJOR 0)
+set(WEBRPC_VERSION_MINOR 0)
+set(WEBRPC_VERSION_PATCH 1)
+
+configure_file (
+  "${PROJECT_SOURCE_DIR}/include/webrpc/Version.h.in"
+  "${PROJECT_BINARY_DIR}/include/webrpc/Version.h"
+)
+
+include_directories("${PROJECT_BINARY_DIR}/include")
+
 ## Webrpc::webrpcvalue ########################################################
 
 # add_library(webrpcvalue)

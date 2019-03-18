@@ -1,5 +1,6 @@
 #include <webrpc/Server.h>
 #include <webrpc/Method.h>
+#include <webrpc/Version.h>
 
 #include <boost/asio.hpp>
 
@@ -33,6 +34,8 @@ class Revert : public Method
 
 int main()
 {
+	std::cout << "Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "." << WEBRPC_VERSION_PATCH << std::endl;
+
 	try
 	{
 		const boost::asio::ip::address host(boost::asio::ip::make_address("127.0.0.1"));
