@@ -39,7 +39,7 @@ add_executable(webrpcparser
 
 target_link_libraries(webrpcparser Boost::boost)
 
-target_include_directories(webrpcparser PUBLIC "./include")
+target_include_directories(webrpcparser PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 target_compile_features(webrpcparser
 	PUBLIC
@@ -58,7 +58,7 @@ add_library(webrpcserver
 
 target_link_libraries(webrpcserver Boost::boost)
 
-target_include_directories(webrpcserver PUBLIC "./include")
+target_include_directories(webrpcserver PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 target_compile_features(webrpcserver
 	PUBLIC
@@ -87,6 +87,9 @@ add_executable(testparser
 )
 
 target_link_libraries(testparser GTest::GTest GTest::Main Boost::boost)
+
+# add include since parser is header only
+target_include_directories(testparser PRIVATE "${PROJECT_SOURCE_DIR}/include")
 
 target_compile_features(testparser
 	PRIVATE

@@ -1,11 +1,10 @@
 #ifndef __PARSER_H__
 #define __PARSER_H__
 
-// see https://dieboostcppbibliotheken.de/boost.spirit-grammatik
-
 #include <boost/spirit/include/qi.hpp>
 #include <boost/variant.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -14,18 +13,15 @@ using namespace boost::spirit;
 
 using value_type = boost::variant<double, int, bool>;
 using string_type = std::string;
-// using string_type = std::vector<char>;
 
 struct request_type
 {
-	// int name;
 	string_type name;
 	value_type value;
 };
 
 BOOST_FUSION_ADAPT_STRUCT(
 	request_type,
-	// (int, name)
 	(string_type, name)
 	(value_type, value)
 )
@@ -40,8 +36,6 @@ struct request_grammar : qi::grammar<Iterator, grammar_type(), Skipper>
 		// rules initialization
 		name_rule    = qi::lexeme[+qi::char_("a-zA-Z0-9")] >> '/';
 		value_rule   = qi::double_ | qi::int_ | qi::bool_;
-		// request_rule = qi::int_ >> '/' >> value_rule;
-		// request_rule = +qi::char_("a-zA-Z0-9") >> '/' >> value_rule;
 		request_rule = name_rule >> value_rule;
 	}
 
