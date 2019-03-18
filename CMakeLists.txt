@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(web-rpc)
+project(WebRPC)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Werror -Wno-error=unused-variable")
 
@@ -8,6 +8,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Werror -Wno-err
 
 # set(BOOST_ROOT "~/dev/boost_1_69_0")
 find_package(Boost REQUIRED)
+
+# set(GTEST_ROOT "~/dev/googletest-release-1.8.1/build")
+enable_testing()
+find_package(Gtest REQUIRED)
 
 ## Webrpc::webrpcvalue ########################################################
 
@@ -17,7 +21,7 @@ find_package(Boost REQUIRED)
 
 # add_library()(webrpcparser
 add_executable(webrpcparser
-	src/SampleParserMain.cpp
+	examples/SampleParser.cpp
 )
 
 target_link_libraries(webrpcparser Boost::boost)
@@ -53,7 +57,7 @@ target_compile_features(webrpcserver
 ## sample-server ##############################################################
 
 add_executable(sample-server
-	src/SampleServerMain.cpp
+	examples/SampleServer.cpp
 )
 
 target_link_libraries(sample-server Boost::boost webrpcserver)
@@ -62,6 +66,21 @@ target_compile_features(sample-server
 	PRIVATE
 		cxx_std_14	# std::make_unique<.>()
 )
+
+## tests ############################################################
+
+add_executable(testparser
+	test/ParserTest.cpp
+)
+
+target_link_libraries(testparser GTest::GTest GTest::Main Boost::boost)
+
+target_compile_features(testparser
+	PRIVATE
+		cxx_variadic_macros
+)
+
+add_test(NAME testparser COMMAND testparser)
 
 #install(TARGETS webrpcserver EXPORT webrpcserver-targets
 #	LIBRARY DESTINATION lib
