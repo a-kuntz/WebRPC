@@ -120,22 +120,20 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 
 		// struct_rule		= lit('{') >> -(member_rule % ',') >> lit('}');
 		// member_rule		= string_rule >> ':' >> value_rule;
+		// todo: bytestring_rule
 
 		BOOST_SPIRIT_DEBUG_NODE(value_rule);
 		BOOST_SPIRIT_DEBUG_NODE(string_rule);
 		BOOST_SPIRIT_DEBUG_NODE(array_rule);
 		BOOST_SPIRIT_DEBUG_NODE(struct_rule);
 		BOOST_SPIRIT_DEBUG_NODE(member_rule);
-		BOOST_SPIRIT_DEBUG_NODE(key_rule);
 	}
 
-	// qi::rule<Iterator, request_type(), Skipper> request_rule;
 	qi::rule<Iterator, value_t(), Skipper> value_rule;
 	qi::rule<Iterator, string_t(), Skipper> string_rule;
 	qi::rule<Iterator, array_t(), Skipper> array_rule;
 	qi::rule<Iterator, struct_t(), Skipper> struct_rule;
 	qi::rule<Iterator, member_t(), Skipper> member_rule;
-	qi::rule<Iterator, string_t(), Skipper> key_rule;
 };
 
 #endif

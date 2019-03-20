@@ -4,7 +4,7 @@ int main()
 {
 	// std::string input;
 	// std::getline(std::cin, input);
-	std::string input("[3.14,42,true,false]");
+	std::string input("[true,42,3.14,abc,[true,42,3.14,abc,[true,42,3.14,abc]]]");
 
 	auto itr = input.begin();
 
