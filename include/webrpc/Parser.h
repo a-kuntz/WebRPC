@@ -10,6 +10,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <sstream>
 #include <vector>
 
 using namespace boost::spirit;
@@ -32,7 +33,7 @@ using member_t	= std::pair<string_t, value_t>;
 class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t, double_t, array_t>
 {
 	public:
-	value_t(null_t val = null_t()) : base_type(val) {}
+	value_t(const null_t& val = null_t()) : base_type(val) {}
 	value_t(const bool_t& val) : base_type(val) {}
 	value_t(const int_t& val) : base_type(val) {}
 	value_t(const double_t& val) : base_type(val) {}
@@ -42,6 +43,39 @@ class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t,
 	// value_t(const struct_t& val) : base_type(val) {}
 	// value_t(const value_t& rhs) : base_type(rhs.get_ast()) {}
 
+	struct serializer : public boost::static_visitor<>
+	{
+		serializer(std::ostream& out) : _out(out) {}
+		void operator()(const null_t& /**/) const {_out << "null_t";}
+		void operator()(const bool_t& v) const {_out << std::boolalpha << v;}
+		void operator()(const int_t& v) const {_out << v;}
+		void operator()(const double_t& v) const {_out << v;}
+		void operator()(const string_t& v) const {_out << v;}
+		void operator()(const value_t& v) const {v.serialize(_out);}
+		void operator()(const array_t& v) const
+		{
+			_out << "[";
+			for (auto itr = std::begin(v); itr != std::end(v); ++itr)
+			{
+				this->operator()(*itr);
+				if (std::next(itr) != std::end(v)) {_out << ",";}
+			}
+			_out << "]";
+		}
+		std::ostream& _out;
+	};
+
+	std::ostream& serialize(std::ostream& out) const {
+		boost::apply_visitor(serializer{out}, base_type::get());
+		return out;
+	}
+
+	std::string to_string() const
+	{
+		std::stringstream ss;
+		serialize(ss);
+		return ss.str();
+	}
 };
 
 // struct request_type
@@ -103,15 +137,5 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 	qi::rule<Iterator, member_t(), Skipper> member_rule;
 	qi::rule<Iterator, string_t(), Skipper> key_rule;
 };
-
-struct print : public boost::static_visitor<>
-{
-	template <typename T>
-	void operator()(T t) const
-	{
-		std::cout << std::boolalpha << t << ';';
-	}
-};
-
 
 #endif
