@@ -2,8 +2,10 @@
 
 int main()
 {
-	// std::string input("42/3.14,42,true,false");
+	// std::string input;
+	// std::getline(std::cin, input);
 	std::string input("[3.14,42,true,false]");
+
 	auto itr = input.begin();
 
 	grammar<std::string::iterator, ascii::space_type> g;

@@ -32,21 +32,16 @@ include_directories("${PROJECT_BINARY_DIR}/include")
 
 ## Webrpc::webrpcparser #######################################################
 
-# add_library()(webrpcparser
-add_executable(webrpcparser
-	examples/SampleParser.cpp
-)
+add_library(webrpcparser INTERFACE)
 
-target_link_libraries(webrpcparser Boost::boost)
+target_link_libraries(webrpcparser INTERFACE Boost::boost)
 
-target_include_directories(webrpcparser PUBLIC "${PROJECT_SOURCE_DIR}/include")
+target_include_directories(webrpcparser INTERFACE ${PROJECT_SOURCE_DIR}/include)
 
 target_compile_features(webrpcparser
-	PUBLIC
-		cxx_deleted_functions
-		cxx_return_type_deduction
-	PRIVATE
-		cxx_nonstatic_member_init
+	INTERFACE
+		cxx_alias_templates
+		cxx_std_11
 )
 
 ## Webrpc::webrpcserver #######################################################
@@ -58,7 +53,7 @@ add_library(webrpcserver
 
 target_link_libraries(webrpcserver Boost::boost)
 
-target_include_directories(webrpcserver PUBLIC "${PROJECT_SOURCE_DIR}/include")
+target_include_directories(webrpcserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 target_compile_features(webrpcserver
 	PUBLIC
@@ -69,18 +64,26 @@ target_compile_features(webrpcserver
 
 ## sample-server ##############################################################
 
-add_executable(sample-server
+add_executable(sampleserver
 	examples/SampleServer.cpp
 )
 
-target_link_libraries(sample-server Boost::boost webrpcserver)
+target_link_libraries(sampleserver Boost::boost webrpcserver)
 
-target_compile_features(sample-server
+target_compile_features(sampleserver
 	PRIVATE
 		cxx_std_14	# std::make_unique<.>()
 )
 
-## tests ############################################################
+## sample-parser ##############################################################
+
+add_executable(sampleparser
+	examples/SampleParser.cpp
+)
+
+target_link_libraries(sampleparser PRIVATE webrpcparser)
+
+## tests ######################################################################
 
 add_executable(testparser
 	test/ParserTest.cpp
