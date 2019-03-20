@@ -27,10 +27,12 @@ class value_t;
 // composite types
 using array_t	= std::vector<value_t>;
 // using array_t	= boost::container::stable_vector<value_t>;
-using struct_t	= std::map<string_t, value_t>;
-using member_t	= std::pair<string_t, value_t>;
+// using struct_t	= std::map<string_t, value_t>;
+using struct_t	= std::vector<std::pair<string_t, value_t>>;
+using member_t	= struct_t::value_type;
+// using member_t	= std::pair<string_t, value_t>;
 
-class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t, double_t, array_t>
+class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t, double_t, array_t, struct_t>
 {
 	public:
 	value_t(const null_t& val = null_t()) : base_type(val) {}
@@ -40,7 +42,7 @@ class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t,
 	value_t(const string_t& val) : base_type(val) {}
 	value_t(char const * val) : base_type((string_t(val))) {}
 	value_t(const array_t& val) : base_type(val) {}
-	// value_t(const struct_t& val) : base_type(val) {}
+	value_t(const struct_t& val) : base_type(val) {}
 	// value_t(const value_t& rhs) : base_type(rhs.get_ast()) {}
 
 	struct serializer : public boost::static_visitor<>
@@ -61,6 +63,18 @@ class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t,
 				if (std::next(itr) != std::end(v)) {_out << ",";}
 			}
 			_out << "]";
+		}
+		void operator()(const struct_t& v) const
+		{
+			_out << "{";
+			for (auto itr = std::begin(v); itr != std::end(v); ++itr)
+			{
+				this->operator()(itr->first);
+				_out << ":";
+				this->operator()(itr->second);
+				if (std::next(itr) != std::end(v)) {_out << ",";}
+			}
+			_out << "}";
 		}
 		std::ostream& _out;
 	};
@@ -109,8 +123,10 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 			  qi::bool_
 			| lexeme[!('+' | (-lit('-') >> '0' >> digit)) >> qi::int_ >> !chr(".eE")]
 			| lexeme[!('+' | (-lit('-') >> '0' >> digit)) >> qi::double_]
+			| array_rule
+			| struct_rule
 			| string_rule
-			| array_rule;
+			;
 
 		string_rule		= qi::alpha >> *qi::alnum;
 		// string_rule		= lexeme[+chr("a-zA-Z0-9")];
@@ -118,6 +134,7 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 
 		array_rule		= lit("[") >> -(value_rule % ',') >> lit("]");
 
+		// struct_rule		= lit('{') >> -((string_rule >> ':' >> value_rule) % ',') >> lit('}');
 		// struct_rule		= lit('{') >> -(member_rule % ',') >> lit('}');
 		// member_rule		= string_rule >> ':' >> value_rule;
 		// todo: bytestring_rule
