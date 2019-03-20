@@ -22,10 +22,10 @@ void check(const std::string& in)
 	std::string input(in);
 	auto itr = input.begin();
 	grammar<std::string::iterator, ascii::space_type> grammar;
-	// const auto match = qi::parse(itr, input.end(), grammar, ascii::space);
 	value_t value;
 	const auto match = qi::phrase_parse(itr, input.end(), grammar, ascii::space, value);
 	ASSERT_EQ(true, match) << "testcase input=" << in;
+	ASSERT_EQ(in, value.to_string());
 }
 
 TEST(Parser, Grammar)
