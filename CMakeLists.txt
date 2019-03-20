@@ -83,6 +83,19 @@ add_executable(sampleparser
 
 target_link_libraries(sampleparser PRIVATE webrpcparser)
 
+## map-parser-example #########################################################
+
+add_executable(map-parser-example
+	examples/map-parser-example.cpp
+)
+
+target_link_libraries(map-parser-example PRIVATE Boost::boost)
+
+target_compile_features(map-parser-example
+	PRIVATE
+		cxx_std_17
+)
+
 ## tests ######################################################################
 
 add_executable(testparser
