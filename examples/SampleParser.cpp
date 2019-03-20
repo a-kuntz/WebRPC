@@ -12,11 +12,11 @@ int main()
 	std::string input("name/3.14,42,true,false");
 	auto itr = input.begin();
 
-	request_grammar<std::string::iterator, ascii::space_type> grammar;
+	grammar<std::string::iterator, ascii::space_type> g;
 
-	grammar_type grammar_value;
-	// if (qi::phrase_parse(itr, input.end(), grammar, ascii::space))
-	if (qi::phrase_parse(itr, input.end(), grammar, ascii::space, grammar_value))
+	value_t value;
+	// if (qi::phrase_parse(itr, input.end(), g, ascii::space))
+	if (qi::phrase_parse(itr, input.end(), g, ascii::space, value))
 	{
 		std::cout << "parsing succeeded: " << std::endl;
 		// std::cout << "remaining input: " << itr << std::endl;

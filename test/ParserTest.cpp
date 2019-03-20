@@ -21,16 +21,27 @@ void check(const std::string& in)
 {
 	std::string input(in);
 	auto itr = input.begin();
-	request_grammar<std::string::iterator, ascii::space_type> grammar;
+	grammar<std::string::iterator, ascii::space_type> grammar;
 	// const auto match = qi::parse(itr, input.end(), grammar, ascii::space);
-	grammar_type grammar_value;
-	const auto match = qi::phrase_parse(itr, input.end(), grammar, ascii::space, grammar_value);
-	ASSERT_EQ(true, match);
+	value_t value;
+	const auto match = qi::phrase_parse(itr, input.end(), grammar, ascii::space, value);
+	ASSERT_EQ(true, match) << "testcase input=" << in;
 }
 
 TEST(Parser, Grammar)
 {
-	check("name/3.14,42,true,false");
+	check("true");
+	check("42");
+	check("3.14");
+	check("abc");
+	// todo: check quoted string
+
+	check("[true,false,true]");
+	check("[42,43,44]");
+	check("[3.14,2.7,1.4]");
+	check("[abc,def,ghi]");
+	check("[true,42,3.14,abc]");
+	check("[true,42,3.14,abc,[true,42,3.14,abc,[true,42,3.14,abc]]]");
 }
 
 int main(int argc, char **argv) {
