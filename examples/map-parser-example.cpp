@@ -1,42 +1,66 @@
+
 #include <boost/spirit/include/qi.hpp>
+#include <boost/fusion/include/std_pair.hpp>
 
+#include <iostream>
 #include <map>
-#include <string>
 
-using namespace boost::spirit;
-using namespace boost::spirit::qi;
+namespace client
+{
+    namespace qi = boost::spirit::qi;
 
-struct name_class {};
-struct quote_class {};
-struct item_class {};
-struct map_class {};
+    typedef std::map<std::string, std::string> pairs_type;
 
+    template <typename Iterator>
+    struct key_value_sequence
+      : qi::grammar<Iterator, pairs_type()>
+    {
+        key_value_sequence()
+          : key_value_sequence::base_type(query)
+        {
+            query =  pair >> *((qi::lit(';') | '&') >> pair);
+            pair  =  key >> -('=' >> value);
+            key   =  qi::char_("a-zA-Z_") >> *qi::char_("a-zA-Z_0-9");
+            value = +qi::char_("a-zA-Z_0-9");
+        }
+
+        qi::rule<Iterator, pairs_type()> query;
+        qi::rule<Iterator, std::pair<std::string, std::string>()> pair;
+        qi::rule<Iterator, std::string()> key, value;
+    };
+}
+
+///////////////////////////////////////////////////////////////////////////////
 int main()
 {
-	std::string input(
-		"foo    : bar ,"
-		"gorp   : smart ,"
-		"falcou : \"crazy frenchman\" " );
-	auto iter = input.begin();
-	auto iter_end = input.end();
+    namespace qi = boost::spirit::qi;
 
-	// auto name = rule<name_class, std::string>()
-	// 	= alpha >> *alnum;
-	// auto quote = rule<quote_class, std::string>()
-	// 	= '"'
-	// 	>> lexeme[ *(~char_('"')) ]
-	// 	>> '"';
-	// auto item = rule<item_class, std::pair<std::string, std::string>>()
-	// 	= name >> ':' >> ( quote | name );
-	// auto map = rule<map_class, std::map< std::string, std::string >>()
-	// 	= item % ',';
+    std::string input("key1=value1;key2;key3=value3");
+    std::string::iterator begin = input.begin();
+    std::string::iterator end = input.end();
 
-	// std::map< std::string, std::string > val;
-	// std::vector<std::pair< std::string, std::string >> val;
+    client::key_value_sequence<std::string::iterator> p;
+    client::pairs_type m;
 
-	// phrase_parse( iter, iter_end, map, space );
-	// phrase_parse( iter, iter_end, map, space, val );
-
-	std::string val;
-	phrase_parse( iter, iter_end, alpha >> *alnum, space, val );
+    if (!qi::parse(begin, end, p, m))
+    {
+        std::cout << "-------------------------------- \n";
+        std::cout << "Parsing failed\n";
+        std::cout << "-------------------------------- \n";
+    }
+    else
+    {
+        std::cout << "-------------------------------- \n";
+        std::cout << "Parsing succeeded, found entries:\n";
+        client::pairs_type::iterator end = m.end();
+        for (client::pairs_type::iterator it = m.begin(); it != end; ++it)
+        {
+            std::cout << (*it).first;
+            if (!(*it).second.empty())
+                std::cout << "=" << (*it).second;
+            std::cout << std::endl;
+        }
+        std::cout << "---------------------------------\n";
+    }
+    return 0;
 }
