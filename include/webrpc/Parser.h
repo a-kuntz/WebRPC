@@ -3,14 +3,16 @@
 
 #include <boost/container/stable_vector.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/fusion/include/std_pair.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/support_extended_variant.hpp>
 #include <boost/variant.hpp>
 
+#include <iomanip>
 #include <iostream>
 #include <map>
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
 
 using namespace boost::spirit;
@@ -29,10 +31,10 @@ using array_t	= std::vector<value_t>;
 // using array_t	= boost::container::stable_vector<value_t>;
 // using struct_t	= std::map<string_t, value_t>;
 using struct_t	= std::vector<std::pair<string_t, value_t>>;
-using member_t	= struct_t::value_type;
-// using member_t	= std::pair<string_t, value_t>;
+using struct_member_t	= struct_t::value_type;
+using bytestring_t = std::vector<int>;
 
-class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t, double_t, array_t, struct_t>
+class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t, double_t, array_t,struct_t,bytestring_t>
 {
 	public:
 	value_t(const null_t& val = null_t()) : base_type(val) {}
@@ -43,7 +45,7 @@ class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t,
 	value_t(char const * val) : base_type((string_t(val))) {}
 	value_t(const array_t& val) : base_type(val) {}
 	value_t(const struct_t& val) : base_type(val) {}
-	// value_t(const value_t& rhs) : base_type(rhs.get_ast()) {}
+	value_t(const bytestring_t& val) : base_type(val) {}
 
 	struct serializer : public boost::static_visitor<>
 	{
@@ -76,6 +78,16 @@ class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t,
 			}
 			_out << "}";
 		}
+		void operator()(const bytestring_t& v) const
+		{
+			_out << "<";
+			for (auto itr = std::begin(v); itr != std::end(v); ++itr)
+			{
+				_out << std::setfill('0') << std::setw(2) << std::hex << *itr;
+				if (std::next(itr) != std::end(v)) {_out << ",";}
+			}
+			_out << ">";
+		}
 		std::ostream& _out;
 	};
 
@@ -92,18 +104,6 @@ class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t,
 	}
 };
 
-// struct request_type
-// {
-// 	string_t name;
-// 	value_t value;
-// };
-
-// BOOST_FUSION_ADAPT_STRUCT(
-// 	request_type,
-// 	(string_t, name)
-// 	(value_t, value)
-// )
-
 template <typename Iterator, typename Skipper>
 struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 {
@@ -112,11 +112,8 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 		qi::lit_type             lit;
 		ascii::char_type         chr;
 		ascii::digit_type        digit;
-		// qi::double_type          double_;
-		// qi::int_parser<int64_t>  int_;
-		// qi::bool_type            bool_value;
-		// qi::attr_type            attr;
 		qi::lexeme_type          lexeme;
+		qi::int_parser<int, 16>  hex;
 
 		// rules initialization
 		value_rule   =
@@ -126,31 +123,36 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 			| array_rule
 			| struct_rule
 			| string_rule
+			| quote_rule
+			| bytestring_rule
 			;
 
-		string_rule		= qi::alpha >> *qi::alnum;
-		// string_rule		= lexeme[+chr("a-zA-Z0-9")];
-		// auto quote = '"' >> lexeme[*( ~char_('"') )] >> '"';
+		// string_rule		= qi::alpha >> *qi::alnum;
+		string_rule			= lexeme[+chr("a-zA-Z_") >> *chr("a-zA-Z0-9_")];
+		quote_rule			= chr('"') >> lexeme[*( ~chr('"') )] >> chr('"');
 
-		array_rule		= lit("[") >> -(value_rule % ',') >> lit("]");
+		array_rule			= lit("[") >> -(value_rule % ',') >> lit("]");
 
-		// struct_rule		= lit('{') >> -((string_rule >> ':' >> value_rule) % ',') >> lit('}');
-		// struct_rule		= lit('{') >> -(member_rule % ',') >> lit('}');
-		// member_rule		= string_rule >> ':' >> value_rule;
-		// todo: bytestring_rule
+		struct_rule			= lit('{') >> -(struct_member_rule % ',') >> lit('}');
+		struct_member_rule	= string_rule >> ':' >> value_rule;
+
+		bytestring_rule = lit('<') >> -(hex % ',') >> lit('>');
 
 		BOOST_SPIRIT_DEBUG_NODE(value_rule);
 		BOOST_SPIRIT_DEBUG_NODE(string_rule);
 		BOOST_SPIRIT_DEBUG_NODE(array_rule);
 		BOOST_SPIRIT_DEBUG_NODE(struct_rule);
-		BOOST_SPIRIT_DEBUG_NODE(member_rule);
+		BOOST_SPIRIT_DEBUG_NODE(struct_member_rule);
+		BOOST_SPIRIT_DEBUG_NODE(bytestring_rule);
 	}
 
 	qi::rule<Iterator, value_t(), Skipper> value_rule;
 	qi::rule<Iterator, string_t(), Skipper> string_rule;
+	qi::rule<Iterator, string_t(), Skipper> quote_rule;
 	qi::rule<Iterator, array_t(), Skipper> array_rule;
 	qi::rule<Iterator, struct_t(), Skipper> struct_rule;
-	qi::rule<Iterator, member_t(), Skipper> member_rule;
-};
+	qi::rule<Iterator, struct_member_t(), Skipper> struct_member_rule;
+	qi::rule<Iterator, bytestring_t(), Skipper> bytestring_rule;
 
+};
 #endif

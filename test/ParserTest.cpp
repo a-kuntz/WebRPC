@@ -28,20 +28,41 @@ void check(const std::string& in)
 	ASSERT_EQ(in, value.to_string());
 }
 
-TEST(Parser, Grammar)
+TEST(Parser, PrimitiveValues)
 {
+	// primitive values
 	check("true");
 	check("42");
 	check("3.14");
 	check("abc");
-	// todo: check quoted string
+	check("abc_3");
+	check("\"abc\"");
+	check("\"a b c?\"");
+}
 
+TEST(Parser, ArrayValues)
+{
+	// arrays
 	check("[true,false,true]");
 	check("[42,43,44]");
 	check("[3.14,2.7,1.4]");
 	check("[abc,def,ghi]");
 	check("[true,42,3.14,abc]");
 	check("[true,42,3.14,abc,[true,42,3.14,abc,[true,42,3.14,abc]]]");
+	check("[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value}]]]");
+}
+
+TEST(Parser, StructValues)
+{
+	// structs
+	check("{key:value,key2:value2,key3:value}");
+	check("{key:value,key2:[1,2,3],key3:{k:v,k:v,k:v}}");
+}
+
+TEST(Parser, BytestringValues)
+{
+	// bytestrings
+	check("<00,11,22,33,44,55,66,aa,bb,cc>");
 }
 
 int main(int argc, char **argv) {
