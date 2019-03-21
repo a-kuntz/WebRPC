@@ -4,6 +4,7 @@
 #include <boost/container/stable_vector.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/fusion/include/std_pair.hpp>
+#include <boost/optional.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/support_extended_variant.hpp>
 #include <boost/variant.hpp>
@@ -151,4 +152,21 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 	qi::rule<Iterator, struct_member_t(), Skipper> struct_member_rule;
 	qi::rule<Iterator, bytestring_t(), Skipper> bytestring_rule;
 };
+
+boost::optional<value_t> parse_value(const std::string& str)
+{
+	std::string input(str);
+	auto itr = input.begin();
+	grammar<std::string::iterator, ascii::space_type> grammar;
+	value_t value;
+	if (qi::phrase_parse(itr, input.end(), grammar, ascii::space, value))
+	{
+		return value;
+	}
+	else
+	{
+		return boost::none;
+	}
+}
+
 #endif

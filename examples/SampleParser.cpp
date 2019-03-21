@@ -4,22 +4,17 @@ int main()
 {
 	// std::string input;
 	// std::getline(std::cin, input);
-	std::string input("[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value}]]]");
+	const std::string input("[true,42,3.14,abc,[1,2,3],{key:value},<00,0a,de,ad,ff>]");
 
-	auto itr = input.begin();
+	auto ov = parse_value(input);
 
-	grammar<std::string::iterator, ascii::space_type> g;
-
-	value_t value;
-	// if (qi::phrase_parse(itr, input.end(), g, ascii::space))
-	if (qi::phrase_parse(itr, input.end(), g, ascii::space, value))
+	if (ov)
 	{
 		std::cout
 			<< "success"
 			<< " input=\"" << input << "\""
-			<< " value=\"" << value.to_string() << "\""
+			<< " value=\"" << ov.value().to_string() << "\""
 			<< std::endl;
-		// std::cout << "remaining input: " << itr << std::endl;
 	}
 	else
 	{

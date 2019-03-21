@@ -13,19 +13,15 @@ TEST(BoostSpirit, basic)
 	{
 		auto it = input.begin();
 		auto match = qi::phrase_parse(it, input.end(), +qi::char_("A-Za-z") >> '/' >> +qi::char_("a-zA-Z0-9"), ascii::space);
-		ASSERT_EQ(true, match);
+		EXPECT_EQ(true, match);
 	}
 }
 
 void check(const std::string& in)
 {
-	std::string input(in);
-	auto itr = input.begin();
-	grammar<std::string::iterator, ascii::space_type> grammar;
-	value_t value;
-	const auto match = qi::phrase_parse(itr, input.end(), grammar, ascii::space, value);
-	ASSERT_EQ(true, match) << "testcase input=" << in;
-	ASSERT_EQ(in, value.to_string());
+	boost::optional<value_t> opt = parse_value(in);
+	ASSERT_EQ(true, static_cast<bool>(opt)) << "testcase input=" << in;
+	EXPECT_EQ(in, opt.value().to_string());
 }
 
 TEST(Parser, PrimitiveValues)
@@ -43,25 +39,32 @@ TEST(Parser, PrimitiveValues)
 TEST(Parser, ArrayValues)
 {
 	// arrays
+	check("[]");
+	check("[[],[],[]]");
 	check("[true,false,true]");
 	check("[42,43,44]");
 	check("[3.14,2.7,1.4]");
-	check("[abc,def,ghi]");
+	check("[abc,d_e_f,ghi]");
+	check("[\"abc\",\"def\",\"ghi.,;.-_?!§$%&/()=\"]");
 	check("[true,42,3.14,abc]");
 	check("[true,42,3.14,abc,[true,42,3.14,abc,[true,42,3.14,abc]]]");
+	check("[{key:val},{key:val},{key:val}]");
+	check("[<>,<00>,<00,01,0a,0f,de,ad,01,23,45,67,89,ab,cd,ef>]");
 	check("[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value}]]]");
 }
 
 TEST(Parser, StructValues)
 {
 	// structs
+	check("{}");
 	check("{key:value,key2:value2,key3:value}");
-	check("{key:value,key2:[1,2,3],key3:{k:v,k:v,k:v}}");
+	check("{key:value,key2:[1,2,3],key3:{k:v,k:v,k:v},key4:<ab,cd,ef>}");
 }
 
 TEST(Parser, BytestringValues)
 {
 	// bytestrings
+	check("<>");
 	check("<00,11,22,33,44,55,66,aa,bb,cc>");
 }
 

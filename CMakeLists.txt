@@ -20,11 +20,11 @@ set(WEBRPC_VERSION_MINOR 0)
 set(WEBRPC_VERSION_PATCH 1)
 
 configure_file (
-  "${PROJECT_SOURCE_DIR}/include/webrpc/Version.h.in"
-  "${PROJECT_BINARY_DIR}/include/webrpc/Version.h"
+	${PROJECT_SOURCE_DIR}/include/webrpc/Version.h.in
+	${PROJECT_BINARY_DIR}/include/webrpc/Version.h
 )
 
-include_directories("${PROJECT_BINARY_DIR}/include")
+include_directories(${PROJECT_BINARY_DIR}/include)
 
 ## Webrpc::webrpcvalue ########################################################
 
@@ -41,7 +41,6 @@ target_include_directories(webrpcparser INTERFACE ${PROJECT_SOURCE_DIR}/include)
 target_compile_features(webrpcparser
 	INTERFACE
 		cxx_alias_templates
-		cxx_std_11
 )
 
 ## Webrpc::webrpcserver #######################################################
