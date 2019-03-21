@@ -104,7 +104,7 @@ add_executable(testparser
 target_link_libraries(testparser GTest::GTest GTest::Main Boost::boost)
 
 # add include since parser is header only
-target_include_directories(testparser PRIVATE "${PROJECT_SOURCE_DIR}/include")
+target_include_directories(testparser PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
 target_compile_features(testparser
 	PRIVATE
