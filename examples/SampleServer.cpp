@@ -33,20 +33,21 @@ class Revert : public AbstractMethod
 	}
 };
 
-class Add : public AbstractMethod
+class Sum : public AbstractMethod
 {
 	public:
-	Add() : AbstractMethod("Add") {};
+	Sum() : AbstractMethod("Sum") {};
 
 	boost::optional<value_t> execute(const boost::optional<value_t> /*arg*/) override
 	{
+		// todo: extract arguments
 		return value_t{42.0};
 	}
 };
 
 int main()
 {
-	std::cout << "Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "." << WEBRPC_VERSION_PATCH << std::endl;
+	std::cout << "WebRPC SampleServer Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "." << WEBRPC_VERSION_PATCH << std::endl;
 
 	try
 	{
@@ -56,7 +57,7 @@ int main()
 		Server server({host, port});
 		server.register_method(std::make_unique<Echo>());
 		server.register_method(std::make_unique<Revert>());
-		server.register_method(std::make_unique<Add>());
+		server.register_method(std::make_unique<Sum>());
 		server.run();
 	}
 	catch (const std::exception& e)
