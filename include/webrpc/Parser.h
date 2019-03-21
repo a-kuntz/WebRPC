@@ -8,6 +8,7 @@
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/support_extended_variant.hpp>
 #include <boost/variant.hpp>
+// #include <typeinfo>
 
 #include <iomanip>
 #include <iostream>
@@ -35,7 +36,7 @@ using struct_t	= std::vector<std::pair<string_t, value_t>>;
 using struct_member_t	= struct_t::value_type;
 using bytestring_t = std::vector<int>;
 
-class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t, double_t, array_t,struct_t,bytestring_t>
+class value_t : public boost::spirit::extended_variant<null_t, bool_t, int_t, string_t, double_t, array_t,struct_t,bytestring_t>
 {
 	public:
 	value_t(const null_t& val = null_t()) : base_type(val) {}
@@ -47,6 +48,23 @@ class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t,
 	value_t(const array_t& val) : base_type(val) {}
 	value_t(const struct_t& val) : base_type(val) {}
 	value_t(const bytestring_t& val) : base_type(val) {}
+
+	// template< typename T >
+	// T get()
+	// {
+	// 	return boost::get<T>(base_type::get());
+	// }
+
+	// template< typename T >
+	// const T get() const
+	// {
+	// 	return boost::get<T>(base_type::get());
+	// }
+
+	// auto type() const
+	// {
+	// 	return base_type::type();
+	// }
 
 	struct serializer : public boost::static_visitor<>
 	{

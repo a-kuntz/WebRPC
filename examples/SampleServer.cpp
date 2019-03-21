@@ -9,9 +9,8 @@
 #include <iostream>
 #include <algorithm>
 
-class Echo : public AbstractMethod
+struct Echo : public AbstractMethod
 {
-	public:
 	Echo() : AbstractMethod("Echo") {};
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
@@ -20,9 +19,8 @@ class Echo : public AbstractMethod
 	}
 };
 
-class Revert : public AbstractMethod
+struct Revert : public AbstractMethod
 {
-	public:
 	Revert() : AbstractMethod("Revert") {};
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
@@ -33,15 +31,29 @@ class Revert : public AbstractMethod
 	}
 };
 
-class Sum : public AbstractMethod
+struct Sum : public AbstractMethod
 {
-	public:
 	Sum() : AbstractMethod("Sum") {};
 
-	boost::optional<value_t> execute(const boost::optional<value_t> /*arg*/) override
+	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
-		// todo: extract arguments
-		return value_t{42.0};
+		// todo: handle non array_t arg
+		const auto a = boost::get<array_t>(arg.value());
+		double sum = 0;
+		for (const auto& item : a)
+		{
+			// todo: handle non double_t arg
+			// if (item.type() == typeid(int_t))
+			// {
+			// 	sum += boost::get<int_t>(item);
+			// }
+			// else if (item.type() == typeid(double_t))
+			// {
+				sum += boost::get<double_t>(item);
+			// }
+		}
+
+		return value_t{sum};
 	}
 };
 
