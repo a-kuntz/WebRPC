@@ -15,7 +15,6 @@ class Echo : public AbstractMethod
 	Echo() : AbstractMethod("Echo") {};
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
-	// std::string execute(const std::string& args) override
 	{
 		return arg;
 	}
@@ -27,11 +26,21 @@ class Revert : public AbstractMethod
 	Revert() : AbstractMethod("Revert") {};
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
-	// std::string execute(const std::string& args) override
 	{
 		std::string result(arg.value().to_string());
 		std::reverse(std::begin(result),std::end(result));
 		return parse_value(result);
+	}
+};
+
+class Add : public AbstractMethod
+{
+	public:
+	Add() : AbstractMethod("Add") {};
+
+	boost::optional<value_t> execute(const boost::optional<value_t> /*arg*/) override
+	{
+		return value_t{42.0};
 	}
 };
 
@@ -47,6 +56,7 @@ int main()
 		Server server({host, port});
 		server.register_method(std::make_unique<Echo>());
 		server.register_method(std::make_unique<Revert>());
+		server.register_method(std::make_unique<Add>());
 		server.run();
 	}
 	catch (const std::exception& e)
