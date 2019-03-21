@@ -1,10 +1,11 @@
-#include <webrpc/Server.h>
 #include <webrpc/fields_alloc.h>
+#include <webrpc/Parser.h>
+#include <webrpc/Server.h>
 
+#include <boost/asio.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
-#include <boost/asio.hpp>
 #include <boost/filesystem.hpp>
 
 #include <chrono>
@@ -177,7 +178,9 @@ private:
 		std::cout << "-" << request << "-" << name << "-" << args << "-";
 		if (method != _registry.end())
 		{
-			const std::string result = method->second->execute(args);
+			const auto oval = parse_value(args);
+			const auto ores = method->second->execute(oval);
+			const auto result = ores.value_or(null_t{}).to_string();
 			std::cout << " exec=" << method->first << "(" << args << ")" << "=>" << result;
 			send_message(result);
 		}
@@ -271,7 +274,7 @@ private:
 	}
 };
 
-void Server::register_method(std::unique_ptr<Method>&& method)
+void Server::register_method(std::unique_ptr<IMethod>&& method)
 {
 	_registry.emplace(std::make_pair(method->get_name(), std::move(method)));
 }

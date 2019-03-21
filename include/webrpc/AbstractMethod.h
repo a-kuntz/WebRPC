@@ -3,12 +3,12 @@
 
 #include <webrpc/IMethod.h>
 
-class Method : public IMethod
+class AbstractMethod : public IMethod
 {
 	public:
-	Method() = delete;
-	Method(const std::string& name) : _name(name) {}
-	virtual ~Method() {};
+	AbstractMethod() = delete;
+	AbstractMethod(const std::string& name) : _name(name) {}
+	virtual ~AbstractMethod() {};
 
 	std::string get_name() const override {return _name;}
 

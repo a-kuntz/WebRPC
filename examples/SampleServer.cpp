@@ -1,5 +1,6 @@
+#include <webrpc/AbstractMethod.h>
+#include <webrpc/Parser.h>	// to parse reversed value
 #include <webrpc/Server.h>
-#include <webrpc/Method.h>
 #include <webrpc/Version.h>
 
 #include <boost/asio.hpp>
@@ -8,27 +9,29 @@
 #include <iostream>
 #include <algorithm>
 
-class Echo : public Method
+class Echo : public AbstractMethod
 {
 	public:
-	Echo() : Method("Echo") {};
+	Echo() : AbstractMethod("Echo") {};
 
-	std::string execute(const std::string& args) override
+	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
+	// std::string execute(const std::string& args) override
 	{
-		return args;
+		return arg;
 	}
 };
 
-class Revert : public Method
+class Revert : public AbstractMethod
 {
 	public:
-	Revert() : Method("Revert") {};
+	Revert() : AbstractMethod("Revert") {};
 
-	std::string execute(const std::string& args) override
+	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
+	// std::string execute(const std::string& args) override
 	{
-		std::string result(args);
+		std::string result(arg.value().to_string());
 		std::reverse(std::begin(result),std::end(result));
-		return result;
+		return parse_value(result);
 	}
 };
 

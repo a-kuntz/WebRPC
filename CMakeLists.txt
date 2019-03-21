@@ -32,25 +32,27 @@ include_directories(${PROJECT_BINARY_DIR}/include)
 
 ## Webrpc::webrpcparser #######################################################
 
-add_library(webrpcparser INTERFACE)
+add_library(webrpcparser
+	src/Parser.cpp
+)
 
-target_link_libraries(webrpcparser INTERFACE Boost::boost)
+target_link_libraries(webrpcparser PUBLIC Boost::boost)
 
-target_include_directories(webrpcparser INTERFACE ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(webrpcparser PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 target_compile_features(webrpcparser
-	INTERFACE
+	PUBLIC
 		cxx_alias_templates
 )
 
 ## Webrpc::webrpcserver #######################################################
 
 add_library(webrpcserver
-	src/Method.cpp
+	src/AbstractMethod.cpp
 	src/Server.cpp
 )
 
-target_link_libraries(webrpcserver Boost::boost)
+target_link_libraries(webrpcserver Boost::boost webrpcparser)
 
 target_include_directories(webrpcserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
@@ -101,7 +103,7 @@ add_executable(testparser
 	test/ParserTest.cpp
 )
 
-target_link_libraries(testparser GTest::GTest GTest::Main Boost::boost)
+target_link_libraries(testparser GTest::GTest GTest::Main Boost::boost webrpcparser)
 
 # add include since parser is header only
 target_include_directories(testparser PRIVATE ${PROJECT_SOURCE_DIR}/include)

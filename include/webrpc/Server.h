@@ -1,14 +1,14 @@
 #ifndef __SERVER__
 #define __SERVER__
 
-#include <webrpc/Method.h>
+#include <webrpc/AbstractMethod.h>
 
 #include <boost/asio.hpp>
 
 #include <map>
 #include <memory>
 
-using Registry = std::map<std::string, std::unique_ptr<Method>>;
+using Registry = std::map<std::string, std::unique_ptr<IMethod>>;
 
 class Server
 {
@@ -20,7 +20,7 @@ class Server
 		_endpoint{endpoint}
 	{};
 
-	void register_method(std::unique_ptr<Method>&& method);
+	void register_method(std::unique_ptr<IMethod>&& method);
 
 	void run();
 
