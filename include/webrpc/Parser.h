@@ -91,7 +91,8 @@ class value_t : boost::spirit::extended_variant<null_t, bool_t, int_t, string_t,
 		std::ostream& _out;
 	};
 
-	std::ostream& serialize(std::ostream& out) const {
+	std::ostream& serialize(std::ostream& out) const
+	{
 		boost::apply_visitor(serializer{out}, base_type::get());
 		return out;
 	}
@@ -116,7 +117,7 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 		qi::int_parser<int, 16>  hex;
 
 		// rules initialization
-		value_rule   =
+		value_rule =
 			  qi::bool_
 			| lexeme[!('+' | (-lit('-') >> '0' >> digit)) >> qi::int_ >> !chr(".eE")]
 			| lexeme[!('+' | (-lit('-') >> '0' >> digit)) >> qi::double_]
@@ -127,16 +128,12 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 			| bytestring_rule
 			;
 
-		// string_rule		= qi::alpha >> *qi::alnum;
 		string_rule			= lexeme[+chr("a-zA-Z_") >> *chr("a-zA-Z0-9_")];
 		quote_rule			= chr('"') >> lexeme[*( ~chr('"') )] >> chr('"');
-
 		array_rule			= lit("[") >> -(value_rule % ',') >> lit("]");
-
 		struct_rule			= lit('{') >> -(struct_member_rule % ',') >> lit('}');
 		struct_member_rule	= string_rule >> ':' >> value_rule;
-
-		bytestring_rule = lit('<') >> -(hex % ',') >> lit('>');
+		bytestring_rule		= lit('<') >> -(hex % ',') >> lit('>');
 
 		BOOST_SPIRIT_DEBUG_NODE(value_rule);
 		BOOST_SPIRIT_DEBUG_NODE(string_rule);
@@ -153,6 +150,5 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 	qi::rule<Iterator, struct_t(), Skipper> struct_rule;
 	qi::rule<Iterator, struct_member_t(), Skipper> struct_member_rule;
 	qi::rule<Iterator, bytestring_t(), Skipper> bytestring_rule;
-
 };
 #endif
