@@ -40,7 +40,7 @@ struct Sum : public AbstractMethod
 	{
 		if (!arg || arg.value().type() != value_t::type_info::array_type)
 		{
-			throw std::runtime_error("invalid argument expected array of double or int like [1,2,3,4e-5,6.7]");
+			throw std::runtime_error("invalid argument: expected array of double or int like [1,2,3,4e-5,6.7]");
 		}
 
 		const auto a = boost::get<array_t>(arg.value());
