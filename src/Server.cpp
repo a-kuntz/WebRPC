@@ -1,4 +1,5 @@
 #include <webrpc/detail/fields_alloc.h>
+#include <webrpc/method/SystemListMethods.h>
 #include <webrpc/Parser.h>
 #include <webrpc/Server.h>
 
@@ -283,6 +284,13 @@ private:
 				check_deadline();
 			});
 	}
+};
+
+Server::Server(const boost::asio::ip::tcp::endpoint endpoint, int num_workers)
+:	_num_workers{num_workers},
+	_endpoint{endpoint}
+{
+	register_method(std::make_unique<method::SystemListMethods>(_registry));
 };
 
 void Server::register_method(IMethodUP&& method)

@@ -3,23 +3,18 @@
 
 #include <webrpc/AbstractMethod.h>
 #include <webrpc/Value.h>
+#include <webrpc/Registry.h>
 
 #include <boost/asio.hpp>
 
 #include <map>
-
-using Registry = std::map<std::string, IMethodUP>;
 
 class Server
 {
 	public:
 	Server() = delete;
 
-	// todo: add introspection method: system.list_methods
-	Server(const boost::asio::ip::tcp::endpoint endpoint, int num_workers=10)
-	:	_num_workers{num_workers},
-		_endpoint{endpoint}
-	{};
+	Server(const boost::asio::ip::tcp::endpoint endpoint, int num_workers=10);
 
 	void register_method(IMethodUP&& method);
 

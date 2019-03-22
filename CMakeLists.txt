@@ -62,6 +62,7 @@ target_compile_features(webrpcserver
 		cxx_deleted_functions
 	PRIVATE
 		cxx_nonstatic_member_init
+		cxx_std_14	# std::make_unique<.>()
 )
 
 ## sample-server ##############################################################
