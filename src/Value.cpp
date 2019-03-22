@@ -1,5 +1,6 @@
 #include <webrpc/Value.h>
 
+#include <iomanip>
 #include <sstream>
 
 namespace detail

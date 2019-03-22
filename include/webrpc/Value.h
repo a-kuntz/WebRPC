@@ -3,7 +3,6 @@
 
 #include <boost/spirit/include/support_extended_variant.hpp>
 
-#include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -19,7 +18,6 @@ using string_t			= std::string;
 
 // composite types
 using array_t			= std::vector<value_t>;
-// using array_t			= boost::container::stable_vector<value_t>;
 using struct_member_t	= std::pair<string_t, value_t>;
 using struct_t			= std::vector<struct_member_t>;
 using bytestring_t		= std::vector<int>;
