@@ -1,4 +1,4 @@
-#include <webrpc/fields_alloc.h>
+#include <webrpc/detail/fields_alloc.h>
 #include <webrpc/Parser.h>
 #include <webrpc/Server.h>
 
