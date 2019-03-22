@@ -178,11 +178,22 @@ private:
 		std::cout << "-" << request << "-" << name << "-" << args << "-";
 		if (method != _registry.end())
 		{
-			const auto oval = parse_value(args);
-			const auto ores = method->second->execute(oval);
-			const auto result = ores.value_or(null_t{}).to_string();
-			std::cout << " exec=" << method->first << "(" << args << ")" << "=>" << result;
-			send_message(result);
+			try
+			{
+				const auto oval = parse_value(args);
+				const auto ores = method->second->execute(oval);
+				const auto result = ores.value_or(null_t{}).to_string();
+				std::cout << " exec=" << method->first << "(" << args << ")" << "=>" << result;
+				send_message(result);
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "caught exception: " << e.what() << std::endl;
+				send_bad_response(
+					http::status::bad_request,
+					"Invalid webrpc request '" + std::string(e.what()) + "'\r\n"
+				);
+			}
 		}
 		else
 		{

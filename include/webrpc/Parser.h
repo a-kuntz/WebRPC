@@ -49,22 +49,33 @@ class value_t : public boost::spirit::extended_variant<null_t, bool_t, int_t, st
 	value_t(const struct_t& val) : base_type(val) {}
 	value_t(const bytestring_t& val) : base_type(val) {}
 
-	// template< typename T >
-	// T get()
-	// {
-	// 	return boost::get<T>(base_type::get());
-	// }
+	enum type_info {
+		null_type,
+		bool_type,
+		int_type,
+		double_type,
+		string_type,
+		array_type,
+		struct_type,
+		bytestring_type,
+	};
 
-	// template< typename T >
-	// const T get() const
-	// {
-	// 	return boost::get<T>(base_type::get());
-	// }
+	struct get_type : public boost::static_visitor<type_info>
+	{
+		type_info operator()(null_t)       const { return null_type;       }
+		type_info operator()(bool_t)       const { return bool_type;       }
+		type_info operator()(int_t)        const { return int_type;        }
+		type_info operator()(double_t)     const { return double_type;     }
+		type_info operator()(string_t)     const { return string_type;     }
+		type_info operator()(array_t)      const { return array_type;      }
+		type_info operator()(struct_t)     const { return struct_type;     }
+		type_info operator()(bytestring_t) const { return bytestring_type; }
+	};
 
-	// auto type() const
-	// {
-	// 	return base_type::type();
-	// }
+	type_info type() const
+	{
+		return boost::apply_visitor(get_type(), *this);
+	}
 
 	struct serializer : public boost::static_visitor<>
 	{

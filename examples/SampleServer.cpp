@@ -8,6 +8,7 @@
 #include <memory>
 #include <iostream>
 #include <algorithm>
+#include <stdexcept>
 
 struct Echo : public AbstractMethod
 {
@@ -37,20 +38,23 @@ struct Sum : public AbstractMethod
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
-		// todo: handle non array_t arg
+		if (!arg || arg.value().type() != value_t::type_info::array_type)
+		{
+			throw std::runtime_error("invalid argument expected array of double or int like [1,2,3,4e-5,6.7]");
+		}
+
 		const auto a = boost::get<array_t>(arg.value());
 		double sum = 0;
 		for (const auto& item : a)
 		{
-			// todo: handle non double_t arg
-			// if (item.type() == typeid(int_t))
-			// {
-			// 	sum += boost::get<int_t>(item);
-			// }
-			// else if (item.type() == typeid(double_t))
-			// {
+			if (item.type() == value_t::type_info::int_type)
+			{
+				sum += boost::get<int_t>(item);
+			}
+			else if (item.type() == value_t::type_info::double_type)
+			{
 				sum += boost::get<double_t>(item);
-			// }
+			}
 		}
 
 		return value_t{sum};
