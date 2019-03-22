@@ -2,6 +2,7 @@
 #define __SERVER__
 
 #include <webrpc/AbstractMethod.h>
+#include <webrpc/Value.h>
 
 #include <boost/asio.hpp>
 

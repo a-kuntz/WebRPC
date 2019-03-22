@@ -34,6 +34,7 @@ include_directories(${PROJECT_BINARY_DIR}/include)
 
 add_library(webrpcparser
 	src/Parser.cpp
+	src/Value.cpp
 )
 
 target_link_libraries(webrpcparser PUBLIC Boost::boost)
