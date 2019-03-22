@@ -7,9 +7,8 @@
 #include <boost/asio.hpp>
 
 #include <map>
-#include <memory>
 
-using Registry = std::map<std::string, std::unique_ptr<IMethod>>;
+using Registry = std::map<std::string, IMethodUP>;
 
 class Server
 {
@@ -22,7 +21,7 @@ class Server
 		_endpoint{endpoint}
 	{};
 
-	void register_method(std::unique_ptr<IMethod>&& method);
+	void register_method(IMethodUP&& method);
 
 	void run();
 

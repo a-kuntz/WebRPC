@@ -1,8 +1,16 @@
 #ifndef __I_METHOD_H__
 #define __I_METHOD_H__
 
+#include <webrpc/Value.h>
+
+#include <boost/optional.hpp>
+
+#include <memory>
 #include <string>
-#include <webrpc/Parser.h>
+
+struct IMethod;
+
+using IMethodUP = std::unique_ptr<IMethod>;
 
 struct IMethod
 {

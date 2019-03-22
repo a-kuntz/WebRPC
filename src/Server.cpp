@@ -285,7 +285,7 @@ private:
 	}
 };
 
-void Server::register_method(std::unique_ptr<IMethod>&& method)
+void Server::register_method(IMethodUP&& method)
 {
 	_registry.emplace(std::make_pair(method->get_name(), std::move(method)));
 }
