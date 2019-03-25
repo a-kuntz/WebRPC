@@ -11,7 +11,7 @@ A web based RPC library.
 
 ## Build instructions
 
-Assumind Boost is located in `~/dev/boost_1_69_0` and Gtest in `~/dev/googletest-release-1.8.1/build` build WebRPC as follows:
+You build WebRPC as follows, assuming Boost is located in `~/dev/boost_1_69_0` and Gtest in `~/dev/googletest-release-1.8.1/build`:
 
     mkdir build
     cd build
