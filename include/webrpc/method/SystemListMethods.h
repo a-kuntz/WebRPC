@@ -6,6 +6,7 @@
 
 namespace method
 {
+
 struct SystemListMethods : public AbstractMethod
 {
 	SystemListMethods() = delete;
@@ -26,6 +27,7 @@ struct SystemListMethods : public AbstractMethod
 
 	const Registry& _registry;
 };
+
 }
 
 #endif
