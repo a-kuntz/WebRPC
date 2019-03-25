@@ -26,22 +26,18 @@ configure_file (
 
 include_directories(${PROJECT_BINARY_DIR}/include)
 
-## Webrpc::webrpcvalue ########################################################
+## Webrpc::webrpcdata #########################################################
 
-# add_library(webrpcvalue)
-
-## Webrpc::webrpcparser #######################################################
-
-add_library(webrpcparser
+add_library(webrpcdata
 	src/Parser.cpp
 	src/Value.cpp
 )
 
-target_link_libraries(webrpcparser PUBLIC Boost::boost)
+target_link_libraries(webrpcdata PUBLIC Boost::boost)
 
-target_include_directories(webrpcparser PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(webrpcdata PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
-target_compile_features(webrpcparser
+target_compile_features(webrpcdata
 	PUBLIC
 		cxx_alias_templates
 )
@@ -53,7 +49,7 @@ add_library(webrpcserver
 	src/Server.cpp
 )
 
-target_link_libraries(webrpcserver Boost::boost webrpcparser)
+target_link_libraries(webrpcserver Boost::boost webrpcdata)
 
 target_include_directories(webrpcserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
@@ -84,7 +80,7 @@ add_executable(sampleparser
 	examples/SampleParser.cpp
 )
 
-target_link_libraries(sampleparser PRIVATE webrpcparser)
+target_link_libraries(sampleparser PRIVATE webrpcdata)
 
 ## map-parser-example #########################################################
 
@@ -101,21 +97,21 @@ target_compile_features(map-parser-example
 
 ## tests ######################################################################
 
-add_executable(testparser
+add_executable(parsertest
 	test/ParserTest.cpp
 )
 
-target_link_libraries(testparser GTest::GTest GTest::Main Boost::boost webrpcparser)
+target_link_libraries(parsertest GTest::GTest GTest::Main Boost::boost webrpcdata)
 
 # add include since parser is header only
-target_include_directories(testparser PRIVATE ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(parsertest PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
-target_compile_features(testparser
+target_compile_features(parsertest
 	PRIVATE
 		cxx_variadic_macros
 )
 
-add_test(NAME testparser COMMAND testparser)
+add_test(NAME parsertest COMMAND parsertest)
 
 #install(TARGETS webrpcserver EXPORT webrpcserver-targets
 #	LIBRARY DESTINATION lib
