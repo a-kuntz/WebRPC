@@ -1,6 +1,32 @@
 # WebRPC
 
-A web based RPC library.
+WebRPC is a web based remote procedure call (RPC) library.
+
+E.g. a remote method `DateTime` may be called via `http://localhost/DateTime` from any software that is capable of emitting http requests. For instance, this can be your browser or the WebRPC sampleclient.
+
+## Cloning and building WebRPC
+
+    git clone https://github.com/yoshiii/WebRPC.git
+    cd WebRPC
+    mkdir build
+    cd build
+    cmake ..
+    make all test
+
+## Sample Session
+
+Start sampleserver which is located in the build folder
+
+    ./build/sampleserver
+
+Call method `DateTime` via sampleclient, which is also locate in the build folder
+
+    ./build/sampleclient http://localhost/DateTime
+
+Call method `Sum` with an array of integer and double values `[1,2.3,4e-5,-6]`
+
+    $ ./build/sampleclient http://localhost/Sum/[1,2.3,4e-5,-6]
+    -2.69996
 
 ## Dependencies
 
@@ -9,15 +35,17 @@ A web based RPC library.
   - Boost.Asio
 - GTest (v. 1.8.1)
 
-## Build instructions
+## Building WebRPC and all its dependencies from scratch
 
-You build WebRPC as follows, assuming Boost is located in `~/dev/boost_1_69_0` and Gtest in `~/dev/googletest-release-1.8.1/build`:
+In case your system does not provide `boost` and `gtest` in the required versions, you can use the setup scripts `scripts/setup_boost.sh` and `scripts/setup_gtest.sh` to unpack and install the sources to `~/deps`.
+
+To compile WebRPC set `BOOST_ROOT` and `GTEST_ROOT` when invoking cmake. There is also a convenience script `scripts/build.sh`.
 
     mkdir build
     cd build
     cmake .. \
-      -DBOOST_ROOT=~/dev/boost_1_69_0 \
-      -DGTEST_ROOT=~/dev/googletest-release-1.8.1/build \
+      -DBOOST_ROOT=~/deps/boost_1_69_0 \
+      -DGTEST_ROOT=~/deps/googletest-release-1.8.1/build \
       -DCMAKE_BUILD_TYPE=debug \
       -DCMAKE_INSTALL_PREFIX=.
     make all test
