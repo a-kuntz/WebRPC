@@ -291,7 +291,7 @@ Server::Server(const boost::asio::ip::tcp::endpoint endpoint, int num_workers)
 	_endpoint{endpoint}
 {
 	register_method(std::make_unique<method::SystemListMethods>(_registry));
-};
+}
 
 void Server::register_method(IMethodUP&& method)
 {
