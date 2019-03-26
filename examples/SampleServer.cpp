@@ -68,7 +68,7 @@ int main()
 	try
 	{
 		const boost::asio::ip::address host(boost::asio::ip::make_address("127.0.0.1"));
-		const unsigned short port(80);
+		const unsigned short port(8080);
 
 		Server server({host, port});
 		server.register_method(std::make_unique<Echo>());

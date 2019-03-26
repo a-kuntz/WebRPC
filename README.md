@@ -21,11 +21,11 @@ Start sampleserver which is located in the build folder
 
 Call method `DateTime` via sampleclient, which is also locate in the build folder
 
-    ./build/sampleclient http://localhost/DateTime
+    ./build/sampleclient http://localhost:8080/DateTime
 
 Call method `Sum` with an array of integer and double values `[1,2.3,4e-5,-6]`
 
-    $ ./build/sampleclient http://localhost/Sum/[1,2.3,4e-5,-6]
+    $ ./build/sampleclient http://localhost:8080/Sum/[1,2.3,4e-5,-6]
     -2.69996
 
 ## Dependencies
