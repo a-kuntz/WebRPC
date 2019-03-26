@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 set -x
 
 ARCHIVE=~/Downloads/googletest-release-1.8.1.tar
