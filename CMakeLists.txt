@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Werror -Wno-err
 
 # set(BOOST_ROOT "~/dev/boost_1_69_0")
 find_package(Boost REQUIRED)
+find_package(Threads REQUIRED)
 
 # set(GTEST_ROOT "~/dev/googletest-release-1.8.1/build")
 enable_testing()
@@ -49,7 +50,7 @@ add_library(webrpcserver
 	src/Server.cpp
 )
 
-target_link_libraries(webrpcserver Boost::boost webrpcdata)
+target_link_libraries(webrpcserver Boost::boost Threads::Threads webrpcdata)
 
 target_include_directories(webrpcserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
