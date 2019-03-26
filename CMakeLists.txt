@@ -6,11 +6,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Werror -Wno-err
 
 ## dependencies ###############################################################
 
-# set(BOOST_ROOT "~/dev/boost_1_69_0")
+# set(BOOST_ROOT "~/deps/boost_1_69_0")
 find_package(Boost REQUIRED)
 find_package(Threads REQUIRED)
 
-# set(GTEST_ROOT "~/dev/googletest-release-1.8.1/build")
+# set(GTEST_ROOT "~/deps/googletest-release-1.8.1/build")
 enable_testing()
 find_package(Gtest REQUIRED)
 

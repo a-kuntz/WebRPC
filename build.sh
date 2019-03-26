@@ -4,9 +4,8 @@ pushd .
 mkdir build
 cd build
 cmake .. \
-	-DBOOST_ROOT=~/dev/boost_1_69_0 \
-	-DGTEST_ROOT=~/dev/googletest-release-1.8.1/build \
-	-DCMAKE_BUILD_TYPE=debug \
+	-DBOOST_ROOT=~/deps/boost_1_69_0 \
+	-DGTEST_ROOT=~/deps/googletest-release-1.8.1/build \
 	-DCMAKE_INSTALL_PREFIX=.
 make all test
 popd
