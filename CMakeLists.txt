@@ -12,7 +12,7 @@ find_package(Threads REQUIRED)
 
 # set(GTEST_ROOT "~/deps/googletest-release-1.8.1/build")
 enable_testing()
-find_package(Gtest REQUIRED)
+find_package(GTest REQUIRED)
 
 ## version info ###############################################################
 
