@@ -11,5 +11,5 @@ cmake .. \
 	-DGTEST_ROOT=${HOME}/deps/googletest-release-1.8.1/build \
 	-DCMAKE_BUILD_TYPE=debug \
 	-DCMAKE_INSTALL_PREFIX=.
-make all test
+CTEST_OUTPUT_ON_FAILURE=1 make all test
 popd
