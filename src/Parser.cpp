@@ -36,7 +36,7 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 		array_rule			= lit("[") >> -(value_rule % ',') >> lit("]");
 		struct_rule			= lit('{') >> -(struct_member_rule % ',') >> lit('}');
 		struct_member_rule	= string_rule >> ':' >> value_rule;
-		bytestring_rule		= lit('<') >> -(hex % ',') >> lit('>');
+		bytestring_rule		= lit('<') >> -((-lit("0x") >> hex) % ',') >> lit('>');
 
 		BOOST_SPIRIT_DEBUG_NODE(value_rule);
 		BOOST_SPIRIT_DEBUG_NODE(string_rule);

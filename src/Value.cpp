@@ -53,7 +53,7 @@ namespace detail
 			_out << "<";
 			for (auto itr = std::begin(v); itr != std::end(v); ++itr)
 			{
-				_out << std::setfill('0') << std::setw(2) << std::hex << *itr;
+				_out << "0x" << std::uppercase << std::setfill('0') << std::setw(2) << std::hex << *itr;
 				if (std::next(itr) != std::end(v)) {_out << ",";}
 			}
 			_out << ">";

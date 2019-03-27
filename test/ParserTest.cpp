@@ -49,7 +49,7 @@ TEST(Parser, ArrayValues)
 	check("[true,42,3.14,abc]");
 	check("[true,42,3.14,abc,[true,42,3.14,abc,[true,42,3.14,abc]]]");
 	check("[{key:val},{key:val},{key:val}]");
-	check("[<>,<00>,<00,01,0a,0f,de,ad,01,23,45,67,89,ab,cd,ef>]");
+	check("[<>,<0x00>,<0x00,0x01,0x0A,0x0F,0xDE,0xAD,0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF>]");
 	check("[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value}]]]");
 }
 
@@ -58,14 +58,18 @@ TEST(Parser, StructValues)
 	// structs
 	check("{}");
 	check("{key:value,key2:value2,key3:value}");
-	check("{key:value,key2:[1,2,3],key3:{k:v,k:v,k:v},key4:<ab,cd,ef>}");
+	check("{key:value,key2:[1,2,3],key3:{k:v,k:v,k:v},key4:<0xAB,0xCD,0xEF>}");
 }
 
 TEST(Parser, BytestringValues)
 {
 	// bytestrings
 	check("<>");
-	check("<00,11,22,33,44,55,66,aa,bb,cc>");
+	check("<0x0F>");
+	check("<0x0F,0x0F>");
+	check("<0x00,0x11,0x22,0x33>");
+	check("<0xAA,0xBB,0xCC,0xDD,0xEE,0xFF>");
+	check("<0x00,0x11,0x22,0x33,0x44,0x55,0x66,0xAA,0xBB,0xCC>");
 }
 
 int main(int argc, char **argv) {
