@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 
 project(WebRPC)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Werror -Wno-error=unused-variable")
-
 ## dependencies ###############################################################
 
 # set(BOOST_ROOT "~/deps/boost_1_69_0")
@@ -14,7 +12,7 @@ find_package(Threads REQUIRED)
 enable_testing()
 find_package(GTest REQUIRED)
 
-## version info ###############################################################
+## global settings ############################################################
 
 set(WEBRPC_VERSION_MAJOR 0)
 set(WEBRPC_VERSION_MINOR 0)
@@ -25,6 +23,8 @@ configure_file (
 	${PROJECT_BINARY_DIR}/include/webrpc/Version.h
 )
 
+add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable)
+# add_compile_definitions()
 include_directories(${PROJECT_BINARY_DIR}/include)
 
 ## Webrpc::webrpcdata #########################################################
