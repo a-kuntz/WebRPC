@@ -43,6 +43,27 @@ std::vector<boost::string_view> split_string_view(boost::string_view strv, boost
     return output;
 }
 
+void replace_all(std::string& str, const std::string& from, const std::string& to) {
+    if(from.empty())
+	{
+        return;
+	}
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos)
+	{
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length();
+    }
+}
+
+std::string decode_url(const std::string& url)
+{
+	std::string result(url);
+	replace_all(result, "%7B", "{");
+	replace_all(result, "%7D", "}");
+	return result;
+}
+
 class HttpWorker
 {
 public:
@@ -173,7 +194,7 @@ private:
 		// todo: cleanup usage of string_view / std::string
 		auto parts = split_string_view(request, "/");
 		const std::string name = parts.size() > 0 ? parts.at(0).to_string() : "no method";
-		const std::string args = parts.size() > 1 ? parts.at(1).to_string() : "no arguments";
+		const std::string args = parts.size() > 1 ? decode_url(parts.at(1).to_string()) : "no arguments";
 
 		const auto method = _registry.find(name);
 		std::cout << "-" << request << "-" << name << "-" << args << "-";
