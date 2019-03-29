@@ -1,6 +1,7 @@
 #include <webrpc/Value.h>
 
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 
 namespace detail
@@ -23,7 +24,7 @@ namespace detail
 		void operator()(const null_t&    ) const {_out << "null_t";}
 		void operator()(const bool_t& v  ) const {_out << std::boolalpha << v;}
 		void operator()(const int_t& v   ) const {_out << v;}
-		void operator()(const double_t& v) const {_out << v;}
+		void operator()(const double_t& v) const {_out << std::showpoint << v;}
 		void operator()(const string_t& v) const {_out << v;}
 		void operator()(const value_t& v ) const {v.serialize(_out);}
 		void operator()(const array_t& v ) const
