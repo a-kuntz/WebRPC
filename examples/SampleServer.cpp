@@ -14,6 +14,9 @@
 #include <sstream>
 #include <stdexcept>
 
+namespace method
+{
+
 struct Echo : public AbstractMethod
 {
 	Echo() : AbstractMethod("Echo") {};
@@ -69,7 +72,6 @@ struct DateTime : public AbstractMethod
 {
 	DateTime() : AbstractMethod("DateTime") {};
 
-
 	boost::optional<value_t> execute(const boost::optional<value_t> /*arg*/) override
 	{
 		const std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -78,6 +80,46 @@ struct DateTime : public AbstractMethod
 		return value_t(date_time.str());
 	}
 };
+
+struct SomeStruct
+{
+	SomeStruct() : _double(0.0), _int(0), _string("") {}
+	SomeStruct(const boost::optional<value_t> arg)
+	{
+		assert(arg.value().type() == value_t::type_info::struct_type);
+		const auto s = boost::get<struct_t>(arg.value());
+		_double = boost::get<double_t>(s.at("double"));
+		_int    = boost::get<int_t>(s.at("int"));
+		_string = boost::get<string_t>(s.at("string"));
+	}
+	explicit operator value_t () const
+	{
+		struct_t result;
+		result["double"] = double_t(_double);
+		result["int"]    = int_t(_int);
+		result["string"] = string_t(_string);
+		return result;
+	}
+	double _double;
+	int _int;
+	std::string _string;
+};
+
+struct GetSetValue : public AbstractMethod
+{
+	GetSetValue(SomeStruct& val) : AbstractMethod("GetSetValue"), _val(val) {};
+
+	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
+	{
+		std::cout << "type=" << arg.value().type() << std::endl;
+		_val = arg && arg.value().type() != value_t::type_info::string_type ? SomeStruct(arg) : _val;
+		return static_cast<value_t>(_val);
+	}
+
+	SomeStruct& _val;
+};
+
+} // namespace method
 
 int main()
 {
@@ -90,11 +132,14 @@ int main()
 		std::cout << "SampleServer listening on " << host << " " << port << std::endl;
 		std::cout << " - http://" << host << ":" << port << "/system.list_methods" << std::endl;
 
+		method::SomeStruct globalValue;
+
 		Server server({host, port});
-		server.register_method(std::make_unique<Echo>());
-		server.register_method(std::make_unique<Revert>());
-		server.register_method(std::make_unique<Sum>());
-		server.register_method(std::make_unique<DateTime>());
+		server.register_method(std::make_unique<method::Echo>());
+		server.register_method(std::make_unique<method::Revert>());
+		server.register_method(std::make_unique<method::Sum>());
+		server.register_method(std::make_unique<method::DateTime>());
+		server.register_method(std::make_unique<method::GetSetValue>(globalValue));
 		server.run();
 	}
 	catch (const std::exception& e)
