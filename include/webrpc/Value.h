@@ -4,6 +4,7 @@
 #include <boost/spirit/include/support_extended_variant.hpp>
 
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -19,7 +20,8 @@ using string_t			= std::string;
 // composite types
 using array_t			= std::vector<value_t>;
 using struct_member_t	= std::pair<string_t, value_t>;
-using struct_t			= std::vector<struct_member_t>;
+using struct_t			= std::map<string_t, value_t>;
+
 using bytestring_t		= std::vector<int>;
 
 struct value_t : public boost::spirit::extended_variant<null_t, bool_t, int_t, string_t, double_t, array_t,struct_t,bytestring_t>

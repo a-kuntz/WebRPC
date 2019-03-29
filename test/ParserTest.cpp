@@ -58,7 +58,7 @@ TEST(Parser, StructValues)
 	// structs
 	check("{}");
 	check("{key:value,key2:value2,key3:value}");
-	check("{key:value,key2:[1,2,3],key3:{k:v,k:v,k:v},key4:<0xAB,0xCD,0xEF>}");
+	check("{key:value,key2:[1,2,3],key3:{k1:v,k2:v,k3:v},key4:<0xAB,0xCD,0xEF>}");
 }
 
 TEST(Parser, BytestringValues)
