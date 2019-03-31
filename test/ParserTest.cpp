@@ -17,59 +17,61 @@ TEST(BoostSpirit, basic)
 	}
 }
 
-void check(const std::string& in)
+void check(const std::string& in, const value_t::type_info type=value_t::type_info::null_type)
 {
 	boost::optional<value_t> opt = parse_value(in);
 	ASSERT_EQ(true, static_cast<bool>(opt)) << "testcase input=" << in;
+	EXPECT_EQ(type, opt.value().type()) << "testcase input=" << in << " expected type=" << type;
 	EXPECT_EQ(in, opt.value().to_string());
 }
 
 TEST(Parser, PrimitiveValues)
 {
 	// primitive values
-	check("true");
-	check("42");
-	check("3.14000");
-	check("abc");
-	check("abc_3");
-	check("\"abc\"");
-	check("\"a b c?\"");
+	// check("", value_t::type_info::null_type);
+	check("true", value_t::type_info::bool_type);
+	check("42", value_t::type_info::int_type);
+	check("3.14000", value_t::type_info::double_type);
+	check("abc", value_t::type_info::string_type);
+	check("abc_3", value_t::type_info::string_type);
+	check("\"abc\"", value_t::type_info::string_type);
+	check("\"a b c?\"", value_t::type_info::string_type);
 }
 
 TEST(Parser, ArrayValues)
 {
 	// arrays
-	check("[]");
-	check("[[],[],[]]");
-	check("[true,false,true]");
-	check("[42,43,44]");
-	check("[3.14000,2.70000,1.40000]");
-	check("[abc,d_e_f,ghi]");
-	check("[\"abc\",\"def\",\"ghi.,;.-_?!§$%&/()=\"]");
-	check("[true,42,3.14000,abc]");
-	check("[true,42,3.14000,abc,[true,42,3.14000,abc,[true,42,3.14000,abc]]]");
-	check("[{key:val},{key:val},{key:val}]");
-	check("[<>,<0x00>,<0x00,0x01,0x0A,0x0F,0xDE,0xAD,0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF>]");
-	check("[true,42,3.14000,abc,{key:value},[true,42,3.14000,abc,{key:value},[true,42,3.14000,abc,{key:value}]]]");
+	check("[]", value_t::type_info::array_type);
+	check("[[],[],[]]", value_t::type_info::array_type);
+	check("[true,false,true]", value_t::type_info::array_type);
+	check("[42,43,44]", value_t::type_info::array_type);
+	check("[3.14000,2.70000,1.40000]", value_t::type_info::array_type);
+	check("[abc,d_e_f,ghi]", value_t::type_info::array_type);
+	check("[\"abc\",\"def\",\"ghi.,;.-_?!§$%&/()=\"]", value_t::type_info::array_type);
+	check("[true,42,3.14000,abc]", value_t::type_info::array_type);
+	check("[true,42,3.14000,abc,[true,42,3.14000,abc,[true,42,3.14000,abc]]]", value_t::type_info::array_type);
+	check("[{key:val},{key:val},{key:val}]", value_t::type_info::array_type);
+	check("[<>,<0x00>,<0x00,0x01,0x0A,0x0F,0xDE,0xAD,0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF>]", value_t::type_info::array_type);
+	check("[true,42,3.14000,abc,{key:value},[true,42,3.14000,abc,{key:value},[true,42,3.14000,abc,{key:value}]]]", value_t::type_info::array_type);
 }
 
 TEST(Parser, StructValues)
 {
 	// structs
-	check("{}");
-	check("{key:value,key2:value2,key3:value}");
-	check("{key:value,key2:[1,2,3],key3:{k1:v,k2:v,k3:v},key4:<0xAB,0xCD,0xEF>}");
+	check("{}", value_t::type_info::struct_type);
+	check("{key:value,key2:value2,key3:value}", value_t::type_info::struct_type);
+	check("{key:value,key2:[1,2,3],key3:{k1:v,k2:v,k3:v},key4:<0xAB,0xCD,0xEF>}", value_t::type_info::struct_type);
 }
 
 TEST(Parser, BytestringValues)
 {
 	// bytestrings
-	check("<>");
-	check("<0x0F>");
-	check("<0x0F,0x0F>");
-	check("<0x00,0x11,0x22,0x33>");
-	check("<0xAA,0xBB,0xCC,0xDD,0xEE,0xFF>");
-	check("<0x00,0x11,0x22,0x33,0x44,0x55,0x66,0xAA,0xBB,0xCC>");
+	check("<>", value_t::type_info::bytestring_type);
+	check("<0x0F>", value_t::type_info::bytestring_type);
+	check("<0x0F,0x0F>", value_t::type_info::bytestring_type);
+	check("<0x00,0x11,0x22,0x33>", value_t::type_info::bytestring_type);
+	check("<0xAA,0xBB,0xCC,0xDD,0xEE,0xFF>", value_t::type_info::bytestring_type);
+	check("<0x00,0x11,0x22,0x33,0x44,0x55,0x66,0xAA,0xBB,0xCC>", value_t::type_info::bytestring_type);
 }
 
 int main(int argc, char **argv) {
