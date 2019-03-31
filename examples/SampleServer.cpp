@@ -112,7 +112,7 @@ struct GetSetValue : public AbstractMethod
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
 		std::cout << "type=" << arg.value().type() << std::endl;
-		_val = arg && arg.value().type() != value_t::type_info::string_type ? SomeStruct(arg) : _val;
+		_val = arg && arg.value().type() == value_t::type_info::struct_type ? SomeStruct(arg) : _val;
 		return static_cast<value_t>(_val);
 	}
 
