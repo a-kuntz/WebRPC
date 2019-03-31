@@ -29,7 +29,7 @@ TEST(Parser, PrimitiveValues)
 	// primitive values
 	check("true");
 	check("42");
-	check("3.14");
+	check("3.14000");
 	check("abc");
 	check("abc_3");
 	check("\"abc\"");
@@ -43,14 +43,14 @@ TEST(Parser, ArrayValues)
 	check("[[],[],[]]");
 	check("[true,false,true]");
 	check("[42,43,44]");
-	check("[3.14,2.7,1.4]");
+	check("[3.14000,2.70000,1.40000]");
 	check("[abc,d_e_f,ghi]");
 	check("[\"abc\",\"def\",\"ghi.,;.-_?!§$%&/()=\"]");
-	check("[true,42,3.14,abc]");
-	check("[true,42,3.14,abc,[true,42,3.14,abc,[true,42,3.14,abc]]]");
+	check("[true,42,3.14000,abc]");
+	check("[true,42,3.14000,abc,[true,42,3.14000,abc,[true,42,3.14000,abc]]]");
 	check("[{key:val},{key:val},{key:val}]");
 	check("[<>,<0x00>,<0x00,0x01,0x0A,0x0F,0xDE,0xAD,0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF>]");
-	check("[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value}]]]");
+	check("[true,42,3.14000,abc,{key:value},[true,42,3.14000,abc,{key:value},[true,42,3.14000,abc,{key:value}]]]");
 }
 
 TEST(Parser, StructValues)
