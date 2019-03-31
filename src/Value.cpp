@@ -18,13 +18,19 @@ namespace detail
 		value_t::type_info operator()(const bytestring_t&) const {return value_t::bytestring_type;}
 	};
 
+	std::string serialize(double_t dbl)
+	{
+		std::string str = std::to_string(dbl);
+		str.erase(str.find_last_not_of('0') + 1, std::string::npos);
+		return str;
+	}
 	struct serializer : public boost::static_visitor<>
 	{
 		serializer(std::ostream& out) : _out(out) {}
 		void operator()(const null_t&    ) const {_out << "null_t";}
 		void operator()(const bool_t& v  ) const {_out << std::boolalpha << v;}
 		void operator()(const int_t& v   ) const {_out << v;}
-		void operator()(const double_t& v) const {_out << std::showpoint << v;}
+		void operator()(const double_t& v) const {_out << serialize(v);}
 		void operator()(const string_t& v) const {_out << v;}
 		void operator()(const value_t& v ) const {v.serialize(_out);}
 		void operator()(const array_t& v ) const

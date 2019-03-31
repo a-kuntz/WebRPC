@@ -31,7 +31,7 @@ TEST(Parser, PrimitiveValues)
 	// check("", value_t::type_info::null_type);
 	check("true", value_t::type_info::bool_type);
 	check("42", value_t::type_info::int_type);
-	check("3.14000", value_t::type_info::double_type);
+	check("3.14", value_t::type_info::double_type);
 	check("abc", value_t::type_info::string_type);
 	check("abc_3", value_t::type_info::string_type);
 	check("\"abc\"", value_t::type_info::string_type);
@@ -45,14 +45,14 @@ TEST(Parser, ArrayValues)
 	check("[[],[],[]]", value_t::type_info::array_type);
 	check("[true,false,true]", value_t::type_info::array_type);
 	check("[42,43,44]", value_t::type_info::array_type);
-	check("[3.14000,2.70000,1.40000]", value_t::type_info::array_type);
+	check("[3.14,2.7,1.4]", value_t::type_info::array_type);
 	check("[abc,d_e_f,ghi]", value_t::type_info::array_type);
 	check("[\"abc\",\"def\",\"ghi.,;.-_?!§$%&/()=\"]", value_t::type_info::array_type);
-	check("[true,42,3.14000,abc]", value_t::type_info::array_type);
-	check("[true,42,3.14000,abc,[true,42,3.14000,abc,[true,42,3.14000,abc]]]", value_t::type_info::array_type);
+	check("[true,42,3.14,abc]", value_t::type_info::array_type);
+	check("[true,42,3.14,abc,[true,42,3.14,abc,[true,42,3.14,abc]]]", value_t::type_info::array_type);
 	check("[{key:val},{key:val},{key:val}]", value_t::type_info::array_type);
 	check("[<>,<0x00>,<0x00,0x01,0x0A,0x0F,0xDE,0xAD,0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF>]", value_t::type_info::array_type);
-	check("[true,42,3.14000,abc,{key:value},[true,42,3.14000,abc,{key:value},[true,42,3.14000,abc,{key:value}]]]", value_t::type_info::array_type);
+	check("[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value},[true,42,3.14,abc,{key:value}]]]", value_t::type_info::array_type);
 }
 
 TEST(Parser, StructValues)
