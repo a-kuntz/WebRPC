@@ -14,6 +14,8 @@ find_package(GTest REQUIRED)
 
 ## global settings ############################################################
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(WEBRPC_VERSION_MAJOR 0)
 set(WEBRPC_VERSION_MINOR 0)
 set(WEBRPC_VERSION_PATCH 1)
@@ -82,19 +84,6 @@ add_executable(sampleparser
 )
 
 target_link_libraries(sampleparser PRIVATE webrpcdata)
-
-## map-parser-example #########################################################
-
-add_executable(map-parser-example
-	examples/map-parser-example.cpp
-)
-
-target_link_libraries(map-parser-example PRIVATE Boost::boost)
-
-target_compile_features(map-parser-example
-	PRIVATE
-		cxx_std_17
-)
 
 ## tests ######################################################################
 
