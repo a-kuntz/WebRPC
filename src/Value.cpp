@@ -31,7 +31,7 @@ namespace detail
 		void operator()(const bool_t& v  ) const {_out << std::boolalpha << v;}
 		void operator()(const int_t& v   ) const {_out << v;}
 		void operator()(const double_t& v) const {_out << serialize(v);}
-		void operator()(const string_t& v) const {_out << v;}
+		void operator()(const string_t& v) const {_out << '\"' << v << '\"';}
 		void operator()(const value_t& v ) const {v.serialize(_out);}
 		void operator()(const array_t& v ) const
 		{
@@ -48,7 +48,7 @@ namespace detail
 			_out << "{";
 			for (auto itr = std::begin(v); itr != std::end(v); ++itr)
 			{
-				this->operator()(itr->first);
+				_out << itr->first;
 				_out << ":";
 				this->operator()(itr->second);
 				if (std::next(itr) != std::end(v)) {_out << ",";}

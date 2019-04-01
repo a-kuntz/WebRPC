@@ -32,7 +32,7 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 			;
 
 		string_rule			= lexeme[+chr("a-zA-Z_") >> *chr("a-zA-Z0-9_")];
-		quote_rule			= chr('"') >> lexeme[*( ~chr('"') )] >> chr('"');
+		quote_rule			= lit('"') >> lexeme[*( ~chr('"') )] >> lit('"');
 		array_rule			= lit("[") >> -(value_rule % ',') >> lit("]");
 		struct_rule			= lit('{') >> -(struct_member_rule % ',') >> lit('}');
 		struct_member_rule	= string_rule >> ':' >> value_rule;
