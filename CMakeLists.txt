@@ -77,6 +77,19 @@ target_compile_features(sampleserver
 		cxx_std_14	# std::make_unique<.>()
 )
 
+## sample-client ##############################################################
+
+add_executable(sampleclient
+	examples/SampleClient.cpp
+)
+
+target_link_libraries(sampleclient Boost::boost webrpcdata)
+
+target_compile_features(sampleclient
+	PRIVATE
+		cxx_std_14	# std::make_unique<.>()
+)
+
 ## sample-parser ##############################################################
 
 add_executable(sampleparser
