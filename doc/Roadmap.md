@@ -6,3 +6,4 @@
 - [ ] Add cmake option WITH_TESTS=n to disable unit tests
 - [x] Find an alternative to CMAKE_CXX_FLAGS to enable warnings
 - [x] add polymorphic value_t::get<>() to remove boost::get<>() from sample server impl
+- [ ] add tree representation for struct serialization
