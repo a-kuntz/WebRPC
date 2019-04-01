@@ -19,186 +19,186 @@ namespace detail {
 
 struct static_pool
 {
-    std::size_t _size;
-    std::size_t _refs = 1;
-    std::size_t _count = 0;
-    char* _p;
+	std::size_t _size;
+	std::size_t _refs = 1;
+	std::size_t _count = 0;
+	char* _p;
 
-    char*
-    end()
-    {
-        return reinterpret_cast<char*>(this + 1) + _size;
-    }
+	char*
+	end()
+	{
+		return reinterpret_cast<char*>(this + 1) + _size;
+	}
 
-    explicit
-    static_pool(std::size_t size)
-        : _size(size)
-        , _p(reinterpret_cast<char*>(this + 1))
-    {
-    }
+	explicit
+	static_pool(std::size_t size)
+		: _size(size)
+		, _p(reinterpret_cast<char*>(this + 1))
+	{
+	}
 
 public:
-    static
-    static_pool&
-    construct(std::size_t size)
-    {
-        auto p = new char[sizeof(static_pool) + size];
-        return *(new(p) static_pool{size});
-    }
+	static
+	static_pool&
+	construct(std::size_t size)
+	{
+		auto p = new char[sizeof(static_pool) + size];
+		return *(new(p) static_pool{size});
+	}
 
-    static_pool&
-    share()
-    {
-        ++_refs;
-        return *this;
-    }
+	static_pool&
+	share()
+	{
+		++_refs;
+		return *this;
+	}
 
-    void
-    destroy()
-    {
-        if(_refs--)
-            return;
-        this->~static_pool();
-        delete[] reinterpret_cast<char*>(this);
-    }
+	void
+	destroy()
+	{
+		if(_refs--)
+			return;
+		this->~static_pool();
+		delete[] reinterpret_cast<char*>(this);
+	}
 
-    void*
-    alloc(std::size_t n)
-    {
-        auto last = _p + n;
-        if(last >= end())
-            BOOST_THROW_EXCEPTION(std::bad_alloc{});
-        ++_count;
-        auto p = _p;
-        _p = last;
-        return p;
-    }
+	void*
+	alloc(std::size_t n)
+	{
+		auto last = _p + n;
+		if(last >= end())
+			BOOST_THROW_EXCEPTION(std::bad_alloc{});
+		++_count;
+		auto p = _p;
+		_p = last;
+		return p;
+	}
 
-    void
-    dealloc()
-    {
-        if(--_count)
-            return;
-        _p = reinterpret_cast<char*>(this + 1);
-    }
+	void
+	dealloc()
+	{
+		if(--_count)
+			return;
+		_p = reinterpret_cast<char*>(this + 1);
+	}
 };
 
 } // detail
 
 /** A non-thread-safe allocator optimized for @ref basic_fields.
 
-    This allocator obtains memory from a pre-allocated memory block
-    of a given size. It does nothing in deallocate until all
-    previously allocated blocks are deallocated, upon which it
-    resets the internal memory block for re-use.
+	This allocator obtains memory from a pre-allocated memory block
+	of a given size. It does nothing in deallocate until all
+	previously allocated blocks are deallocated, upon which it
+	resets the internal memory block for re-use.
 
-    To use this allocator declare an instance persistent to the
-    connection or session, and construct with the block size.
-    A good rule of thumb is 20% more than the maximum allowed
-    header size. For example if the application only allows up
-    to an 8,000 byte header, the block size could be 9,600.
+	To use this allocator declare an instance persistent to the
+	connection or session, and construct with the block size.
+	A good rule of thumb is 20% more than the maximum allowed
+	header size. For example if the application only allows up
+	to an 8,000 byte header, the block size could be 9,600.
 
-    Then, for every instance of `message` construct the header
-    with a copy of the previously declared allocator instance.
+	Then, for every instance of `message` construct the header
+	with a copy of the previously declared allocator instance.
 */
 template<class T>
 struct fields_alloc
 {
-    detail::static_pool* _pool;
+	detail::static_pool* _pool;
 
 public:
-    using value_type = T;
-    using is_always_equal = std::false_type;
-    using pointer = T*;
-    using reference = T&;
-    using const_pointer = T const*;
-    using const_reference = T const&;
-    using size_type = std::size_t;
-    using difference_type = std::ptrdiff_t;
+	using value_type = T;
+	using is_always_equal = std::false_type;
+	using pointer = T*;
+	using reference = T&;
+	using const_pointer = T const*;
+	using const_reference = T const&;
+	using size_type = std::size_t;
+	using difference_type = std::ptrdiff_t;
 
-    template<class U>
-    struct rebind
-    {
-        using other = fields_alloc<U>;
-    };
+	template<class U>
+	struct rebind
+	{
+		using other = fields_alloc<U>;
+	};
 
 #if defined(_GLIBCXX_USE_CXX11_ABI) && (_GLIBCXX_USE_CXX11_ABI == 0)
-    // Workaround for g++
-    // basic_string assumes that allocators are default-constructible
-    // See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56437
-    fields_alloc() = default;
+	// Workaround for g++
+	// basic_string assumes that allocators are default-constructible
+	// See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56437
+	fields_alloc() = default;
 #endif
 
-    explicit
-    fields_alloc(std::size_t size)
-        : _pool(&detail::static_pool::construct(size))
-    {
-    }
+	explicit
+	fields_alloc(std::size_t size)
+		: _pool(&detail::static_pool::construct(size))
+	{
+	}
 
-    fields_alloc(fields_alloc const& other)
-        : _pool(&other._pool->share())
-    {
-    }
+	fields_alloc(fields_alloc const& other)
+		: _pool(&other._pool->share())
+	{
+	}
 
-    template<class U>
-    fields_alloc(fields_alloc<U> const& other)
-        : _pool(&other._pool->share())
-    {
-    }
+	template<class U>
+	fields_alloc(fields_alloc<U> const& other)
+		: _pool(&other._pool->share())
+	{
+	}
 
-    ~fields_alloc()
-    {
-        _pool->destroy();
-    }
+	~fields_alloc()
+	{
+		_pool->destroy();
+	}
 
-    value_type*
-    allocate(size_type n)
-    {
-        return static_cast<value_type*>(
-            _pool->alloc(n * sizeof(T)));
-    }
+	value_type*
+	allocate(size_type n)
+	{
+		return static_cast<value_type*>(
+			_pool->alloc(n * sizeof(T)));
+	}
 
-    void
-    deallocate(value_type*, size_type)
-    {
-        _pool->dealloc();
-    }
+	void
+	deallocate(value_type*, size_type)
+	{
+		_pool->dealloc();
+	}
 
 #if defined(BOOST_LIBSTDCXX_VERSION) && BOOST_LIBSTDCXX_VERSION < 60000
-    template<class U, class... Args>
-    void
-    construct(U* ptr, Args&&... args)
-    {
-        ::new((void*)ptr) U(std::forward<Args>(args)...);
-    }
+	template<class U, class... Args>
+	void
+	construct(U* ptr, Args&&... args)
+	{
+		::new((void*)ptr) U(std::forward<Args>(args)...);
+	}
 
-    template<class U>
-    void
-    destroy(U* ptr)
-    {
-        ptr->~U();
-    }
+	template<class U>
+	void
+	destroy(U* ptr)
+	{
+		ptr->~U();
+	}
 #endif
 
-    template<class U>
-    friend
-    bool
-    operator==(
-        fields_alloc const& lhs,
-        fields_alloc<U> const& rhs)
-    {
-        return &lhs._pool == &rhs._pool;
-    }
+	template<class U>
+	friend
+	bool
+	operator==(
+		fields_alloc const& lhs,
+		fields_alloc<U> const& rhs)
+	{
+		return &lhs._pool == &rhs._pool;
+	}
 
-    template<class U>
-    friend
-    bool
-    operator!=(
-        fields_alloc const& lhs,
-        fields_alloc<U> const& rhs)
-    {
-        return ! (lhs == rhs);
-    }
+	template<class U>
+	friend
+	bool
+	operator!=(
+		fields_alloc const& lhs,
+		fields_alloc<U> const& rhs)
+	{
+		return ! (lhs == rhs);
+	}
 };
 
 #endif

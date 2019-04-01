@@ -24,36 +24,36 @@ namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
 
 std::vector<boost::string_view> split_string_view(boost::string_view strv, boost::string_view delims = "/")
 {
-    std::vector<boost::string_view> output;
-    size_t first = 0;
+	std::vector<boost::string_view> output;
+	size_t first = 0;
 
-    while (first < strv.size())
-    {
-        const auto second = strv.find_first_of(delims, first);
+	while (first < strv.size())
+	{
+		const auto second = strv.find_first_of(delims, first);
 
-        if (first != second)
-            output.emplace_back(strv.substr(first, second-first));
+		if (first != second)
+			output.emplace_back(strv.substr(first, second-first));
 
-        if (second == boost::string_view::npos)
-            break;
+		if (second == boost::string_view::npos)
+			break;
 
-        first = second + 1;
-    }
+		first = second + 1;
+	}
 
-    return output;
+	return output;
 }
 
 void replace_all(std::string& str, const std::string& from, const std::string& to) {
-    if(from.empty())
+	if(from.empty())
 	{
-        return;
+		return;
 	}
-    size_t start_pos = 0;
-    while((start_pos = str.find(from, start_pos)) != std::string::npos)
+	size_t start_pos = 0;
+	while((start_pos = str.find(from, start_pos)) != std::string::npos)
 	{
-        str.replace(start_pos, from.length(), to);
-        start_pos += to.length();
-    }
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length();
+	}
 }
 
 std::string decode_url(const std::string& url)
