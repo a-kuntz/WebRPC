@@ -32,6 +32,7 @@ public:
 	{
 		if (!ec)
 		{
+			// todo: create HTTP GET request
 			std::string http_request = "GET " + _request + " HTTP/1.1\r\nHost: " + _host + "\r\n\r\n";
 			write(_tcp_socket, buffer(http_request));
 			_tcp_socket.async_read_some(buffer(_buffer), [this](const boost::system::error_code &ec, std::size_t bytes_transferred)
@@ -74,6 +75,7 @@ private:
 
 int main()
 {
+	// todo: read host, port and request from commandline
 	Client client{"localhost", 8080, "system.list_methods"};
 	client.run();
 }
