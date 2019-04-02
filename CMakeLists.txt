@@ -83,7 +83,7 @@ add_executable(sampleclient
 	examples/SampleClient.cpp
 )
 
-target_link_libraries(sampleclient Boost::boost webrpcdata)
+target_link_libraries(sampleclient Boost::boost Threads::Threads webrpcdata)
 
 target_compile_features(sampleclient
 	PRIVATE
