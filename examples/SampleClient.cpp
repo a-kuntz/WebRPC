@@ -13,11 +13,14 @@
 //
 //------------------------------------------------------------------------------
 
+#include <webrpc/Version.h>
+
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
 #include <boost/asio/connect.hpp>
 #include <boost/asio/ip/tcp.hpp>
+
 #include <cstdlib>
 #include <functional>
 #include <iostream>
@@ -167,11 +170,16 @@ int main(int argc, char** argv)
 	// Check command line arguments.
 	if(argc != 4 && argc != 5)
 	{
-		std::cerr <<
-			"Usage: http-client-async <host> <port> <target> [<HTTP version: 1.0 or 1.1(default)>]\n" <<
-			"Example:\n" <<
-			"    http-client-async www.example.com 80 /\n" <<
-			"    http-client-async www.example.com 80 / 1.0\n";
+		std::cerr
+			<< "Usage: http-client-async <host> <port> <target> [<HTTP version: 1.0 or 1.1(default)>]\n"
+			<< "Example:\n"
+			<< "    http-client-async www.example.com 80 /\n"
+			<< "    http-client-async www.example.com 80 / 1.0\n";
+		std::cerr
+			<< "\n"
+			<< "WebRPC Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "." << WEBRPC_VERSION_PATCH
+			<< " (" << GIT_BRANCH << " @ " << GIT_COMMIT_HASH << " " << (GIT_WORKING_COPY_MODIFIED ? "+" : "") << ")"
+			<< std::endl;
 		return EXIT_FAILURE;
 	}
 	auto const host = argv[1];
