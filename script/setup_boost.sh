@@ -16,9 +16,38 @@ mkdir -p ${DEPS_DIR}
 cd ${DEPS_DIR}
 
 tar -xzf ${ARCHIVE}
-# cd ${LIB_ROOT}
+cd ${LIB_ROOT}
 #./bootstrap.sh --show-libraries
-# ./bootstrap.sh --prefix=. --with-libraries=chrono,date_time,system
-# ./b2 install
+#- atomic
+#- chrono
+#- container
+#- context
+#- contract
+#- coroutine
+#- date_time
+#- exception
+#- fiber
+#- filesystem
+#- graph
+#- graph_parallel
+#- iostreams
+#- locale
+#- log
+#- math
+#- mpi
+#- program_options
+#- python
+#- random
+#- regex
+#- serialization
+#- stacktrace
+#- system
+#- test
+#- thread
+#- timer
+#- type_erasure
+#- wave
+ ./bootstrap.sh --prefix=. --with-libraries=filesystem,program_options
+ ./b2 install
 
 popd

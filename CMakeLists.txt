@@ -5,8 +5,8 @@ project(WebRPC)
 ## dependencies ###############################################################
 
 # set(BOOST_ROOT "${CMAKE_SOURCE_DIR}/deps/boost_1_69_0")
-# set(BOOST_ROOT "~/deps/boost_1_69_0")
-find_package(Boost REQUIRED)
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost COMPONENTS program_options filesystem REQUIRED)
 find_package(Threads REQUIRED)
 
 # set(GTEST_ROOT "${CMAKE_SOURCE_DIR}/deps/googletest-release-1.8.1/build")
@@ -110,7 +110,7 @@ add_executable(sampleclient
 	examples/SampleClient.cpp
 )
 
-target_link_libraries(sampleclient Boost::boost Threads::Threads webrpcdata)
+target_link_libraries(sampleclient Boost::boost Boost::program_options Boost::filesystem Threads::Threads webrpcdata)
 
 target_compile_features(sampleclient
 	PRIVATE

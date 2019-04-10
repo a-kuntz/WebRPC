@@ -33,6 +33,8 @@ Call method `Sum` with an array of integer and double values `[1,2.3,4e-5,-6]`
 - Boost (v 1.69.0)
   - Boost.Spirit X3
   - Boost.Asio
+  - Boost.Filesystem
+  - Boost.Program_options
 - GTest (v. 1.8.1)
 
 ## Building WebRPC and all its dependencies from scratch
