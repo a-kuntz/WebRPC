@@ -4,15 +4,6 @@ WebRPC is a web based remote procedure call (RPC) library.
 
 E.g. a remote method `DateTime` may be called via `http://localhost/DateTime` from any software that is capable of emitting http requests. For instance, this can be your browser or the WebRPC sampleclient.
 
-## Cloning and building WebRPC
-
-    git clone https://github.com/yoshiii/WebRPC.git
-    cd WebRPC
-    mkdir build
-    cd build
-    cmake ..
-    make all test
-
 ## Sample Session
 
 Start sampleserver which is located in the build folder
@@ -27,6 +18,15 @@ Call method `Sum` with an array of integer and double values `[1,2.3,4e-5,-6]`
 
     $ ./build/sampleclient http://localhost:8080/Sum/[1,2.3,4e-5,-6]
     -2.69996
+
+## Cloning and building WebRPC
+
+    git clone https://github.com/yoshiii/WebRPC.git
+    cd WebRPC
+    mkdir build
+    cd build
+    cmake ..
+    make all test
 
 ## Dependencies
 
