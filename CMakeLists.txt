@@ -4,11 +4,12 @@ project(WebRPC)
 
 ## dependencies ###############################################################
 
+# set(BOOST_ROOT "${CMAKE_SOURCE_DIR}/deps/boost_1_69_0")
 # set(BOOST_ROOT "~/deps/boost_1_69_0")
 find_package(Boost REQUIRED)
 find_package(Threads REQUIRED)
 
-# set(GTEST_ROOT "~/deps/googletest-release-1.8.1/build")
+# set(GTEST_ROOT "${CMAKE_SOURCE_DIR}/deps/googletest-release-1.8.1/build")
 enable_testing()
 find_package(GTest REQUIRED)
 

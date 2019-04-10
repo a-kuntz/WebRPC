@@ -1,15 +1,18 @@
 #!/bin/bash
 
 set -e
+set -u
 set -x
 
+SCRIPT_DIR=$( cd "$(dirname "${BASH_SOURCE}")" ; pwd -P )
+DEPS_DIR=${SCRIPT_DIR}/../deps
+
 ARCHIVE=~/Downloads/googletest-release-1.8.1.tar.gz
-DST_DIR=~/deps/
 LIB_ROOT=$(basename ${ARCHIVE} .tar.gz)
 
 pushd .
-mkdir -p ${DST_DIR}
-cd ${DST_DIR}
+mkdir -p ${DEPS_DIR}
+cd ${DEPS_DIR}
 
 tar -xzf ${ARCHIVE}
 cd ${LIB_ROOT}
