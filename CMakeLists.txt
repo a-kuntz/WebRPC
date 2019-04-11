@@ -52,7 +52,8 @@ configure_file (
 	${PROJECT_BINARY_DIR}/include/webrpc/Version.h
 )
 
-add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable)
+add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable -fvisibility=hidden)
+#add_compile_options(-g -fsanitize=address -fno-omit-frame-pointer)
 # add_compile_definitions()
 include_directories(${PROJECT_BINARY_DIR}/include)
 
