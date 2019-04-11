@@ -19,7 +19,7 @@ namespace method
 
 struct Echo : public AbstractMethod
 {
-	Echo() : AbstractMethod("Echo") {};
+	Echo() : AbstractMethod("Echo") {}
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
@@ -29,7 +29,7 @@ struct Echo : public AbstractMethod
 
 struct Revert : public AbstractMethod
 {
-	Revert() : AbstractMethod("Revert") {};
+	Revert() : AbstractMethod("Revert") {}
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
@@ -41,7 +41,7 @@ struct Revert : public AbstractMethod
 
 struct Sum : public AbstractMethod
 {
-	Sum() : AbstractMethod("Sum") {};
+	Sum() : AbstractMethod("Sum") {}
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
@@ -70,7 +70,7 @@ struct Sum : public AbstractMethod
 
 struct DateTime : public AbstractMethod
 {
-	DateTime() : AbstractMethod("DateTime") {};
+	DateTime() : AbstractMethod("DateTime") {}
 
 	boost::optional<value_t> execute(const boost::optional<value_t> /*arg*/) override
 	{
@@ -107,7 +107,7 @@ struct SomeStruct
 
 struct GetSetValue : public AbstractMethod
 {
-	GetSetValue(SomeStruct& val) : AbstractMethod("GetSetValue"), _val(val) {};
+	GetSetValue(SomeStruct& val) : AbstractMethod("GetSetValue"), _val(val) {}
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
