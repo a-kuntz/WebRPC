@@ -134,9 +134,10 @@ int main(int argc, char** argv)
 		("port,p", po::value<unsigned short>(&port)->value_name("PORT")->default_value(8080)->implicit_value(8080), "port number")
 		("help,h", "print help message and exit");
 
-	// parse options
+	// parse and compare for required options
 	po::variables_map vm;
 	po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
+	po::notify(vm);
 
 	if (vm.count("help"))
 	{
@@ -149,9 +150,6 @@ int main(int argc, char** argv)
 			<< std::endl;
 		return EXIT_SUCCESS;
 	}
-
-	// compare for required options
-	po::notify(vm);
 
 	try
 	{
