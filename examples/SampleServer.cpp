@@ -136,7 +136,7 @@ int main(int argc, char** argv)
 
 	// parse and compare for required options
 	po::variables_map vm;
-	po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
+	po::store(po::parse_command_line(argc, argv, desc), vm);
 	po::notify(vm);
 
 	if (vm.count("help"))
