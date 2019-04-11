@@ -98,7 +98,7 @@ add_executable(sampleserver
 	examples/SampleServer.cpp
 )
 
-target_link_libraries(sampleserver Boost::boost webrpcserver)
+target_link_libraries(sampleserver Boost::boost Boost::program_options Boost::filesystem webrpcserver)
 
 target_compile_features(sampleserver
 	PRIVATE

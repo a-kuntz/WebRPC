@@ -4,6 +4,7 @@
 #include <webrpc/Version.h>
 
 #include <boost/asio.hpp>
+#include <boost/program_options.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -13,6 +14,8 @@
 #include <memory>
 #include <sstream>
 #include <stdexcept>
+
+namespace po = boost::program_options;
 
 namespace method
 {
@@ -120,17 +123,39 @@ struct GetSetValue : public AbstractMethod
 
 } // namespace method
 
-int main()
+int main(int argc, char** argv)
 {
-	std::cout
-		<< "WebRPC Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "." << WEBRPC_VERSION_PATCH
-		<< " (" << GIT_BRANCH << " @ " << GIT_COMMIT_HASH << " " << (GIT_WORKING_COPY_MODIFIED ? "+" : "") << ")"
-		<< std::endl;
+	std::string ip;
+	unsigned short port = 0;
+
+	po::options_description desc("Options");
+	desc.add_options()
+		("ip,i", po::value<std::string>(&ip)->value_name("IP")->default_value("127.0.0.1")->implicit_value("127.0.0.1"), "ip address to bind to")
+		("port,p", po::value<unsigned short>(&port)->value_name("PORT")->default_value(8080)->implicit_value(8080), "port number")
+		("help,h", "print help message and exit");
+
+	// parse options
+	po::variables_map vm;
+	po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
+
+	if (vm.count("help"))
+	{
+		std::cout
+			<< "sampleserver [options]\n"
+			<< "\n"
+			<< desc << "\n"
+			<< "WebRPC Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "." << WEBRPC_VERSION_PATCH
+			<< " (" << GIT_BRANCH << " @ " << GIT_COMMIT_HASH << " " << (GIT_WORKING_COPY_MODIFIED ? "+" : "") << ")"
+			<< std::endl;
+		return EXIT_SUCCESS;
+	}
+
+	// compare for required options
+	po::notify(vm);
 
 	try
 	{
-		const boost::asio::ip::address host(boost::asio::ip::make_address("127.0.0.1"));
-		const unsigned short port(8080);
+		const boost::asio::ip::address host(boost::asio::ip::make_address(ip));
 
 		std::cout << "SampleServer listening on " << host << " " << port << std::endl;
 		std::cout << " - http://" << host << ":" << port << "/system.list_methods" << std::endl;
