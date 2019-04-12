@@ -24,7 +24,7 @@ using struct_t			= std::map<string_t, value_t>;
 
 using bytestring_t		= std::vector<int>;
 
-struct value_t : public boost::spirit::extended_variant<null_t, bool_t, int_t, string_t, double_t, array_t,struct_t,bytestring_t>
+struct value_t : public boost::spirit::extended_variant<null_t, bool_t, int_t, string_t, double_t, array_t, struct_t, bytestring_t>
 {
 	value_t(const null_t& val = null_t())	: base_type(val) {}
 	value_t(const bool_t& val)				: base_type(val) {}
