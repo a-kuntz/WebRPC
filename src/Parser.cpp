@@ -41,12 +41,12 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 		struct_member_rule	= string_rule >> ':' >> value_rule;
 		bytestring_rule		= lit('<') >> -((-lit("0x") >> hex) % ',') >> lit('>');
 
-		BOOST_SPIRIT_DEBUG_NODE(value_rule);
-		BOOST_SPIRIT_DEBUG_NODE(string_rule);
-		BOOST_SPIRIT_DEBUG_NODE(array_rule);
-		BOOST_SPIRIT_DEBUG_NODE(struct_rule);
-		BOOST_SPIRIT_DEBUG_NODE(struct_member_rule);
-		BOOST_SPIRIT_DEBUG_NODE(bytestring_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(value_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(string_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(array_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(struct_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(struct_member_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(bytestring_rule);
 	}
 
 	qi::rule<Iterator, value_t(), Skipper> value_rule;
