@@ -20,6 +20,7 @@
 #include <boost/beast/version.hpp>
 #include <boost/asio/connect.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/program_options.hpp>
 
 #include <cstdlib>
 #include <functional>
@@ -29,6 +30,7 @@
 
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
+namespace po = boost::program_options;
 
 //------------------------------------------------------------------------------
 
@@ -60,13 +62,12 @@ public:
 	// Start the asynchronous operation
 	void
 	run(
-		char const* host,
-		char const* port,
-		char const* target,
-		int version)
+		const std::string& host,
+		const std::string& port,
+		const std::string& target)
 	{
 		// Set up an HTTP GET request message
-		_request.version(version);
+		_request.version(10);
 		_request.method(http::verb::get);
 		_request.target(target);
 		_request.set(http::field::host, host);
@@ -167,31 +168,43 @@ public:
 
 int main(int argc, char** argv)
 {
-	// Check command line arguments.
-	if(argc != 4 && argc != 5)
+	std::string host;
+	std::string port;
+	std::string request;
+
+	po::options_description desc("Options");
+	desc.add_options()
+		("ip,i",      po::value<std::string>(&host)->value_name("HOST"), "host address")
+		("port,p",    po::value<std::string>(&port)->value_name("PORT")->default_value("8080")->implicit_value("8080"), "port number")
+		("request,r", po::value<std::string>(&request)->value_name("REQUEST"), "request")
+		("help,h", "print help message and exit");
+
+	// parse and compare for required options
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::notify(vm);
+
+	if (vm.count("help"))
 	{
-		std::cerr
-			<< "Usage: http-client-async <host> <port> <target> [<HTTP version: 1.0 or 1.1(default)>]\n"
-			<< "Example:\n"
-			<< "    http-client-async www.example.com 80 /\n"
-			<< "    http-client-async www.example.com 80 / 1.0\n";
-		std::cerr
+		std::cout
+			<< "sampleclient [options]\n"
+			<< "\n"
+			<< desc << "\n"
+			<< "Example\n"
+//			<< "    http://localhost:8080/system.list_methods\n"
+			<< "    -i localhost -r system.list_methods\n"
 			<< "\n"
 			<< "WebRPC Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "." << WEBRPC_VERSION_PATCH
 			<< " (" << GIT_BRANCH << " @ " << GIT_COMMIT_HASH << " " << (GIT_WORKING_COPY_MODIFIED ? "+" : "") << ")"
 			<< std::endl;
-		return EXIT_FAILURE;
+		return EXIT_SUCCESS;
 	}
-	auto const host = argv[1];
-	auto const port = argv[2];
-	auto const target = argv[3];
-	int version = argc == 5 && !std::strcmp("1.0", argv[4]) ? 10 : 11;
 
 	// The io_context is required for all I/O
 	boost::asio::io_context ioc;
 
 	// Launch the asynchronous operation
-	std::make_shared<session>(ioc)->run(host, port, target, version);
+	std::make_shared<session>(ioc)->run(host, port, request);
 
 	// Run the I/O service. The call will return when
 	// the get operation is complete.

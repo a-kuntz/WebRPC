@@ -3,7 +3,7 @@
 ## feature list
 
 - [x] parse sampleserver commandline arguments via program_options: specify ip, port number
-- [ ] parse sampleclient commandline arguments via program_options: specify host, port number, request
+- [x] parse sampleclient commandline arguments via program_options: specify host, port number, request
 - [ ] add tree representation for struct serialization
 - [ ] create request class to parse requests as struct_t
 - [ ] support websocket server/client
