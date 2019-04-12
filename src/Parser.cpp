@@ -4,6 +4,9 @@
 #include <boost/fusion/include/std_pair.hpp>
 #include <boost/spirit/include/qi.hpp>
 
+#include <boost/fusion/adapted/std_tuple.hpp>
+#include <boost/fusion/include/adapt_struct.hpp>
+
 #include <iostream>
 
 using namespace boost::spirit;
@@ -63,7 +66,62 @@ boost::optional<value_t> parse_value(const std::string& str)
 	value_t value;
 	if (qi::phrase_parse(itr, input.end(), grammar, ascii::space, value))
 	{
-		return value;
+		return std::move(value);
+	}
+	else
+	{
+		return boost::none;
+	}
+}
+
+using uri_t = std::tuple<std::string, boost::optional<unsigned>, std::string>;
+
+template <typename Iterator, typename Skipper>
+struct uri_grammar : qi::grammar<Iterator, uri_t(), Skipper>
+{
+	uri_grammar() : uri_grammar::base_type{uri_rule}
+	{
+		ascii::char_type         chr;
+		qi::lexeme_type          lexeme;
+
+		// rules initialization
+		uri_rule	= "http://" >> host_rule >> -(':' >> port_rule) >> '/' >> args_rule;
+		host_rule	= lexeme[+chr("a-zA-Z0-9_-.")];
+//		host_rule	= lexeme[+qi::char_ - ':'];
+		port_rule	= qi::uint_;
+		args_rule	= lexeme[*qi::char_];
+
+//		BOOST_SPIRIT_DEBUG_NODE(uri_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(host_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(port_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(args_rule);
+
+//		qi::debug(uri_rule);
+//		qi::debug(host_rule);
+//		qi::debug(port_rule);
+//		qi::debug(args_rule);
+	}
+
+	qi::rule<Iterator, uri_t(), Skipper> uri_rule;
+	qi::rule<Iterator, std::string(), Skipper> host_rule;
+	qi::rule<Iterator, boost::optional<unsigned>(), Skipper> port_rule;
+	qi::rule<Iterator, std::string(), Skipper> args_rule;
+};
+
+boost::optional<Uri> parse_uri(const std::string& str)
+{
+	std::string input(str);
+	auto itr = input.begin();
+	uri_grammar<std::string::iterator, ascii::space_type> grammar;
+	uri_t uri;
+	if (qi::phrase_parse(itr, input.end(), grammar, ascii::space, uri))
+	{
+		const auto port = std::get<1>(uri);
+
+		return (port
+			? Uri(std::get<0>(uri), *port, std::get<2>(uri))
+			: Uri(std::get<0>(uri), {}, std::get<2>(uri))
+		);
 	}
 	else
 	{

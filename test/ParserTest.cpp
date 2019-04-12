@@ -74,6 +74,23 @@ TEST(Parser, BytestringValues)
 	check("<0x00,0x11,0x22,0x33,0x44,0x55,0x66,0xAA,0xBB,0xCC>", value_t::type_info::bytestring_type);
 }
 
+void check(const std::string& in, const Uri& uri)
+{
+	boost::optional<Uri> opt = parse_uri(in);
+	ASSERT_EQ(true, static_cast<bool>(opt)) << "testcase input=" << in;
+	EXPECT_EQ(uri.host, opt.value().host);
+	EXPECT_EQ(uri.port, opt.value().port);
+	EXPECT_EQ(uri.request, opt.value().request);
+}
+
+TEST(UriParser, BasicValues)
+{
+	check("http://localhost:1234/request", Uri{"localhost", 1234, "request"});
+	check("http://localhost/request", Uri{"localhost", 8080, "request"});
+	check("http://127.0.0.1:5678/request", Uri{"127.0.0.1", 5678, "request"});
+	check("http://192.168.0.1/request", Uri{"192.168.0.1", 8080, "request"});
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

@@ -71,6 +71,7 @@ target_include_directories(webrpcdata PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_compile_features(webrpcdata
 	PUBLIC
 		cxx_alias_templates
+		cxx_std_17
 )
 
 ## Webrpc::webrpcserver #######################################################
