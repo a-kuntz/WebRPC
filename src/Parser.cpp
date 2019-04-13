@@ -85,11 +85,11 @@ struct uri_grammar : qi::grammar<Iterator, uri_t(), Skipper>
 		qi::lexeme_type          lexeme;
 
 		// rules initialization
-		uri_rule	= "http://" >> host_rule >> -(':' >> port_rule) >> '/' >> args_rule;
+		uri_rule	= "http://" >> host_rule >> -(':' >> port_rule) >> '/' >> target_rule;
 		host_rule	= lexeme[+chr("a-zA-Z0-9_-.")];
 //		host_rule	= lexeme[+qi::char_ - ':'];
 		port_rule	= qi::uint_;
-		args_rule	= lexeme[*qi::char_];
+		target_rule	= lexeme[*qi::char_];
 
 //		BOOST_SPIRIT_DEBUG_NODE(uri_rule);
 //		BOOST_SPIRIT_DEBUG_NODE(host_rule);
@@ -105,7 +105,7 @@ struct uri_grammar : qi::grammar<Iterator, uri_t(), Skipper>
 	qi::rule<Iterator, uri_t(), Skipper> uri_rule;
 	qi::rule<Iterator, std::string(), Skipper> host_rule;
 	qi::rule<Iterator, boost::optional<unsigned>(), Skipper> port_rule;
-	qi::rule<Iterator, std::string(), Skipper> args_rule;
+	qi::rule<Iterator, std::string(), Skipper> target_rule;
 };
 
 boost::optional<Uri> parse_uri(const std::string& str)

@@ -68,11 +68,19 @@ target_link_libraries(webrpcdata PUBLIC Boost::boost)
 
 target_include_directories(webrpcdata PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
-target_compile_features(webrpcdata
-	PUBLIC
-		cxx_alias_templates
-		cxx_std_17
+target_compile_features(webrpcdata PUBLIC cxx_std_17)
+
+## Webrpc::webrpcclient #######################################################
+
+add_library(webrpcclient
+	src/Client.cpp
 )
+
+target_link_libraries(webrpcclient Boost::boost Threads::Threads webrpcdata)
+
+target_include_directories(webrpcclient PUBLIC ${PROJECT_SOURCE_DIR}/include)
+
+target_compile_features(webrpcclient PUBLIC cxx_std_17)
 
 ## Webrpc::webrpcserver #######################################################
 
@@ -112,7 +120,7 @@ add_executable(sampleclient
 	examples/SampleClient.cpp
 )
 
-target_link_libraries(sampleclient Boost::boost Boost::program_options Boost::filesystem Threads::Threads webrpcdata)
+target_link_libraries(sampleclient webrpcclient Boost::boost Boost::program_options Boost::filesystem Threads::Threads)
 
 target_compile_features(sampleclient
 	PRIVATE

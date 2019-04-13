@@ -80,7 +80,7 @@ void check(const std::string& in, const Uri& uri)
 	ASSERT_EQ(true, static_cast<bool>(opt)) << "testcase input=" << in;
 	EXPECT_EQ(uri.host, opt.value().host);
 	EXPECT_EQ(uri.port, opt.value().port);
-	EXPECT_EQ(uri.request, opt.value().request);
+	EXPECT_EQ(uri.target, opt.value().target);
 }
 
 TEST(UriParser, BasicValues)
