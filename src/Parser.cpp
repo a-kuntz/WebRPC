@@ -116,12 +116,53 @@ boost::optional<Uri> parse_uri(const std::string& str)
 	uri_t uri;
 	if (qi::phrase_parse(itr, input.end(), grammar, ascii::space, uri))
 	{
-		const auto port = std::get<1>(uri);
+		return Uri{std::get<0>(uri), std::get<1>(uri), std::get<2>(uri)};
+	}
+	else
+	{
+		return boost::none;
+	}
+}
 
-		return (port
-			? Uri(std::get<0>(uri), *port, std::get<2>(uri))
-			: Uri(std::get<0>(uri), {}, std::get<2>(uri))
-		);
+using target_t = std::tuple<std::string, boost::optional<std::string>>;
+
+template <typename Iterator, typename Skipper>
+struct target_grammar : qi::grammar<Iterator, target_t(), Skipper>
+{
+	target_grammar() : target_grammar::base_type{target_rule}
+	{
+		ascii::char_type         chr;
+		qi::lexeme_type          lexeme;
+
+		// rules initialization
+		target_rule	= method_rule >> -('/' >> args_rule);
+		method_rule	= lexeme[+chr("a-zA-Z0-9_-.")];
+//		method_rule	= lexeme[+chr >> !chr("/")];
+		args_rule	= lexeme[*qi::char_];
+
+//		BOOST_SPIRIT_DEBUG_NODE(target_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(method_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(args_rule);
+
+//		qi::debug(target_rule);
+//		qi::debug(method_rule);
+//		qi::debug(args_rule);
+	}
+
+	qi::rule<Iterator, target_t(), Skipper> target_rule;
+	qi::rule<Iterator, std::string(), Skipper> method_rule;
+	qi::rule<Iterator, boost::optional<std::string>(), Skipper> args_rule;
+};
+
+boost::optional<Target> parse_target(const std::string& str)
+{
+	std::string input(str);
+	auto itr = input.begin();
+	target_grammar<std::string::iterator, ascii::space_type> grammar;
+	target_t target;
+	if (qi::phrase_parse(itr, input.end(), grammar, ascii::space, target))
+	{
+		return Target{std::get<0>(target), std::get<1>(target)};
 	}
 	else
 	{

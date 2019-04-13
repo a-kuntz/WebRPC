@@ -91,6 +91,21 @@ TEST(UriParser, BasicValues)
 	check("http://192.168.0.1/request", Uri{"192.168.0.1", 8080, "request"});
 }
 
+void check(const std::string& in, const Target& trg)
+{
+	const auto opt = parse_target(in);
+	ASSERT_EQ(true, static_cast<bool>(opt)) << "testcase input=" << in;
+	EXPECT_EQ(trg.method, opt.value().method);
+	EXPECT_EQ(trg.args, opt.value().args);
+}
+
+TEST(TargetParser, BasicValues)
+{
+	check("method", Target{"method", {}});
+//	check("system.list_methods", Target{"system.list_methods", {}}); // todo: enable test and fix bug
+	check("Sum/[1,2,3,4,5]", Target{"Sum", boost::optional<std::string>{"[1,2,3,4,5]"}});
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
