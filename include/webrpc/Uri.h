@@ -2,7 +2,6 @@
 #define __URI_H__
 
 #include <string>
-#include <iostream>
 #include <optional>
 
 struct Uri
