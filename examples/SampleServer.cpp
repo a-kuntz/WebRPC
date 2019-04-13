@@ -167,6 +167,8 @@ int main(int argc, char** argv)
 		server.register_method(std::make_unique<method::DateTime>());
 		server.register_method(std::make_unique<method::GetSetValue>(globalValue));
 		server.run();
+
+		return EXIT_SUCCESS;
 	}
 	catch (const std::exception& e)
 	{
