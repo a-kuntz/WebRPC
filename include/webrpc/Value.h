@@ -54,7 +54,7 @@ struct value_t : public boost::spirit::extended_variant<null_t, bool_t, int_t, s
 	std::string to_string() const;
 
 	template <typename T>
-	T get() const
+	T as() const
 	{
 		return boost::get<T>(*this);
 	}

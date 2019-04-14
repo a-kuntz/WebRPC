@@ -53,17 +53,17 @@ struct Sum : public AbstractMethod
 			throw std::runtime_error("invalid argument: expected array of double or int like [1,2,3,4e-5,6.7]");
 		}
 
-		const auto a = arg.value().get<array_t>();
+		const auto a = arg.value().as<array_t>();
 		double sum = 0;
 		for (const auto& item : a)
 		{
 			if (item.type() == value_t::type_info::int_type)
 			{
-				sum += item.get<int_t>();
+				sum += item.as<int_t>();
 			}
 			else if (item.type() == value_t::type_info::double_type)
 			{
-				sum += item.get<double_t>();
+				sum += item.as<double_t>();
 			}
 		}
 
@@ -90,10 +90,10 @@ struct SomeStruct
 	SomeStruct(const boost::optional<value_t> arg)
 	{
 		assert(arg.value().type() == value_t::type_info::struct_type);
-		const auto s = arg.value().get<struct_t>();
-		_double = s.at("double").get<double_t>();
-		_int    = s.at("int").get<int_t>();
-		_string = s.at("string").get<string_t>();
+		const auto s = arg.value().as<struct_t>();
+		_double = s.at("double").as<double_t>();
+		_int    = s.at("int").as<int_t>();
+		_string = s.at("string").as<string_t>();
 	}
 	explicit operator value_t () const
 	{
