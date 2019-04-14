@@ -7,6 +7,7 @@
 - [x] use parse_uri from sampleclient
 - [x] add verbose option to sampleclient (show http request details only in verbose mode)
 - [ ] add verbose option to sampleserver (show http request / reply details in verbose mode)
+- [ ] cleanup: move uri decoding code from server to parse_uri
 - [ ] add tree representation for struct serialization
 - [ ] refactor Target to SimpleTarget, which represents targets of the form `method/optional<value_t>`
 - [ ] create StructTarget class to parse targets as struct_t like `{method:name,args:value_t}`
