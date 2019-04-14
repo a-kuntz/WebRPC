@@ -7,7 +7,8 @@
 - [x] use parse_uri from sampleclient
 - [x] add verbose option to sampleclient (show http request details only in verbose mode)
 - [ ] add tree representation for struct serialization
-- [ ] create request class to parse requests as struct_t
+- [ ] refactor Target to SimpleTarget, which represents targets of the form `method/optional<value_t>`
+- [ ] create StructTarget class to parse targets as struct_t like `{method:name,args:value_t}`
 - [ ] support websocket server/client
 - [ ] create sample chat server/client
 - [ ] add cmake option WITH_TESTS=n to disable unit tests
