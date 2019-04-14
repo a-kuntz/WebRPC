@@ -27,7 +27,7 @@ void check(const std::string& in, const value_t::type_info type=value_t::type_in
 TEST(Parser, PrimitiveValues)
 {
 	// primitive values
-	// check("", value_t::type_info::null_type);
+//	check("", value_t::type_info::null_type); // todo: enable parsing empty strings
 	check("true", value_t::type_info::bool_type);
 	check("42", value_t::type_info::int_type);
 	check("3.14", value_t::type_info::double_type);

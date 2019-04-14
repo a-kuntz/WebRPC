@@ -8,6 +8,7 @@
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/optional/optional_io.hpp>
 
 #include <chrono>
 #include <cstdlib>
@@ -21,27 +22,6 @@
 namespace ip = boost::asio::ip;         // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio.hpp>
 namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
-
-std::vector<boost::string_view> split_string_view(boost::string_view strv, boost::string_view delims = "/")
-{
-	std::vector<boost::string_view> output;
-	size_t first = 0;
-
-	while (first < strv.size())
-	{
-		const auto second = strv.find_first_of(delims, first);
-
-		if (first != second)
-			output.emplace_back(strv.substr(first, second-first));
-
-		if (second == boost::string_view::npos)
-			break;
-
-		first = second + 1;
-	}
-
-	return output;
-}
 
 void replace_all(std::string& str, const std::string& from, const std::string& to) {
 	if(from.empty())
@@ -176,7 +156,7 @@ private:
 		switch (req.method())
 		{
 		case http::verb::get:
-			process_webrpc_request(req.target());
+			process_target(req.target());
 			break;
 
 		default:
@@ -189,39 +169,43 @@ private:
 		}
 	}
 
-	void process_webrpc_request(const boost::beast::string_view request)
+	void process_target(const boost::beast::string_view trg)
 	{
-		// todo: cleanup usage of string_view / std::string
-		auto parts = split_string_view(request, "/");
-		const std::string name = parts.size() > 0 ? parts.at(0).to_string() : "no method";
-		const std::string args = parts.size() > 1 ? decode_url(parts.at(1).to_string()) : "no arguments";
+		const auto target = parse_target(std::string(trg));
 
-		const auto method = _registry.find(name);
-		std::cout << "-" << request << "-" << name << "-" << args << "-";
-		if (method != _registry.end())
-		{
-			try
-			{
-				const auto oval = parse_value(args);
-				const auto ores = method->second->execute(oval);
-				const auto result = ores.value_or(null_t{}).to_string();
-				std::cout << " exec=" << method->first << "(" << args << ")" << "=>" << result;
-				send_message(result);
-			}
-			catch (const std::exception& e)
-			{
-				std::cout << "caught exception: " << e.what() << std::endl;
-				send_bad_response(
-					http::status::bad_request,
-					"Invalid webrpc request '" + std::string(e.what()) + "'\r\n"
-				);
-			}
-		}
-		else
+		if (!target)
 		{
 			send_bad_response(
 				http::status::bad_request,
-				"Invalid webrpc request '" + request.to_string() + "'\r\n"
+				"Invalid webrpc request '" + trg.to_string() + "'\r\n"
+			);
+		}
+
+		const auto method = _registry.find(target->method);
+		std::cout << "-" << trg << "-" << target->method << "-" << target->args << "-";
+		if (method == _registry.end())
+		{
+			send_bad_response(
+				http::status::bad_request,
+				"Invalid webrpc request '" + trg.to_string() + "'\r\n"
+			);
+		}
+
+		try
+		{
+			const auto oval = target->args ? parse_value(*target->args) : boost::none;
+//			const auto oval = parse_value(target->args.value_or("")); // todo: enable when parsing empty strings is supported
+			const auto ores = method->second->execute(oval);
+			const auto result = ores.value_or(null_t{}).to_string();
+			std::cout << " exec=" << method->first << "(" << target->args << ")" << "=>" << result;
+			send_message(result);
+		}
+		catch (const std::exception& e)
+		{
+			std::cout << "caught exception: " << e.what() << std::endl;
+			send_bad_response(
+				http::status::bad_request,
+				"Invalid webrpc request '" + std::string(e.what()) + "'\r\n"
 			);
 		}
 		std::cout << std::endl;
