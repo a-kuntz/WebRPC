@@ -130,14 +130,14 @@ struct GetSetValue : public AbstractMethod
 
 int main(int argc, char** argv)
 {
-	std::string ip;
-	unsigned short port = 0;
+	std::string host_name{"127.0.0.1"};
+	unsigned short port{8080};
 
 	po::options_description desc("Options");
 	desc.add_options()
-		("ip,i", po::value<std::string>(&ip)->value_name("IP")->default_value("127.0.0.1")->implicit_value("127.0.0.1"), "ip address to bind to")
-		("port,p", po::value<unsigned short>(&port)->value_name("PORT")->default_value(8080)->implicit_value(8080), "port number")
-		("help,h", "print help message and exit");
+		("host,h", po::value<std::string>(&host_name)->value_name("HOST")->default_value("127.0.0.1"), "host name or ip address to bind to")
+		("port,p", po::value<unsigned short>(&port)->value_name("PORT")->default_value(8080), "port number")
+		("help", "print help message and exit");
 
 	// parse and compare for required options
 	po::variables_map vm;
@@ -158,7 +158,7 @@ int main(int argc, char** argv)
 
 	try
 	{
-		const boost::asio::ip::address host(boost::asio::ip::make_address(ip));
+		const boost::asio::ip::address host = boost::asio::ip::make_address(host_name);
 
 		std::cout << "SampleServer listening on " << host << " " << port << std::endl;
 		std::cout << " - http://" << host << ":" << port << "/system.list_methods" << std::endl;
