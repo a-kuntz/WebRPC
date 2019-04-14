@@ -8,12 +8,11 @@ using namespace boost::spirit;
 
 TEST(BoostSpirit, basic)
 {
-	std::string input("abc/4");
-	for (std::string input : {"abc/4", "abc/5"})
+	auto g = +qi::char_("A-Za-z._-") >> '/' >> +qi::char_("0-9a-zA-Z._-");
+
+	for (const std::string input : {"abc-def_ghi.jkl/4", "abc/5"})
 	{
-		auto it = input.begin();
-		auto match = qi::phrase_parse(it, input.end(), +qi::char_("A-Za-z") >> '/' >> +qi::char_("a-zA-Z0-9"), ascii::space);
-		EXPECT_EQ(true, match);
+		EXPECT_EQ(true, qi::phrase_parse(input.begin(), input.end(), g, ascii::space)) << "input: " << input;
 	}
 }
 
@@ -102,7 +101,8 @@ void check(const std::string& in, const Target& trg)
 TEST(TargetParser, BasicValues)
 {
 	check("method", Target{"method", {}});
-//	check("system.list_methods", Target{"system.list_methods", {}}); // todo: enable test and fix bug
+	check("system.list_methods", Target{"system.list_methods", {}});
+	check("system.list-methods", Target{"system.list-methods", {}});
 	check("Sum/[1,2,3,4,5]", Target{"Sum", boost::optional<std::string>{"[1,2,3,4,5]"}});
 }
 
