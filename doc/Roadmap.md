@@ -6,6 +6,7 @@
 - [x] parse sampleclient commandline arguments via program_options: specify host, port number, request
 - [x] use parse_uri from sampleclient
 - [x] add verbose option to sampleclient (show http request details only in verbose mode)
+- [ ] add verbose option to sampleserver (show http request / reply details in verbose mode)
 - [ ] add tree representation for struct serialization
 - [ ] refactor Target to SimpleTarget, which represents targets of the form `method/optional<value_t>`
 - [ ] create StructTarget class to parse targets as struct_t like `{method:name,args:value_t}`
