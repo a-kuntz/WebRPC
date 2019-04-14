@@ -20,6 +20,7 @@ void fail(boost::system::error_code ec, char const* what)
 Client::Client(boost::asio::io_context& ioc)
 	: _resolver(ioc)
 	, _socket(ioc)
+	, _verbose(false)
 {}
 
 void Client::call(const std::string& uri_string)
@@ -44,6 +45,11 @@ void Client::call(const std::string& uri_string)
 			std::placeholders::_2));
 }
 
+void Client::set_verbose(bool verbose)
+{
+	_verbose = verbose;
+}
+
 void Client::on_resolve(boost::system::error_code ec, tcp::resolver::results_type results)
 {
 	if(ec)
@@ -65,8 +71,11 @@ void Client::on_connect(boost::system::error_code ec)
 	if(ec)
 		return fail(ec, "connect");
 
-	// Write the request to standard out
-	std::cout << _request << std::endl;
+	if (_verbose)
+	{
+		// Write the request to standard out
+		std::cout << _request;
+	}
 
 	// Send the HTTP request to the remote host
 	http::async_write(_socket, _request,
@@ -100,8 +109,13 @@ void Client::on_read(boost::system::error_code ec, std::size_t bytes_transferred
 	if(ec)
 		return fail(ec, "read");
 
+	if (_verbose)
+	{
+		std::cout << _response.base();
+	}
+
 	// Write the message to standard out
-	std::cout << _response << std::endl;
+	std::cout << _response.body() << std::endl;
 
 	// Gracefully close the socket
 	_socket.shutdown(tcp::socket::shutdown_both, ec);

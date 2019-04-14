@@ -20,6 +20,8 @@ public:
 
 	void call(const std::string& uri_string);
 
+	void set_verbose(bool verbose);
+
 private:
 	void on_resolve(boost::system::error_code ec, tcp::resolver::results_type results);
 
@@ -35,6 +37,7 @@ private:
 	boost::beast::flat_buffer _buffer;
 	http::request<http::empty_body> _request;
 	http::response<http::string_body> _response;
+	bool _verbose;
 };
 
 #endif // CLIENT_H

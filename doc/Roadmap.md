@@ -4,8 +4,8 @@
 
 - [x] parse sampleserver commandline arguments via program_options: specify ip, port number
 - [x] parse sampleclient commandline arguments via program_options: specify host, port number, request
-- [ ] use parse_uri from sampleclient
-- [ ] add verbose option to sampleclient (show http request details only in verbose mode)
+- [x] use parse_uri from sampleclient
+- [x] add verbose option to sampleclient (show http request details only in verbose mode)
 - [ ] add tree representation for struct serialization
 - [ ] create request class to parse requests as struct_t
 - [ ] support websocket server/client

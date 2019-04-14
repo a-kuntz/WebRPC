@@ -14,11 +14,13 @@ namespace po = boost::program_options;
 int main(int argc, char** argv)
 {
 	std::string uri;
+	bool verbose = false;
 
 	po::options_description desc("Options");
 	desc.add_options()
 		("uri,u",     po::value<std::string>(&uri)->value_name("URI"), "WebRPC uri")
-		("help,h", "print help message and exit");
+		("verbose,v", po::value<bool>(&verbose)->implicit_value(true), "verbose")
+		("help,h",    "print help message and exit");
 
 	po::positional_options_description pos_desc;
 	pos_desc.add("uri", -1);
@@ -47,7 +49,9 @@ int main(int argc, char** argv)
 		// Launch the asynchronous operation
 		boost::asio::io_context ioc;
 
-		std::make_shared<Client>(ioc)->call(uri);
+		auto client = std::make_shared<Client>(ioc);
+		client->set_verbose(verbose);
+		client->call(uri);
 
 		ioc.run();
 
