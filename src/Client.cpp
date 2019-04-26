@@ -3,8 +3,9 @@
 #include <webrpc/Uri.h>
 #include <webrpc/Parser.h>
 
-#include <boost/beast/version.hpp>
 #include <boost/asio/connect.hpp>
+#include <boost/asio/connect.hpp>
+#include <boost/beast/version.hpp>
 
 #include <functional>
 #include <iostream>
@@ -16,14 +17,46 @@ void fail(boost::system::error_code ec, char const* what)
 	std::cerr << what << ": " << ec.message() << "\n";
 }
 
+namespace detail
+{
+// Performs an HTTP GET and prints the response
+class Session : public std::enable_shared_from_this<Session>
+{
+public:
+	// Resolver and socket require an io_context
+	explicit Session(boost::asio::io_context& ioc);
+
+	// todo: add lambda or string return value
+	void async_call(const std::string& uri_string);
+
+	void set_verbose(bool verbose);
+
+private:
+	void on_resolve(boost::system::error_code ec, tcp::resolver::results_type results);
+
+	void on_connect(boost::system::error_code ec);
+
+	void on_write(boost::system::error_code ec, std::size_t bytes_transferred);
+
+	void on_read(boost::system::error_code ec, std::size_t bytes_transferred);
+
+private:
+	tcp::resolver _resolver;
+	tcp::socket _socket;
+	boost::beast::flat_buffer _buffer;
+	http::request<http::empty_body> _request;
+	http::response<http::string_body> _response;
+	bool _verbose;
+};
+
 // Resolver and socket require an io_context
-Client::Client(boost::asio::io_context& ioc)
+Session::Session(boost::asio::io_context& ioc)
 	: _resolver(ioc)
 	, _socket(ioc)
 	, _verbose(false)
 {}
 
-void Client::call(const std::string& uri_string)
+void Session::async_call(const std::string& uri_string)
 {
 	const auto uri = parse_uri(uri_string);
 
@@ -39,20 +72,20 @@ void Client::call(const std::string& uri_string)
 		uri->host,
 		uri->port,
 		std::bind(
-			&Client::on_resolve,
+			&Session::on_resolve,
 			shared_from_this(),
 			std::placeholders::_1,
 			std::placeholders::_2));
 }
 
-void Client::set_verbose(bool verbose)
+void Session::set_verbose(bool verbose)
 {
 	_verbose = verbose;
 }
 
-void Client::on_resolve(boost::system::error_code ec, tcp::resolver::results_type results)
+void Session::on_resolve(boost::system::error_code ec, tcp::resolver::results_type results)
 {
-	if(ec)
+	if (ec)
 		return fail(ec, "resolve");
 
 	// Make the connection on the IP address we get from a lookup
@@ -61,14 +94,14 @@ void Client::on_resolve(boost::system::error_code ec, tcp::resolver::results_typ
 		results.begin(),
 		results.end(),
 		std::bind(
-			&Client::on_connect,
+			&Session::on_connect,
 			shared_from_this(),
 			std::placeholders::_1));
 }
 
-void Client::on_connect(boost::system::error_code ec)
+void Session::on_connect(boost::system::error_code ec)
 {
-	if(ec)
+	if (ec)
 		return fail(ec, "connect");
 
 	if (_verbose)
@@ -80,33 +113,29 @@ void Client::on_connect(boost::system::error_code ec)
 	// Send the HTTP request to the remote host
 	http::async_write(_socket, _request,
 		std::bind(
-			&Client::on_write,
+			&Session::on_write,
 			shared_from_this(),
 			std::placeholders::_1,
 			std::placeholders::_2));
 }
 
-void Client::on_write(boost::system::error_code ec, std::size_t bytes_transferred)
+void Session::on_write(boost::system::error_code ec, std::size_t /*bytes_transferred*/)
 {
-	boost::ignore_unused(bytes_transferred);
-
-	if(ec)
+	if (ec)
 		return fail(ec, "write");
 
 	// Receive the HTTP response
 	http::async_read(_socket, _buffer, _response,
 		std::bind(
-			&Client::on_read,
+			&Session::on_read,
 			shared_from_this(),
 			std::placeholders::_1,
 			std::placeholders::_2));
 }
 
-void Client::on_read(boost::system::error_code ec, std::size_t bytes_transferred)
+void Session::on_read(boost::system::error_code ec, std::size_t /*bytes_transferred*/)
 {
-	boost::ignore_unused(bytes_transferred);
-
-	if(ec)
+	if (ec)
 		return fail(ec, "read");
 
 	if (_verbose)
@@ -121,9 +150,28 @@ void Client::on_read(boost::system::error_code ec, std::size_t bytes_transferred
 	_socket.shutdown(tcp::socket::shutdown_both, ec);
 
 	// not_connected happens sometimes so don't bother reporting it.
-	if(ec && ec != boost::system::errc::not_connected)
+	if (ec && ec != boost::system::errc::not_connected)
 		return fail(ec, "shutdown");
 
 	// If we get here then the connection is closed gracefully
+}
+} // ns detail
+
+Client::Client(bool verbose)
+	: _verbose(verbose)
+{}
+
+void Client::async_call(const std::string& uri)
+{
+	// Launch the asynchronous operation
+	boost::asio::io_context ioc;
+
+	auto session = std::make_shared<detail::Session>(ioc);
+	session->set_verbose(_verbose);
+	session->async_call(uri);
+//	session->call(uri);
+//	session->call(uri);
+
+	ioc.run();
 }
 

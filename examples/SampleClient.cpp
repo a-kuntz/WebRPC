@@ -1,7 +1,6 @@
 #include <webrpc/Version.h>
 #include <webrpc/Client.h>
 
-#include <boost/asio/connect.hpp>
 #include <boost/program_options.hpp>
 
 #include <cstdlib>
@@ -46,14 +45,9 @@ int main(int argc, char** argv)
 	}
 
 	try {
-		// Launch the asynchronous operation
-		boost::asio::io_context ioc;
 
-		auto client = std::make_shared<Client>(ioc);
-		client->set_verbose(verbose);
-		client->call(uri);
-
-		ioc.run();
+		Client c{verbose};
+		c.async_call(uri);
 
 		return EXIT_SUCCESS;
 	}
