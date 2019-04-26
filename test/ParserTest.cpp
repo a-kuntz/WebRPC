@@ -33,6 +33,7 @@ TEST(Parser, PrimitiveValues)
 	check("3.14", value_t::type_info::double_type);
 	// check("abc", value_t::type_info::string_type);
 	// check("abc_3", value_t::type_info::string_type);
+	// check("abc-3", value_t::type_info::string_type);
 	check("\"abc\"", value_t::type_info::string_type);
 	check("\"a b c?\"", value_t::type_info::string_type);
 }
