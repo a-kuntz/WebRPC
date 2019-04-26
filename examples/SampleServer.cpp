@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <iostream>
 #include <memory>
+#include <random>
 #include <sstream>
 #include <stdexcept>
 
@@ -40,8 +41,27 @@ struct Revert : public AbstractMethod
 	{
 		std::string result(arg.value().to_string());
 		std::reverse(std::begin(result),std::end(result));
-		return Parser::parse_value(result);
+		return value_t(result);
 	}
+};
+
+struct Shuffle : public AbstractMethod
+{
+	Shuffle()
+	: AbstractMethod("Shuffle")
+	, _rng{static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count())}
+	{}
+	~Shuffle() override = default;
+
+	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
+	{
+		std::string result(arg.value().to_string());
+
+		std::shuffle (result.begin(), result.end(), _rng);
+		return value_t(result);
+	}
+
+	std::default_random_engine _rng;
 };
 
 struct Sum : public AbstractMethod
@@ -171,6 +191,7 @@ int main(int argc, char** argv)
 		server.set_verbose(verbose);
 		server.register_method(std::make_unique<method::Echo>());
 		server.register_method(std::make_unique<method::Revert>());
+		server.register_method(std::make_unique<method::Shuffle>());
 		server.register_method(std::make_unique<method::Sum>());
 		server.register_method(std::make_unique<method::DateTime>());
 		server.register_method(std::make_unique<method::GetSetValue>(globalValue));
