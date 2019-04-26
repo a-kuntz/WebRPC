@@ -45,10 +45,14 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 
 //		BOOST_SPIRIT_DEBUG_NODE(value_rule);
 //		BOOST_SPIRIT_DEBUG_NODE(string_rule);
+//		BOOST_SPIRIT_DEBUG_NODE(quote_rule);
 //		BOOST_SPIRIT_DEBUG_NODE(array_rule);
 //		BOOST_SPIRIT_DEBUG_NODE(struct_rule);
 //		BOOST_SPIRIT_DEBUG_NODE(struct_member_rule);
 //		BOOST_SPIRIT_DEBUG_NODE(bytestring_rule);
+
+//		qi::debug(string_rule);
+//		qi::debug(quote_rule);
 	}
 
 	qi::rule<Iterator, value_t(), Skipper> value_rule;
