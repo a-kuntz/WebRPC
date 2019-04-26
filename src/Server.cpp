@@ -56,6 +56,8 @@ public:
 
 	void start();
 
+	void set_verbose(bool verbose);
+
 private:
 	using alloc_t = fields_alloc<char>;
 
@@ -104,6 +106,8 @@ private:
 	boost::optional<http::response_serializer<http::string_body, http::basic_fields<alloc_t>>> _string_serializer;
 
 	Registry& _registry;
+
+	bool _verbose = false;
 };
 
 HttpWorker::HttpWorker(tcp::acceptor& acceptor, Registry& registry)
@@ -115,6 +119,11 @@ void HttpWorker::start()
 {
 	accept();
 	check_deadline();
+}
+
+void HttpWorker::set_verbose(bool verbose)
+{
+	_verbose = verbose;
 }
 
 void HttpWorker::accept()
@@ -176,6 +185,11 @@ void HttpWorker::read_request()
 
 void HttpWorker::process_request(http::request<request_body_t, http::basic_fields<alloc_t>> const& req)
 {
+	if (_verbose)
+	{
+		std::cout << req/* << std::endl*/;
+	}
+
 	switch (req.method())
 	{
 	case http::verb::get:
@@ -205,7 +219,7 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 	}
 
 	const auto method = _registry.find(target->method);
-	std::cout << "-" << trg << "-" << target->method << "-" << target->args << "-";
+
 	if (method == _registry.end())
 	{
 		send_bad_response(
@@ -220,7 +234,12 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 //			const auto oval = Parser::parse_value(target->args.value_or("")); // todo: enable when parsing empty strings is supported
 		const auto ores = method->second->execute(oval);
 		const auto result = ores.value_or(null_t{}).to_string();
-		std::cout << " exec=" << method->first << "(" << target->args << ")" << "=>" << result;
+
+		if (!_verbose)
+		{
+			std::cout << "exec: " << method->first << "(" << target->args << ")" << " => " << result << std::endl;
+		}
+
 		send_message(result);
 	}
 	catch (const std::exception& e)
@@ -231,7 +250,6 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 			"Invalid webrpc request '" + std::string(e.what()) + "'\r\n"
 		);
 	}
-	std::cout << std::endl;
 }
 
 void HttpWorker::send_bad_response(
@@ -249,6 +267,11 @@ void HttpWorker::send_bad_response(
 	_string_response->set(http::field::content_type, "text/plain");
 	_string_response->body() = error;
 	_string_response->prepare_payload();
+
+	if (_verbose)
+	{
+		std::cout << _string_response/* << std::endl*/;
+	}
 
 	_string_serializer.emplace(*_string_response);
 
@@ -277,6 +300,11 @@ void HttpWorker::send_message(boost::beast::string_view message)
 	_string_response->set(http::field::content_type, "text/plain");
 	_string_response->body() = message.to_string() + "\n";
 	_string_response->prepare_payload();
+
+	if (_verbose)
+	{
+		std::cout << _string_response << std::endl;
+	}
 
 	_string_serializer.emplace(*_string_response);
 
@@ -316,8 +344,8 @@ void HttpWorker::check_deadline()
 } // ns detail
 
 Server::Server(const boost::asio::ip::tcp::endpoint endpoint, int num_workers)
-:	_num_workers{num_workers},
-	_endpoint{endpoint}
+: _endpoint{endpoint}
+, _num_workers{num_workers}
 {
 	register_method(std::make_unique<method::SystemListMethods>(_registry));
 }
@@ -337,8 +365,15 @@ void Server::run()
 	for (int i = 0; i < _num_workers; ++i)
 	{
 		workers.emplace_back(acceptor, _registry);
+		workers.back().set_verbose(_verbose);
 		workers.back().start();
 	}
 
 	ioc.run();
 }
+
+void Server::set_verbose(bool verbose)
+{
+	_verbose = verbose;
+}
+

@@ -20,10 +20,13 @@ public:
 
 	void run();
 
+	void set_verbose(bool verbose);
+
 private:
-	const int _num_workers;
 	const boost::asio::ip::tcp::endpoint _endpoint;
+	const int _num_workers;
 	Registry _registry;
+	bool _verbose = false;
 };
 
 #endif

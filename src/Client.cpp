@@ -144,7 +144,7 @@ void Session::on_read(boost::system::error_code ec, std::size_t /*bytes_transfer
 	}
 
 	// Write the message to standard out
-	std::cout << _response.body() << std::endl;
+	std::cout << _response.body(); // body ends with newline
 
 	// Gracefully close the socket
 	_socket.shutdown(tcp::socket::shutdown_both, ec);
