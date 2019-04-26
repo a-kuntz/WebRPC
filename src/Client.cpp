@@ -58,7 +58,7 @@ Session::Session(boost::asio::io_context& ioc)
 
 void Session::async_call(const std::string& uri_string)
 {
-	const auto uri = parse_uri(uri_string);
+	const auto uri = Parser::parse_uri(uri_string);
 
 	// Set up an HTTP GET request message
 	_request.version(10);

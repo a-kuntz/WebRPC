@@ -18,7 +18,7 @@ TEST(BoostSpirit, basic)
 
 void check(const std::string& in, const value_t::type_info type=value_t::type_info::null_type)
 {
-	boost::optional<value_t> opt = parse_value(in);
+	boost::optional<value_t> opt = Parser::parse_value(in);
 	ASSERT_EQ(true, static_cast<bool>(opt)) << "testcase input=" << in;
 	EXPECT_EQ(type, opt.value().type()) << "testcase input=" << in << " expected type=" << type;
 	EXPECT_EQ(in, opt.value().to_string());
@@ -75,7 +75,7 @@ TEST(Parser, BytestringValues)
 
 void check(const std::string& in, const Uri& uri)
 {
-	boost::optional<Uri> opt = parse_uri(in);
+	boost::optional<Uri> opt = Parser::parse_uri(in);
 	ASSERT_EQ(true, static_cast<bool>(opt)) << "testcase input=" << in;
 	EXPECT_EQ(uri.host, opt.value().host);
 	EXPECT_EQ(uri.port, opt.value().port);
@@ -92,7 +92,7 @@ TEST(UriParser, BasicValues)
 
 void check(const std::string& in, const Target& trg)
 {
-	const auto opt = parse_target(in);
+	const auto opt = Parser::parse_target(in);
 	ASSERT_EQ(true, static_cast<bool>(opt)) << "testcase input=" << in;
 	EXPECT_EQ(trg.method, opt.value().method);
 	EXPECT_EQ(trg.args, opt.value().args);

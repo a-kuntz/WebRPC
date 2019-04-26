@@ -40,7 +40,7 @@ struct Revert : public AbstractMethod
 	{
 		std::string result(arg.value().to_string());
 		std::reverse(std::begin(result),std::end(result));
-		return parse_value(result);
+		return Parser::parse_value(result);
 	}
 };
 

@@ -9,6 +9,8 @@
 
 #include <iostream>
 
+namespace Parser
+{
 using namespace boost::spirit;
 
 template <typename Iterator, typename Skipper>
@@ -169,3 +171,5 @@ boost::optional<Target> parse_target(const std::string& str)
 		return boost::none;
 	}
 }
+
+} // ns Parser

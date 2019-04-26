@@ -194,7 +194,7 @@ void HttpWorker::process_request(http::request<request_body_t, http::basic_field
 
 void HttpWorker::process_target(const boost::beast::string_view trg)
 {
-	const auto target = parse_target(std::string(trg));
+	const auto target = Parser::parse_target(std::string(trg));
 
 	if (!target)
 	{
@@ -216,8 +216,8 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 
 	try
 	{
-		const auto oval = target->args ? parse_value(*target->args) : boost::none;
-//			const auto oval = parse_value(target->args.value_or("")); // todo: enable when parsing empty strings is supported
+		const auto oval = target->args ? Parser::parse_value(*target->args) : boost::none;
+//			const auto oval = Parser::parse_value(target->args.value_or("")); // todo: enable when parsing empty strings is supported
 		const auto ores = method->second->execute(oval);
 		const auto result = ores.value_or(null_t{}).to_string();
 		std::cout << " exec=" << method->first << "(" << target->args << ")" << "=>" << result;

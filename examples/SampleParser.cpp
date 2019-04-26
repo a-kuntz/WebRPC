@@ -5,7 +5,7 @@ int main()
 	std::string input;
 	while (std::getline(std::cin, input))
 	{
-		auto ov = parse_value(input);
+		auto ov = Parser::parse_value(input);
 
 		if (ov)
 		{
