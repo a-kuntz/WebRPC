@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
+
 using namespace boost::spirit;
 
 TEST(BoostSpirit, basic)
@@ -21,7 +23,13 @@ void check(const std::string& in, const value_t::type_info type=value_t::type_in
 	boost::optional<value_t> opt = Parser::parse_value(in);
 	ASSERT_EQ(true, static_cast<bool>(opt)) << "testcase input=" << in;
 	EXPECT_EQ(type, opt.value().type()) << "testcase input=" << in << " expected type=" << type;
-	EXPECT_EQ(in, opt.value().to_string());
+
+	// remove all quotes from strings
+	std::string ref(in);
+	std::string val(opt.value().to_string());
+	ref.erase(std::remove(begin(ref), end(ref), '"'), end(ref));
+	val.erase(std::remove(begin(val), end(val), '"'), end(val));
+	EXPECT_EQ(ref, val);
 }
 
 TEST(Parser, PrimitiveValues)
@@ -31,9 +39,9 @@ TEST(Parser, PrimitiveValues)
 	check("true", value_t::type_info::bool_type);
 	check("42", value_t::type_info::int_type);
 	check("3.14", value_t::type_info::double_type);
-	// check("abc", value_t::type_info::string_type);
-	// check("abc_3", value_t::type_info::string_type);
-	// check("abc-3", value_t::type_info::string_type);
+	check("abc", value_t::type_info::string_type);
+	check("abc_3", value_t::type_info::string_type);
+	check("abc-3", value_t::type_info::string_type);
 	check("\"abc\"", value_t::type_info::string_type);
 	check("\"a b c?\"", value_t::type_info::string_type);
 }
@@ -46,7 +54,7 @@ TEST(Parser, ArrayValues)
 	check("[true,false,true]", value_t::type_info::array_type);
 	check("[42,43,44]", value_t::type_info::array_type);
 	check("[3.14,2.7,1.4]", value_t::type_info::array_type);
-	// check("[abc,d_e_f,ghi]", value_t::type_info::array_type);
+	check("[abc,d_e_f,ghi]", value_t::type_info::array_type);
 	check("[\"abc\",\"def\",\"ghi.,;.-_?!§$%&/()=\"]", value_t::type_info::array_type);
 	check("[true,42,3.14,\"abc\"]", value_t::type_info::array_type);
 	check("[true,42,3.14,\"abc\",[true,42,3.14,\"abc\",[true,42,3.14,\"abc\"]]]", value_t::type_info::array_type);

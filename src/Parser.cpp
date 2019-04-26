@@ -36,8 +36,9 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 			| bytestring_rule
 			;
 
-		string_rule			= lexeme[+chr("a-zA-Z_") >> *chr("a-zA-Z0-9_")];
-		quote_rule			= lit('"') >> lexeme[*( ~chr('"') )] >> lit('"');
+		string_rule			= lexeme[+chr("a-zA-Z_") >> *chr("a-zA-Z0-9_-")];
+		quote_rule			= lit('"') >> lexeme[*( ~chr('"') )] >> lit('"'); // todo: remove quotes from string
+//		quote_rule			= chr('"') >> lexeme[*( ~chr('"') )] >> chr('"'); // todo: remove quotes from string
 		array_rule			= lit("[") >> -(value_rule % ',') >> lit("]");
 		struct_rule			= lit('{') >> -(struct_member_rule % ',') >> lit('}');
 		struct_member_rule	= string_rule >> ':' >> value_rule;
@@ -51,6 +52,7 @@ struct grammar : qi::grammar<Iterator, value_t(), Skipper>
 //		BOOST_SPIRIT_DEBUG_NODE(struct_member_rule);
 //		BOOST_SPIRIT_DEBUG_NODE(bytestring_rule);
 
+//		qi::debug(value_rule);
 //		qi::debug(string_rule);
 //		qi::debug(quote_rule);
 	}

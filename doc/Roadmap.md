@@ -8,6 +8,7 @@
 - [x] add verbose option to sampleclient (show http request details only in verbose mode)
 - [x] add verbose option to sampleserver (show http request / reply details in verbose mode)
 - [x] cleanup: move uri decoding code from server to parse_uri
+- [ ] remove quotes from quoted strings
 - [ ] enable parse_value to parse empty strings
 - [ ] add tree representation for struct serialization
 - [ ] refactor Target to SimpleTarget, which represents targets of the form `method/optional<value_t>`
