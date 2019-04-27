@@ -24,7 +24,6 @@ namespace method
 struct Echo : public AbstractMethod
 {
 	Echo() : AbstractMethod("Echo") {}
-	~Echo() override = default;
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
@@ -35,7 +34,6 @@ struct Echo : public AbstractMethod
 struct Revert : public AbstractMethod
 {
 	Revert() : AbstractMethod("Revert") {}
-	~Revert() override = default;
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
@@ -51,7 +49,6 @@ struct Shuffle : public AbstractMethod
 	: AbstractMethod("Shuffle")
 	, _rng{static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count())}
 	{}
-	~Shuffle() override = default;
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
@@ -67,7 +64,6 @@ struct Shuffle : public AbstractMethod
 struct Sum : public AbstractMethod
 {
 	Sum() : AbstractMethod("Sum") {}
-	~Sum() override = default;
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
@@ -97,7 +93,6 @@ struct Sum : public AbstractMethod
 struct DateTime : public AbstractMethod
 {
 	DateTime() : AbstractMethod("DateTime") {}
-	~DateTime() override = default;
 
 	boost::optional<value_t> execute(const boost::optional<value_t> /*arg*/) override
 	{
@@ -110,7 +105,7 @@ struct DateTime : public AbstractMethod
 
 struct SomeStruct
 {
-	SomeStruct() : _double(0.0), _int(0), _string("") {}
+	SomeStruct() = default;
 	SomeStruct(const boost::optional<value_t> arg)
 	{
 		assert(arg.value().type() == value_t::type_info::struct_type);
@@ -127,15 +122,14 @@ struct SomeStruct
 		result["string"] = string_t(_string);
 		return result;
 	}
-	double _double;
-	int _int;
+	double _double = 0.0;
+	int _int = 0;
 	std::string _string;
 };
 
 struct GetSetValue : public AbstractMethod
 {
 	GetSetValue(SomeStruct& val) : AbstractMethod("GetSetValue"), _val(val) {}
-	~GetSetValue() override = default;
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{

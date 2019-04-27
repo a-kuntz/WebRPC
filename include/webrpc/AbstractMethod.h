@@ -9,7 +9,6 @@ class AbstractMethod : public IMethod
 
 	public:
 	AbstractMethod(const std::string& name);
-	virtual ~AbstractMethod() = default;
 
 	std::string get_name() const override;
 
