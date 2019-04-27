@@ -39,7 +39,7 @@ struct Revert : public AbstractMethod
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
-		std::string result(arg.value().to_string());
+		std::string result(arg.value().as<string_t>());
 		std::reverse(std::begin(result),std::end(result));
 		return value_t(result);
 	}
@@ -55,7 +55,7 @@ struct Shuffle : public AbstractMethod
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
-		std::string result(arg.value().to_string());
+		std::string result(arg.value().as<string_t>());
 
 		std::shuffle (result.begin(), result.end(), _rng);
 		return value_t(result);
