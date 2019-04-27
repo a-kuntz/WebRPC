@@ -54,7 +54,7 @@ configure_file (
 
 add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable -fvisibility=hidden)
 #add_compile_options(-g -fsanitize=address -fno-omit-frame-pointer)
-# add_compile_definitions()
+#add_compile_definitions()
 include_directories(${PROJECT_BINARY_DIR}/include)
 
 ## Webrpc::webrpcdata #########################################################
@@ -89,7 +89,7 @@ add_library(webrpcserver
 	src/Server.cpp
 )
 
-target_link_libraries(webrpcserver Boost::boost Threads::Threads webrpcdata)
+target_link_libraries(webrpcserver PUBLIC webrpcdata Boost::boost Threads::Threads)
 
 target_include_directories(webrpcserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
@@ -107,12 +107,9 @@ add_executable(sampleserver
 	examples/SampleServer.cpp
 )
 
-target_link_libraries(sampleserver Boost::boost Boost::program_options Boost::filesystem webrpcserver)
+target_link_libraries(sampleserver PRIVATE webrpcserver Boost::boost Boost::program_options Threads::Threads)
 
-target_compile_features(sampleserver
-	PRIVATE
-		cxx_std_14	# std::make_unique<.>()
-)
+target_compile_features(sampleserver PRIVATE cxx_std_14)
 
 ## sample-client ##############################################################
 
@@ -120,12 +117,9 @@ add_executable(sampleclient
 	examples/SampleClient.cpp
 )
 
-target_link_libraries(sampleclient webrpcclient Boost::boost Boost::program_options Boost::filesystem Threads::Threads)
+target_link_libraries(sampleclient PRIVATE webrpcclient Boost::boost Boost::program_options Threads::Threads)
 
-target_compile_features(sampleclient
-	PRIVATE
-		cxx_std_14	# std::make_unique<.>()
-)
+target_compile_features(sampleclient PRIVATE cxx_std_14)
 
 ## sample-parser ##############################################################
 
@@ -141,15 +135,9 @@ add_executable(parsertest
 	test/ParserTest.cpp
 )
 
-target_link_libraries(parsertest GTest::GTest GTest::Main Boost::boost webrpcdata)
+target_link_libraries(parsertest PRIVATE webrpcdata GTest::GTest GTest::Main Boost::boost)
 
-# add include since parser is header only
-target_include_directories(parsertest PRIVATE ${PROJECT_SOURCE_DIR}/include)
-
-target_compile_features(parsertest
-	PRIVATE
-		cxx_variadic_macros
-)
+target_compile_features(parsertest PRIVATE cxx_variadic_macros)
 
 add_test(NAME parsertest COMMAND parsertest)
 
