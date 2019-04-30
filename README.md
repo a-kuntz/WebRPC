@@ -23,10 +23,8 @@ Call method `Sum` with an array of integer and double values `[1,2.3,4e-5,-6]`
 
     git clone https://github.com/yoshiii/WebRPC.git
     cd WebRPC
-    mkdir build
-    cd build
-    cmake ..
-    make all test
+    cmake -Bbuild -H.
+    make -C build all test
 
 ## Dependencies
 
@@ -43,11 +41,9 @@ In case your system does not provide `boost` and `gtest` in the required version
 
 To compile WebRPC set `BOOST_ROOT` and `GTEST_ROOT` when invoking cmake. There is also a convenience script `scripts/build.sh`.
 
-    mkdir build
-    cd build
-    cmake .. \
+    cmake -Bbuild -H. \
       -DBOOST_ROOT=../deps/boost_1_69_0 \
       -DGTEST_ROOT=../deps/googletest-release-1.8.1/build \
       -DCMAKE_BUILD_TYPE=debug \
       -DCMAKE_INSTALL_PREFIX=.
-    make all test
+    make -C build all test
