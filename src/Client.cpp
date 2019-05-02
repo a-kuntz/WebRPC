@@ -4,12 +4,12 @@
 #include <webrpc/Parser.h>
 
 #include <boost/asio/connect.hpp>
-#include <boost/asio/connect.hpp>
 #include <boost/beast/version.hpp>
 
 #include <functional>
 #include <iostream>
 #include <string>
+#include <future>
 
 // Report a failure
 void fail(boost::system::error_code ec, char const* what)
@@ -24,12 +24,10 @@ class Session : public std::enable_shared_from_this<Session>
 {
 public:
 	// Resolver and socket require an io_context
-	explicit Session(boost::asio::io_context& ioc);
+	explicit Session(boost::asio::io_context& ioc, bool verbose);
 
 	// todo: add lambda or string return value
-	void async_call(const std::string& uri_string);
-
-	void set_verbose(bool verbose);
+	void async_call(const std::string& uri_string, Client::Completion completion);
 
 private:
 	void on_resolve(boost::system::error_code ec, tcp::resolver::results_type results);
@@ -47,17 +45,20 @@ private:
 	http::request<http::empty_body> _request;
 	http::response<http::string_body> _response;
 	bool _verbose;
+	Client::Completion _completion = nullptr;
 };
 
 // Resolver and socket require an io_context
-Session::Session(boost::asio::io_context& ioc)
+Session::Session(boost::asio::io_context& ioc, bool verbose)
 	: _resolver(ioc)
 	, _socket(ioc)
-	, _verbose(false)
+	, _verbose(verbose)
 {}
 
-void Session::async_call(const std::string& uri_string)
+void Session::async_call(const std::string& uri_string, Client::Completion completion)
 {
+	_completion = completion;
+
 	const auto uri = Parser::parse_uri(uri_string);
 
 	// Set up an HTTP GET request message
@@ -76,11 +77,6 @@ void Session::async_call(const std::string& uri_string)
 			shared_from_this(),
 			std::placeholders::_1,
 			std::placeholders::_2));
-}
-
-void Session::set_verbose(bool verbose)
-{
-	_verbose = verbose;
 }
 
 void Session::on_resolve(boost::system::error_code ec, tcp::resolver::results_type results)
@@ -140,11 +136,16 @@ void Session::on_read(boost::system::error_code ec, std::size_t /*bytes_transfer
 
 	if (_verbose)
 	{
-		std::cout << _response.base();
+		std::cout << _response;
 	}
 
-	// Write the message to standard out
-	std::cout << _response.body(); // body ends with newline
+	// remove trailing newline
+	const std::string result = [&](){
+		auto s = _response.body();
+		s.pop_back();
+		return s;
+	}();
+	_completion(result);
 
 	// Gracefully close the socket
 	_socket.shutdown(tcp::socket::shutdown_both, ec);
@@ -157,21 +158,22 @@ void Session::on_read(boost::system::error_code ec, std::size_t /*bytes_transfer
 }
 } // ns detail
 
-Client::Client(bool verbose)
-	: _verbose(verbose)
+Client::Client(boost::asio::io_context& ioc, bool verbose)
+	: _ioc(ioc)
+	, _verbose(verbose)
 {}
 
-void Client::async_call(const std::string& uri)
+void Client::async_call(const std::string& uri, Completion completion)
 {
-	// Launch the asynchronous operation
-	boost::asio::io_context ioc;
+	std::make_shared<detail::Session>(_ioc, _verbose)->async_call(uri, completion);
+}
 
-	auto session = std::make_shared<detail::Session>(ioc);
-	session->set_verbose(_verbose);
-	session->async_call(uri);
-//	session->call(uri);
-//	session->call(uri);
-
-	ioc.run();
+std::string Client::call(const std::string& uri)
+{
+	std::promise<std::string> promise;
+	auto future = promise.get_future();
+	std::make_shared<detail::Session>(_ioc, _verbose)->async_call(uri, [&](const std::string& res){promise.set_value(res);});
+	future.wait();
+	return future.get();
 }
 

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <thread>
 
 namespace po = boost::program_options;
 
@@ -45,9 +46,17 @@ int main(int argc, char** argv)
 	}
 
 	try {
+		// create and start io context
+		boost::asio::io_context ioc;
 
-		Client c{verbose};
-		c.async_call(uri);
+		Client c{ioc, verbose};
+
+		c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
+		ioc.run();
+
+//		std::thread t([&](){ioc.run();});
+//		std::cout << "sync ->" << c.call(uri) << "<-\n";
+//		t.join();
 
 		return EXIT_SUCCESS;
 	}
