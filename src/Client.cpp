@@ -19,14 +19,12 @@ void fail(boost::system::error_code ec, char const* what)
 
 namespace detail
 {
-// Performs an HTTP GET and prints the response
 class Session : public std::enable_shared_from_this<Session>
 {
 public:
 	// Resolver and socket require an io_context
 	explicit Session(boost::asio::io_context& ioc, bool verbose);
 
-	// todo: add lambda or string return value
 	void async_call(const std::string& uri_string, Client::Completion completion);
 
 private:
@@ -48,7 +46,6 @@ private:
 	Client::Completion _completion = nullptr;
 };
 
-// Resolver and socket require an io_context
 Session::Session(boost::asio::io_context& ioc, bool verbose)
 	: _resolver(ioc)
 	, _socket(ioc)
@@ -176,4 +173,3 @@ std::string Client::call(const std::string& uri)
 	future.wait();
 	return future.get();
 }
-
