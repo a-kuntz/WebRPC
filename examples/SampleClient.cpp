@@ -72,8 +72,12 @@ int main(int argc, char** argv)
 		boost::asio::io_context ioc;
 		Client c{ioc, verbose};
 
+//		c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
+//		ioc.run();
+
 		c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
-		ioc.run();
+		std::thread t([&](){ioc.run();});
+		t.join();
 
 //		auto g = ThreadGuard{ioc};
 //		std::cout << "==" << c.call(uri) << "==\n";
