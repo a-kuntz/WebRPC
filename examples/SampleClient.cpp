@@ -11,6 +11,28 @@
 
 namespace po = boost::program_options;
 
+class ThreadGuard
+{
+public:
+	ThreadGuard(boost::asio::io_context& ioc)
+	: _ioc(ioc)
+	, _work(boost::asio::make_work_guard(ioc))
+	, _thread([&](){ioc.run();})
+	{}
+
+	~ThreadGuard()
+	{
+		_ioc.stop();
+		_thread.join();
+	}
+
+private:
+	boost::asio::io_context& _ioc;
+	boost::asio::executor_work_guard<boost::asio::io_context::executor_type> _work;
+	std::thread _thread;
+};
+
+
 int main(int argc, char** argv)
 {
 	std::string uri;
@@ -48,15 +70,13 @@ int main(int argc, char** argv)
 	try {
 		// create and start io context
 		boost::asio::io_context ioc;
-
 		Client c{ioc, verbose};
 
 		c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
 		ioc.run();
 
-//		std::thread t([&](){ioc.run();});
-//		std::cout << "sync ->" << c.call(uri) << "<-\n";
-//		t.join();
+//		auto g = ThreadGuard{ioc};
+//		std::cout << "==" << c.call(uri) << "==\n";
 
 		return EXIT_SUCCESS;
 	}
