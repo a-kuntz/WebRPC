@@ -170,6 +170,9 @@ std::string Client::call(const std::string& uri)
 	std::promise<std::string> promise;
 	auto future = promise.get_future();
 	std::make_shared<detail::Session>(_ioc, _verbose)->async_call(uri, [&](const std::string& res){promise.set_value(res);});
+	std::thread t([&](){_ioc.run();});
 	future.wait();
+	t.join();
+	_ioc.reset();
 	return future.get();
 }

@@ -24,6 +24,11 @@ public:
 		_thread.join();
 	}
 
+	void reset()
+	{
+		_work.reset();
+	}
+
 private:
 	boost::asio::executor_work_guard<boost::asio::io_context::executor_type> _work;
 	std::thread _thread;
@@ -73,11 +78,13 @@ int main(int argc, char** argv)
 //		if (false)
 		{
 			c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
+			c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
 			ioc.run();
 		}
 
 		if (false)
 		{
+			c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
 			c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
 			std::thread t([&](){ioc.run();});
 			t.join();
@@ -87,31 +94,23 @@ int main(int argc, char** argv)
 		{
 			auto guard = boost::asio::make_work_guard(ioc);
 			std::thread t([&](){ioc.run();});
-			c.async_call(uri, [&](const std::string& res){std::cout << "--" << res << "--\n"; ioc.stop();});
+			c.async_call(uri, [&](const std::string& res){std::cout << "--" << res << "--\n"; guard.reset();});
+			c.async_call(uri, [&](const std::string& res){std::cout << "--" << res << "--\n"; guard.reset();});
 			t.join();
 		}
 
 		if (false)
 		{
 			auto guard = IocThreadGuard{ioc};
-			c.async_call(uri, [&](const std::string& res){std::cout << "--" << res << "--\n"; ioc.stop();});
+			c.async_call(uri, [&](const std::string& res){std::cout << "--" << res << "--\n"; guard.reset();});
+			c.async_call(uri, [&](const std::string& res){std::cout << "--" << res << "--\n"; guard.reset();});
 		}
 
 		// call(.)
 		if (false)
 		{
-			auto guard = boost::asio::make_work_guard(ioc);
-			std::thread t([&](){ioc.run();});
 			std::cout << "==" << c.call(uri) << "==\n";
-			ioc.stop();
-			t.join();
-		}
-
-		if (false)
-		{
-			auto guard = IocThreadGuard{ioc};
 			std::cout << "==" << c.call(uri) << "==\n";
-			ioc.stop();
 		}
 
 		return EXIT_SUCCESS;
