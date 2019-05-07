@@ -17,6 +17,7 @@
 - [ ] create StructTarget class to parse targets as struct_t like `{method:name,args:value_t}`
 - [ ] support websocket server/client
 - [ ] create sample chat server/client
+- [ ] generate glue code from interface definition
 - [ ] add cmake option WITH_TESTS=n to disable unit tests
 - [x] add sampleclient
 - [x] add sample method `DateTime`
