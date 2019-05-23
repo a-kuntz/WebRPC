@@ -49,7 +49,7 @@ std::string decode_url(const std::string& url)
 
 class HttpWorker
 {
-  public:
+	public:
 	HttpWorker(HttpWorker const&) = delete;
 	HttpWorker& operator=(HttpWorker const&) = delete;
 
@@ -59,7 +59,7 @@ class HttpWorker
 
 	void set_verbose(bool verbose);
 
-  private:
+	private:
 	using alloc_t = fields_alloc<char>;
 
 	// using request_body_t = http::basic_dynamic_body<boost::beast::flat_static_buffer<1024 * 1024>>;

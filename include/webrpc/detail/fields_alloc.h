@@ -35,7 +35,7 @@ struct static_pool
 		, _p(reinterpret_cast<char*>(this + 1))
 	{}
 
-  public:
+	public:
 	static static_pool& construct(std::size_t size)
 	{
 		auto p = new char[sizeof(static_pool) + size];
@@ -97,7 +97,7 @@ template <class T> struct fields_alloc
 {
 	detail::static_pool* _pool;
 
-  public:
+	public:
 	using value_type	  = T;
 	using is_always_equal = std::false_type;
 	using pointer		  = T*;

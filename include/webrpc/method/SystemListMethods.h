@@ -7,9 +7,11 @@
 namespace method
 {
 
-struct SystemListMethods : public AbstractMethod
+class SystemListMethods : public AbstractMethod
 {
+	public:
 	SystemListMethods() = delete;
+
 	SystemListMethods(const Registry& registry)
 		: AbstractMethod("system.list_methods")
 		, _registry(registry){};
@@ -24,6 +26,7 @@ struct SystemListMethods : public AbstractMethod
 		return value_t{res};
 	}
 
+	private:
 	const Registry& _registry;
 };
 

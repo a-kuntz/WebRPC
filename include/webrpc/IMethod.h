@@ -14,9 +14,11 @@ using IMethodUP = std::unique_ptr<IMethod>;
 
 struct IMethod
 {
-  public:
-	virtual ~IMethod()															 = default;
-	virtual std::string				 get_name() const							 = 0;
+	public:
+	virtual ~IMethod() = default;
+
+	virtual std::string get_name() const = 0;
+
 	virtual boost::optional<value_t> execute(const boost::optional<value_t> arg) = 0;
 };
 

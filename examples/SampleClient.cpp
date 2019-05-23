@@ -13,7 +13,7 @@ namespace po = boost::program_options;
 
 class IocThreadGuard
 {
-  public:
+	public:
 	IocThreadGuard(boost::asio::io_context& ioc)
 		: _work(boost::asio::make_work_guard(ioc))
 		, _thread([&]() { ioc.run(); })
@@ -29,7 +29,7 @@ class IocThreadGuard
 		_work.reset();
 	}
 
-  private:
+	private:
 	boost::asio::executor_work_guard<boost::asio::io_context::executor_type> _work;
 	std::thread																 _thread;
 };

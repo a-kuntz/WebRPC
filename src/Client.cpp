@@ -21,13 +21,13 @@ namespace detail
 {
 class Session : public std::enable_shared_from_this<Session>
 {
-  public:
+	public:
 	// Resolver and socket require an io_context
 	explicit Session(boost::asio::io_context& ioc, bool verbose);
 
 	void async_call(const std::string& uri_string, Client::Completion completion);
 
-  private:
+	private:
 	void on_resolve(boost::system::error_code ec, tcp::resolver::results_type results);
 
 	void on_connect(boost::system::error_code ec);
@@ -36,7 +36,7 @@ class Session : public std::enable_shared_from_this<Session>
 
 	void on_read(boost::system::error_code ec, std::size_t bytes_transferred);
 
-  private:
+	private:
 	tcp::resolver					  _resolver;
 	tcp::socket						  _socket;
 	boost::beast::flat_buffer		  _buffer;

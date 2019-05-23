@@ -15,7 +15,7 @@ namespace http = boost::beast::http;   // from <boost/beast/http.hpp>
 
 class Client
 {
-  public:
+	public:
 	using Completion = std::function<void(const std::string&)>;
 
 	Client(boost::asio::io_context& ioc, bool verbose);
@@ -24,7 +24,7 @@ class Client
 
 	std::string call(const std::string& uri);
 
-  private:
+	private:
 	boost::asio::io_context& _ioc;
 	const bool				 _verbose;
 };

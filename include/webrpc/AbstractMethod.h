@@ -7,12 +7,12 @@ class AbstractMethod : public IMethod
 {
 	AbstractMethod() = delete;
 
-  public:
+	public:
 	AbstractMethod(const std::string& name);
 
 	std::string get_name() const override;
 
-  private:
+	private:
 	const std::string _name;
 };
 

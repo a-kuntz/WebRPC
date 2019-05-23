@@ -11,7 +11,7 @@
 
 class Server
 {
-  public:
+	public:
 	Server() = delete;
 
 	Server(const boost::asio::ip::tcp::endpoint endpoint, int num_workers = 10);
@@ -22,7 +22,7 @@ class Server
 
 	void set_verbose(bool verbose);
 
-  private:
+	private:
 	const boost::asio::ip::tcp::endpoint _endpoint;
 	const int							 _num_workers;
 	Registry							 _registry;
