@@ -152,3 +152,12 @@ add_test(NAME parsertest COMMAND parsertest)
 #	NAMESPACE Webrpc::
 #	DESTINATION lib/cmake/Webrpc
 #)
+
+add_custom_command(
+	OUTPUT clang-format
+	COMMAND find . -name *.cpp -o -name *.h | xargs clang-format -i
+)
+
+add_custom_target(beautify
+	DEPENDS clang-format
+)
