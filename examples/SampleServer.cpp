@@ -1,5 +1,5 @@
 #include <webrpc/AbstractMethod.h>
-#include <webrpc/Parser.h>	// to parse reversed value
+#include <webrpc/Parser.h> // to parse reversed value
 #include <webrpc/Server.h>
 #include <webrpc/Version.h>
 
@@ -23,7 +23,9 @@ namespace method
 
 struct Echo : public AbstractMethod
 {
-	Echo() : AbstractMethod("Echo") {}
+	Echo()
+		: AbstractMethod("Echo")
+	{}
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
@@ -33,12 +35,14 @@ struct Echo : public AbstractMethod
 
 struct Revert : public AbstractMethod
 {
-	Revert() : AbstractMethod("Revert") {}
+	Revert()
+		: AbstractMethod("Revert")
+	{}
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
 		std::string result(arg.value().as<string_t>());
-		std::reverse(std::begin(result),std::end(result));
+		std::reverse(std::begin(result), std::end(result));
 		return value_t(result);
 	}
 };
@@ -46,15 +50,15 @@ struct Revert : public AbstractMethod
 struct Shuffle : public AbstractMethod
 {
 	Shuffle()
-	: AbstractMethod("Shuffle")
-	, _rng{static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count())}
+		: AbstractMethod("Shuffle")
+		, _rng{static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count())}
 	{}
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
 		std::string result(arg.value().as<string_t>());
 
-		std::shuffle (result.begin(), result.end(), _rng);
+		std::shuffle(result.begin(), result.end(), _rng);
 		return value_t(result);
 	}
 
@@ -63,7 +67,9 @@ struct Shuffle : public AbstractMethod
 
 struct Sum : public AbstractMethod
 {
-	Sum() : AbstractMethod("Sum") {}
+	Sum()
+		: AbstractMethod("Sum")
+	{}
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
@@ -72,8 +78,8 @@ struct Sum : public AbstractMethod
 			throw std::runtime_error("invalid argument: expected array of double or int like [1,2,3,4e-5,6.7]");
 		}
 
-		const auto a = arg.value().as<array_t>();
-		double sum = 0;
+		const auto a   = arg.value().as<array_t>();
+		double	 sum = 0;
 		for (const auto& item : a)
 		{
 			if (item.type() == value_t::type_info::int_type)
@@ -92,7 +98,9 @@ struct Sum : public AbstractMethod
 
 struct DateTime : public AbstractMethod
 {
-	DateTime() : AbstractMethod("DateTime") {}
+	DateTime()
+		: AbstractMethod("DateTime")
+	{}
 
 	boost::optional<value_t> execute(const boost::optional<value_t> /*arg*/) override
 	{
@@ -110,26 +118,29 @@ struct SomeStruct
 	{
 		assert(arg.value().type() == value_t::type_info::struct_type);
 		const auto s = arg.value().as<struct_t>();
-		_double = s.at("double").as<double_t>();
-		_int    = s.at("int").as<int_t>();
-		_string = s.at("string").as<string_t>();
+		_double		 = s.at("double").as<double_t>();
+		_int		 = s.at("int").as<int_t>();
+		_string		 = s.at("string").as<string_t>();
 	}
-	explicit operator value_t () const
+	explicit operator value_t() const
 	{
 		struct_t result;
 		result["double"] = double_t(_double);
-		result["int"]    = int_t(_int);
+		result["int"]	= int_t(_int);
 		result["string"] = string_t(_string);
 		return result;
 	}
-	double _double = 0.0;
-	int _int = 0;
+	double		_double = 0.0;
+	int			_int	= 0;
 	std::string _string;
 };
 
 struct GetSetValue : public AbstractMethod
 {
-	GetSetValue(SomeStruct& val) : AbstractMethod("GetSetValue"), _val(val) {}
+	GetSetValue(SomeStruct& val)
+		: AbstractMethod("GetSetValue")
+		, _val(val)
+	{}
 
 	boost::optional<value_t> execute(const boost::optional<value_t> arg) override
 	{
@@ -144,16 +155,15 @@ struct GetSetValue : public AbstractMethod
 
 int main(int argc, char** argv)
 {
-	std::string host_name{"127.0.0.1"};
+	std::string	host_name{"127.0.0.1"};
 	unsigned short port{8080};
-	bool verbose = false;
+	bool		   verbose = false;
 
 	po::options_description desc("Options");
-	desc.add_options()
-		("host,h", po::value<std::string>(&host_name)->value_name("HOST")->default_value("127.0.0.1"), "host name or ip address to bind to")
-		("port,p", po::value<unsigned short>(&port)->value_name("PORT")->default_value(8080), "port number")
-		("verbose,v", po::value<bool>(&verbose)->implicit_value(true), "verbose")
-		("help", "print help message and exit");
+	desc.add_options()("host,h", po::value<std::string>(&host_name)->value_name("HOST")->default_value("127.0.0.1"),
+		"host name or ip address to bind to")(
+		"port,p", po::value<unsigned short>(&port)->value_name("PORT")->default_value(8080), "port number")(
+		"verbose,v", po::value<bool>(&verbose)->implicit_value(true), "verbose")("help", "print help message and exit");
 
 	// parse and compare for required options
 	po::variables_map vm;
@@ -162,13 +172,12 @@ int main(int argc, char** argv)
 
 	if (vm.count("help"))
 	{
-		std::cout
-			<< "sampleserver [options]\n"
-			<< "\n"
-			<< desc << "\n"
-			<< "WebRPC Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "." << WEBRPC_VERSION_PATCH
-			<< " (" << GIT_BRANCH << " @ " << GIT_COMMIT_HASH << " " << (GIT_WORKING_COPY_MODIFIED ? "+" : "") << ")"
-			<< std::endl;
+		std::cout << "sampleserver [options]\n"
+				  << "\n"
+				  << desc << "\n"
+				  << "WebRPC Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "."
+				  << WEBRPC_VERSION_PATCH << " (" << GIT_BRANCH << " @ " << GIT_COMMIT_HASH << " "
+				  << (GIT_WORKING_COPY_MODIFIED ? "+" : "") << ")" << std::endl;
 		return EXIT_SUCCESS;
 	}
 

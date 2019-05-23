@@ -7,14 +7,15 @@
 
 struct Target
 {
-    Target() = default;
+	Target() = default;
 
-    Target(const std::string& method, const boost::optional<std::string>& args)
-	: method{method}, args{args}
-    {}
+	Target(const std::string& method, const boost::optional<std::string>& args)
+		: method{method}
+		, args{args}
+	{}
 
-    std::string method;
-    boost::optional<std::string> args;
+	std::string					 method;
+	boost::optional<std::string> args;
 };
 
 #endif // __TARGET_H__

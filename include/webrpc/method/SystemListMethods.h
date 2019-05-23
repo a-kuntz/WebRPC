@@ -11,9 +11,8 @@ struct SystemListMethods : public AbstractMethod
 {
 	SystemListMethods() = delete;
 	SystemListMethods(const Registry& registry)
-	:	AbstractMethod("system.list_methods"),
-		_registry(registry)
-	{};
+		: AbstractMethod("system.list_methods")
+		, _registry(registry){};
 
 	boost::optional<value_t> execute(const boost::optional<value_t> /*arg*/) override
 	{
@@ -28,6 +27,6 @@ struct SystemListMethods : public AbstractMethod
 	const Registry& _registry;
 };
 
-}
+} // namespace method
 
 #endif

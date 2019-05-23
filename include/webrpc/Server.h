@@ -2,8 +2,8 @@
 #define __SERVER__
 
 #include <webrpc/AbstractMethod.h>
-#include <webrpc/Value.h>
 #include <webrpc/Registry.h>
+#include <webrpc/Value.h>
 
 #include <boost/asio.hpp>
 
@@ -11,10 +11,10 @@
 
 class Server
 {
-public:
+  public:
 	Server() = delete;
 
-	Server(const boost::asio::ip::tcp::endpoint endpoint, int num_workers=10);
+	Server(const boost::asio::ip::tcp::endpoint endpoint, int num_workers = 10);
 
 	void register_method(IMethodUP&& method);
 
@@ -22,11 +22,11 @@ public:
 
 	void set_verbose(bool verbose);
 
-private:
+  private:
 	const boost::asio::ip::tcp::endpoint _endpoint;
-	const int _num_workers;
-	Registry _registry;
-	bool _verbose = false;
+	const int							 _num_workers;
+	Registry							 _registry;
+	bool								 _verbose = false;
 };
 
 #endif

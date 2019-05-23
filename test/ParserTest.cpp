@@ -18,7 +18,7 @@ TEST(BoostSpirit, basic)
 	}
 }
 
-void check(const std::string& in, const value_t::type_info type=value_t::type_info::null_type)
+void check(const std::string& in, const value_t::type_info type = value_t::type_info::null_type)
 {
 	boost::optional<value_t> opt = Parser::parse_value(in);
 	ASSERT_EQ(true, static_cast<bool>(opt)) << "testcase input=" << in;
@@ -35,7 +35,7 @@ void check(const std::string& in, const value_t::type_info type=value_t::type_in
 TEST(Parser, PrimitiveValues)
 {
 	// primitive values
-//	check("", value_t::type_info::null_type); // todo: enable parsing empty strings
+	//	check("", value_t::type_info::null_type); // todo: enable parsing empty strings
 	check("true", value_t::type_info::bool_type);
 	check("42", value_t::type_info::int_type);
 	check("3.14", value_t::type_info::double_type);
@@ -59,8 +59,11 @@ TEST(Parser, ArrayValues)
 	check("[true,42,3.14,\"abc\"]", value_t::type_info::array_type);
 	check("[true,42,3.14,\"abc\",[true,42,3.14,\"abc\",[true,42,3.14,\"abc\"]]]", value_t::type_info::array_type);
 	check("[{key:\"val\"},{key:\"val\"},{key:\"val\"}]", value_t::type_info::array_type);
-	check("[<>,<0x00>,<0x00,0x01,0x0A,0x0F,0xDE,0xAD,0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF>]", value_t::type_info::array_type);
-	check("[true,42,3.14,\"abc\",{key:\"value\"},[true,42,3.14,\"abc\",{key:\"value\"},[true,42,3.14,\"abc\",{key:\"value\"}]]]", value_t::type_info::array_type);
+	check("[<>,<0x00>,<0x00,0x01,0x0A,0x0F,0xDE,0xAD,0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF>]",
+		value_t::type_info::array_type);
+	check("[true,42,3.14,\"abc\",{key:\"value\"},[true,42,3.14,\"abc\",{key:\"value\"},[true,42,3.14,\"abc\",{key:"
+		  "\"value\"}]]]",
+		value_t::type_info::array_type);
 }
 
 TEST(Parser, StructValues)
@@ -68,7 +71,8 @@ TEST(Parser, StructValues)
 	// structs
 	check("{}", value_t::type_info::struct_type);
 	check("{key:\"value\",key2:\"value2\",key3:\"value\"}", value_t::type_info::struct_type);
-	check("{key:\"value\",key2:[1,2,3],key3:{k1:\"v\",k2:\"v\",k3:\"v\"},key4:<0xAB,0xCD,0xEF>}", value_t::type_info::struct_type);
+	check("{key:\"value\",key2:[1,2,3],key3:{k1:\"v\",k2:\"v\",k3:\"v\"},key4:<0xAB,0xCD,0xEF>}",
+		value_t::type_info::struct_type);
 }
 
 TEST(Parser, BytestringValues)
@@ -115,7 +119,8 @@ TEST(TargetParser, BasicValues)
 	check("Sum/[1,2,3,4,5]", Target{"Sum", boost::optional<std::string>{"[1,2,3,4,5]"}});
 }
 
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+int main(int argc, char** argv)
+{
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }

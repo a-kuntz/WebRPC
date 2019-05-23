@@ -9,17 +9,14 @@ int main()
 
 		if (ov)
 		{
-			std::cout
-				<< "success"
-				<< " input=\"" << input << "\""
-				<< " value=\"" << ov.value().to_string() << "\""
-				<< std::endl;
+			std::cout << "success"
+					  << " input=\"" << input << "\""
+					  << " value=\"" << ov.value().to_string() << "\"" << std::endl;
 		}
 		else
 		{
-			std::cout
-				<< "parsing failed"
-				<< " input=" << input << std::endl;
+			std::cout << "parsing failed"
+					  << " input=" << input << std::endl;
 		}
 	}
 }

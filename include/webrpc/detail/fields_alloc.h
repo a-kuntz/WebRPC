@@ -15,75 +15,67 @@
 #include <memory>
 #include <stdexcept>
 
-namespace detail {
+namespace detail
+{
 
 struct static_pool
 {
 	std::size_t _size;
-	std::size_t _refs = 1;
+	std::size_t _refs  = 1;
 	std::size_t _count = 0;
-	char* _p;
+	char*		_p;
 
-	char*
-	end()
+	char* end()
 	{
 		return reinterpret_cast<char*>(this + 1) + _size;
 	}
 
-	explicit
-	static_pool(std::size_t size)
+	explicit static_pool(std::size_t size)
 		: _size(size)
 		, _p(reinterpret_cast<char*>(this + 1))
-	{
-	}
+	{}
 
-public:
-	static
-	static_pool&
-	construct(std::size_t size)
+  public:
+	static static_pool& construct(std::size_t size)
 	{
 		auto p = new char[sizeof(static_pool) + size];
-		return *(new(p) static_pool{size});
+		return *(new (p) static_pool{size});
 	}
 
-	static_pool&
-	share()
+	static_pool& share()
 	{
 		++_refs;
 		return *this;
 	}
 
-	void
-	destroy()
+	void destroy()
 	{
-		if(_refs--)
+		if (_refs--)
 			return;
 		this->~static_pool();
 		delete[] reinterpret_cast<char*>(this);
 	}
 
-	void*
-	alloc(std::size_t n)
+	void* alloc(std::size_t n)
 	{
 		auto last = _p + n;
-		if(last >= end())
+		if (last >= end())
 			BOOST_THROW_EXCEPTION(std::bad_alloc{});
 		++_count;
 		auto p = _p;
-		_p = last;
+		_p	 = last;
 		return p;
 	}
 
-	void
-	dealloc()
+	void dealloc()
 	{
-		if(--_count)
+		if (--_count)
 			return;
 		_p = reinterpret_cast<char*>(this + 1);
 	}
 };
 
-} // detail
+} // namespace detail
 
 /** A non-thread-safe allocator optimized for @ref basic_fields.
 
@@ -101,23 +93,21 @@ public:
 	Then, for every instance of `message` construct the header
 	with a copy of the previously declared allocator instance.
 */
-template<class T>
-struct fields_alloc
+template <class T> struct fields_alloc
 {
 	detail::static_pool* _pool;
 
-public:
-	using value_type = T;
+  public:
+	using value_type	  = T;
 	using is_always_equal = std::false_type;
-	using pointer = T*;
-	using reference = T&;
-	using const_pointer = T const*;
+	using pointer		  = T*;
+	using reference		  = T&;
+	using const_pointer   = T const*;
 	using const_reference = T const&;
-	using size_type = std::size_t;
+	using size_type		  = std::size_t;
 	using difference_type = std::ptrdiff_t;
 
-	template<class U>
-	struct rebind
+	template <class U> struct rebind
 	{
 		using other = fields_alloc<U>;
 	};
@@ -129,75 +119,54 @@ public:
 	fields_alloc() = default;
 #endif
 
-	explicit
-	fields_alloc(std::size_t size)
+	explicit fields_alloc(std::size_t size)
 		: _pool(&detail::static_pool::construct(size))
-	{
-	}
+	{}
 
 	fields_alloc(fields_alloc const& other)
 		: _pool(&other._pool->share())
-	{
-	}
+	{}
 
-	template<class U>
+	template <class U>
 	fields_alloc(fields_alloc<U> const& other)
 		: _pool(&other._pool->share())
-	{
-	}
+	{}
 
 	~fields_alloc()
 	{
 		_pool->destroy();
 	}
 
-	value_type*
-	allocate(size_type n)
+	value_type* allocate(size_type n)
 	{
-		return static_cast<value_type*>(
-			_pool->alloc(n * sizeof(T)));
+		return static_cast<value_type*>(_pool->alloc(n * sizeof(T)));
 	}
 
-	void
-	deallocate(value_type*, size_type)
+	void deallocate(value_type*, size_type)
 	{
 		_pool->dealloc();
 	}
 
 #if defined(BOOST_LIBSTDCXX_VERSION) && BOOST_LIBSTDCXX_VERSION < 60000
-	template<class U, class... Args>
-	void
-	construct(U* ptr, Args&&... args)
+	template <class U, class... Args> void construct(U* ptr, Args&&... args)
 	{
-		::new((void*)ptr) U(std::forward<Args>(args)...);
+		::new ((void*) ptr) U(std::forward<Args>(args)...);
 	}
 
-	template<class U>
-	void
-	destroy(U* ptr)
+	template <class U> void destroy(U* ptr)
 	{
 		ptr->~U();
 	}
 #endif
 
-	template<class U>
-	friend
-	bool
-	operator==(
-		fields_alloc const& lhs,
-		fields_alloc<U> const& rhs)
+	template <class U> friend bool operator==(fields_alloc const& lhs, fields_alloc<U> const& rhs)
 	{
 		return &lhs._pool == &rhs._pool;
 	}
 
-	template<class U>
-	friend
-	bool
-	operator!=(
-		fields_alloc const& lhs,
-		fields_alloc<U> const& rhs)
+	template <class U> friend bool operator!=(fields_alloc const& lhs, fields_alloc<U> const& rhs)
 	{
-		return ! (lhs == rhs);
+		return !(lhs == rhs);
 	}
 };
 

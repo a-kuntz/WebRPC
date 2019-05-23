@@ -1,5 +1,5 @@
-#include <webrpc/Version.h>
 #include <webrpc/Client.h>
+#include <webrpc/Version.h>
 
 #include <boost/program_options.hpp>
 
@@ -13,10 +13,10 @@ namespace po = boost::program_options;
 
 class IocThreadGuard
 {
-public:
+  public:
 	IocThreadGuard(boost::asio::io_context& ioc)
-	: _work(boost::asio::make_work_guard(ioc))
-	, _thread([&](){ioc.run();})
+		: _work(boost::asio::make_work_guard(ioc))
+		, _thread([&]() { ioc.run(); })
 	{}
 
 	~IocThreadGuard()
@@ -29,22 +29,19 @@ public:
 		_work.reset();
 	}
 
-private:
+  private:
 	boost::asio::executor_work_guard<boost::asio::io_context::executor_type> _work;
-	std::thread _thread;
+	std::thread																 _thread;
 };
-
 
 int main(int argc, char** argv)
 {
 	std::string uri;
-	bool verbose = false;
+	bool		verbose = false;
 
 	po::options_description desc("Options");
-	desc.add_options()
-		("uri,u",     po::value<std::string>(&uri)->value_name("URI"), "WebRPC uri")
-		("verbose,v", po::value<bool>(&verbose)->implicit_value(true), "verbose")
-		("help,h",    "print help message and exit");
+	desc.add_options()("uri,u", po::value<std::string>(&uri)->value_name("URI"), "WebRPC uri")("verbose,v",
+		po::value<bool>(&verbose)->implicit_value(true), "verbose")("help,h", "print help message and exit");
 
 	po::positional_options_description pos_desc;
 	pos_desc.add("uri", -1);
@@ -56,54 +53,66 @@ int main(int argc, char** argv)
 
 	if (vm.count("help"))
 	{
-		std::cout
-			<< "sampleclient [options] URI\n"
-			<< "\n"
-			<< desc << "\n"
-			<< "URI example:\n"
-			<< "    http://localhost:8080/system.list_methods\n"
-			<< "\n"
-			<< "WebRPC Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "." << WEBRPC_VERSION_PATCH
-			<< " (" << GIT_BRANCH << " @ " << GIT_COMMIT_HASH << " " << (GIT_WORKING_COPY_MODIFIED ? "+" : "") << ")"
-			<< std::endl;
+		std::cout << "sampleclient [options] URI\n"
+				  << "\n"
+				  << desc << "\n"
+				  << "URI example:\n"
+				  << "    http://localhost:8080/system.list_methods\n"
+				  << "\n"
+				  << "WebRPC Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "."
+				  << WEBRPC_VERSION_PATCH << " (" << GIT_BRANCH << " @ " << GIT_COMMIT_HASH << " "
+				  << (GIT_WORKING_COPY_MODIFIED ? "+" : "") << ")" << std::endl;
 		return EXIT_SUCCESS;
 	}
 
-	try {
+	try
+	{
 		// create and start io context
 		boost::asio::io_context ioc;
-		Client c{ioc, verbose};
+		Client					c{ioc, verbose};
 
 		// async_call(.)
-//		if (false)
+		//		if (false)
 		{
-			c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
-			c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
+			c.async_call(uri, [](const std::string& res) { std::cout << "--" << res << "--\n"; });
+			c.async_call(uri, [](const std::string& res) { std::cout << "--" << res << "--\n"; });
 			ioc.run();
 		}
 
 		if (false)
 		{
-			c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
-			c.async_call(uri, [](const std::string& res){std::cout << "--" << res << "--\n";});
-			std::thread t([&](){ioc.run();});
+			c.async_call(uri, [](const std::string& res) { std::cout << "--" << res << "--\n"; });
+			c.async_call(uri, [](const std::string& res) { std::cout << "--" << res << "--\n"; });
+			std::thread t([&]() { ioc.run(); });
 			t.join();
 		}
 
 		if (false)
 		{
-			auto guard = boost::asio::make_work_guard(ioc);
-			std::thread t([&](){ioc.run();});
-			c.async_call(uri, [&](const std::string& res){std::cout << "--" << res << "--\n"; guard.reset();});
-			c.async_call(uri, [&](const std::string& res){std::cout << "--" << res << "--\n"; guard.reset();});
+			auto		guard = boost::asio::make_work_guard(ioc);
+			std::thread t([&]() { ioc.run(); });
+			c.async_call(uri, [&](const std::string& res) {
+				std::cout << "--" << res << "--\n";
+				guard.reset();
+			});
+			c.async_call(uri, [&](const std::string& res) {
+				std::cout << "--" << res << "--\n";
+				guard.reset();
+			});
 			t.join();
 		}
 
 		if (false)
 		{
 			auto guard = IocThreadGuard{ioc};
-			c.async_call(uri, [&](const std::string& res){std::cout << "--" << res << "--\n"; guard.reset();});
-			c.async_call(uri, [&](const std::string& res){std::cout << "--" << res << "--\n"; guard.reset();});
+			c.async_call(uri, [&](const std::string& res) {
+				std::cout << "--" << res << "--\n";
+				guard.reset();
+			});
+			c.async_call(uri, [&](const std::string& res) {
+				std::cout << "--" << res << "--\n";
+				guard.reset();
+			});
 		}
 
 		// call(.)

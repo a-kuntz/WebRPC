@@ -1,7 +1,7 @@
-#include <webrpc/detail/fields_alloc.h>
-#include <webrpc/method/SystemListMethods.h>
 #include <webrpc/Parser.h>
 #include <webrpc/Server.h>
+#include <webrpc/detail/fields_alloc.h>
+#include <webrpc/method/SystemListMethods.h>
 
 #include <boost/asio.hpp>
 #include <boost/beast/core.hpp>
@@ -19,19 +19,20 @@
 #include <string>
 #include <vector>
 
-namespace ip = boost::asio::ip;         // from <boost/asio.hpp>
-using tcp = boost::asio::ip::tcp;       // from <boost/asio.hpp>
-namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
+namespace ip   = boost::asio::ip;	  // from <boost/asio.hpp>
+using tcp	  = boost::asio::ip::tcp; // from <boost/asio.hpp>
+namespace http = boost::beast::http;   // from <boost/beast/http.hpp>
 
 namespace detail
 {
-void replace_all(std::string& str, const std::string& from, const std::string& to) {
-	if(from.empty())
+void replace_all(std::string& str, const std::string& from, const std::string& to)
+{
+	if (from.empty())
 	{
 		return;
 	}
 	size_t start_pos = 0;
-	while((start_pos = str.find(from, start_pos)) != std::string::npos)
+	while ((start_pos = str.find(from, start_pos)) != std::string::npos)
 	{
 		str.replace(start_pos, from.length(), to);
 		start_pos += to.length();
@@ -48,7 +49,7 @@ std::string decode_url(const std::string& url)
 
 class HttpWorker
 {
-public:
+  public:
 	HttpWorker(HttpWorker const&) = delete;
 	HttpWorker& operator=(HttpWorker const&) = delete;
 
@@ -58,10 +59,10 @@ public:
 
 	void set_verbose(bool verbose);
 
-private:
+  private:
 	using alloc_t = fields_alloc<char>;
 
-	//using request_body_t = http::basic_dynamic_body<boost::beast::flat_static_buffer<1024 * 1024>>;
+	// using request_body_t = http::basic_dynamic_body<boost::beast::flat_static_buffer<1024 * 1024>>;
 	using request_body_t = http::string_body;
 
 	void accept();
@@ -95,9 +96,7 @@ private:
 
 	// The timer putting a time limit on requests.
 	boost::asio::basic_waitable_timer<std::chrono::steady_clock> request_deadline_{
-		_acceptor.get_executor().context(),
-		(std::chrono::steady_clock::time_point::max)()
-	};
+		_acceptor.get_executor().context(), (std::chrono::steady_clock::time_point::max)()};
 
 	// The string-based response message.
 	boost::optional<http::response<http::string_body, http::basic_fields<alloc_t>>> _string_response;
@@ -111,8 +110,8 @@ private:
 };
 
 HttpWorker::HttpWorker(tcp::acceptor& acceptor, Registry& registry)
-: _acceptor(acceptor)
-, _registry(registry)
+	: _acceptor(acceptor)
+	, _registry(registry)
 {}
 
 void HttpWorker::start()
@@ -133,23 +132,19 @@ void HttpWorker::accept()
 	_socket.close(ec);
 	_buffer.consume(_buffer.size());
 
-	_acceptor.async_accept(
-		_socket,
-		[this](boost::beast::error_code ec)
+	_acceptor.async_accept(_socket, [this](boost::beast::error_code ec) {
+		if (ec)
 		{
-			if (ec)
-			{
-				accept();
-			}
-			else
-			{
-				// Request must be fully processed within 60 seconds.
-				request_deadline_.expires_after(
-					std::chrono::seconds(60));
+			accept();
+		}
+		else
+		{
+			// Request must be fully processed within 60 seconds.
+			request_deadline_.expires_after(std::chrono::seconds(60));
 
-				read_request();
-			}
-		});
+			read_request();
+		}
+	});
 }
 
 void HttpWorker::read_request()
@@ -165,29 +160,21 @@ void HttpWorker::read_request()
 	// We construct the dynamic body with a 1MB limit
 	// to prevent vulnerability to buffer attacks.
 	//
-	_parser.emplace(
-		std::piecewise_construct,
-		std::make_tuple(),
-		std::make_tuple(_alloc));
+	_parser.emplace(std::piecewise_construct, std::make_tuple(), std::make_tuple(_alloc));
 
-	http::async_read(
-		_socket,
-		_buffer,
-		*_parser,
-		[this](boost::beast::error_code ec, std::size_t)
-		{
-			if (ec)
-				accept();
-			else
-				process_request(_parser->get());
-		});
+	http::async_read(_socket, _buffer, *_parser, [this](boost::beast::error_code ec, std::size_t) {
+		if (ec)
+			accept();
+		else
+			process_request(_parser->get());
+	});
 }
 
 void HttpWorker::process_request(http::request<request_body_t, http::basic_fields<alloc_t>> const& req)
 {
 	if (_verbose)
 	{
-		std::cout << req/* << std::endl*/;
+		std::cout << req /* << std::endl*/;
 	}
 
 	switch (req.method())
@@ -200,8 +187,7 @@ void HttpWorker::process_request(http::request<request_body_t, http::basic_field
 		// We return responses indicating an error if
 		// we do not recognize the request method.
 		send_bad_response(
-			http::status::bad_request,
-			"Invalid request-method '" + req.method_string().to_string() + "'\r\n");
+			http::status::bad_request, "Invalid request-method '" + req.method_string().to_string() + "'\r\n");
 		break;
 	}
 }
@@ -212,32 +198,28 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 
 	if (!target)
 	{
-		send_bad_response(
-			http::status::bad_request,
-			"Invalid webrpc request '" + trg.to_string() + "'\r\n"
-		);
+		send_bad_response(http::status::bad_request, "Invalid webrpc request '" + trg.to_string() + "'\r\n");
 	}
 
 	const auto method = _registry.find(target->method);
 
 	if (method == _registry.end())
 	{
-		send_bad_response(
-			http::status::bad_request,
-			"Invalid webrpc request '" + trg.to_string() + "'\r\n"
-		);
+		send_bad_response(http::status::bad_request, "Invalid webrpc request '" + trg.to_string() + "'\r\n");
 	}
 
 	try
 	{
 		const auto oval = target->args ? Parser::parse_value(*target->args) : boost::none;
-//			const auto oval = Parser::parse_value(target->args.value_or("")); // todo: enable when parsing empty strings is supported
-		const auto ores = method->second->execute(oval);
+		//			const auto oval = Parser::parse_value(target->args.value_or("")); // todo: enable when parsing empty
+		// strings is supported
+		const auto ores   = method->second->execute(oval);
 		const auto result = ores.value_or(null_t{}).to_string();
 
 		if (!_verbose)
 		{
-			std::cout << "exec: " << method->first << "(" << target->args << ")" << " => " << result << std::endl;
+			std::cout << "exec: " << method->first << "(" << target->args << ")"
+					  << " => " << result << std::endl;
 		}
 
 		send_message(result);
@@ -245,21 +227,13 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 	catch (const std::exception& e)
 	{
 		std::cout << "caught exception: " << e.what() << std::endl;
-		send_bad_response(
-			http::status::bad_request,
-			"Invalid webrpc request '" + std::string(e.what()) + "'\r\n"
-		);
+		send_bad_response(http::status::bad_request, "Invalid webrpc request '" + std::string(e.what()) + "'\r\n");
 	}
 }
 
-void HttpWorker::send_bad_response(
-	http::status status,
-	std::string const& error)
+void HttpWorker::send_bad_response(http::status status, std::string const& error)
 {
-	_string_response.emplace(
-		std::piecewise_construct,
-		std::make_tuple(),
-		std::make_tuple(_alloc));
+	_string_response.emplace(std::piecewise_construct, std::make_tuple(), std::make_tuple(_alloc));
 
 	_string_response->result(status);
 	_string_response->keep_alive(false);
@@ -270,29 +244,22 @@ void HttpWorker::send_bad_response(
 
 	if (_verbose)
 	{
-		std::cout << _string_response/* << std::endl*/;
+		std::cout << _string_response /* << std::endl*/;
 	}
 
 	_string_serializer.emplace(*_string_response);
 
-	http::async_write(
-		_socket,
-		*_string_serializer,
-		[this](boost::beast::error_code ec, std::size_t)
-		{
-			_socket.shutdown(tcp::socket::shutdown_send, ec);
-			_string_serializer.reset();
-			_string_response.reset();
-			accept();
-		});
+	http::async_write(_socket, *_string_serializer, [this](boost::beast::error_code ec, std::size_t) {
+		_socket.shutdown(tcp::socket::shutdown_send, ec);
+		_string_serializer.reset();
+		_string_response.reset();
+		accept();
+	});
 }
 
 void HttpWorker::send_message(boost::beast::string_view message)
 {
-	_string_response.emplace(
-		std::piecewise_construct,
-		std::make_tuple(),
-		std::make_tuple(_alloc));
+	_string_response.emplace(std::piecewise_construct, std::make_tuple(), std::make_tuple(_alloc));
 
 	_string_response->result(http::status::ok);
 	_string_response->keep_alive(false);
@@ -308,16 +275,12 @@ void HttpWorker::send_message(boost::beast::string_view message)
 
 	_string_serializer.emplace(*_string_response);
 
-	http::async_write(
-		_socket,
-		*_string_serializer,
-		[this](boost::beast::error_code ec, std::size_t)
-		{
-			_socket.shutdown(tcp::socket::shutdown_send, ec);
-			_string_serializer.reset();
-			_string_response.reset();
-			accept();
-		});
+	http::async_write(_socket, *_string_serializer, [this](boost::beast::error_code ec, std::size_t) {
+		_socket.shutdown(tcp::socket::shutdown_send, ec);
+		_string_serializer.reset();
+		_string_response.reset();
+		accept();
+	});
 }
 
 void HttpWorker::check_deadline()
@@ -330,22 +293,17 @@ void HttpWorker::check_deadline()
 		_socket.close();
 
 		// Sleep indefinitely until we're given a new deadline.
-		request_deadline_.expires_at(
-			std::chrono::steady_clock::time_point::max());
+		request_deadline_.expires_at(std::chrono::steady_clock::time_point::max());
 	}
 
-	request_deadline_.async_wait(
-		[this](boost::beast::error_code)
-		{
-			check_deadline();
-		});
+	request_deadline_.async_wait([this](boost::beast::error_code) { check_deadline(); });
 }
 
-} // ns detail
+} // namespace detail
 
 Server::Server(const boost::asio::ip::tcp::endpoint endpoint, int num_workers)
-: _endpoint{endpoint}
-, _num_workers{num_workers}
+	: _endpoint{endpoint}
+	, _num_workers{num_workers}
 {
 	register_method(std::make_unique<method::SystemListMethods>(_registry));
 }
@@ -359,7 +317,7 @@ void Server::run()
 {
 	// todo: check how to handle io_context in boost asio application
 	boost::asio::io_context ioc{1};
-	tcp::acceptor acceptor{ioc, _endpoint};
+	tcp::acceptor			acceptor{ioc, _endpoint};
 
 	std::list<detail::HttpWorker> workers;
 	for (int i = 0; i < _num_workers; ++i)
@@ -376,4 +334,3 @@ void Server::set_verbose(bool verbose)
 {
 	_verbose = verbose;
 }
-

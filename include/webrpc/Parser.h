@@ -16,5 +16,5 @@ boost::optional<Target> parse_target(const std::string& str);
 
 boost::optional<value_t> parse_value(const std::string& str);
 
-} // ns Parser
+} // namespace Parser
 #endif
