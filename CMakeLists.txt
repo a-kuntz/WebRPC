@@ -4,12 +4,14 @@ project(WebRPC)
 
 ## dependencies ###############################################################
 
-# set(BOOST_ROOT "${CMAKE_SOURCE_DIR}/deps/boost_1_69_0")
-set(Boost_USE_STATIC_LIBS ON)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+set(BOOST_ROOT ${CONAN_BOOST_ROOT})
+set(GTEST_ROOT ${CONAN_GTEST_ROOT})
+
 find_package(Boost COMPONENTS program_options filesystem REQUIRED)
 find_package(Threads REQUIRED)
 
-# set(GTEST_ROOT "${CMAKE_SOURCE_DIR}/deps/googletest-release-1.8.1/build")
 enable_testing()
 find_package(GTest REQUIRED)
 

@@ -37,8 +37,15 @@ Introspection allows to list the available methods of a server
 
     git clone https://github.com/a-kuntz/WebRPC.git
     cd WebRPC
-    cmake -Bbuild -H.
-    make -C build all test
+
+    mkdir -p build
+    cd build
+
+    conan install ..
+    cmake ..
+    make all test
+
+    cd -
 
 ## Dependencies
 
@@ -53,24 +60,12 @@ The productive code of the library depends only on Boost libraries. WebRPC unit 
   - Boost.Program_options
 - GTest (v. 1.8.1) - for unit tests
 
-### Tools
+### Build Tools
 
-WebRPC is build using cmake. It compiles and is tested on the following platforms and compilers:
+WebRPC is build using `cmake`. Dependencies are managed by `conan`. WebRPC compiles and is tested on the following platforms and compilers:
 
 | OS            | Compiler           |
 | ------------- | ------------------ |
 | Ubuntu 18.04  | gcc                |
 | macOS 10.13.x | clang-1000.11.45.5 |
 
-## Building WebRPC and all its dependencies from scratch
-
-In case your system does not provide `boost` and `gtest` in the required versions, you can download the sources from the web and use the setup scripts `scripts/setup_boost.sh` and `scripts/setup_gtest.sh` to unpack and install the sources to folder `./deps` of your WebRPC working copy.
-
-To compile WebRPC set `BOOST_ROOT` and `GTEST_ROOT` when invoking cmake. There is also a convenience script `scripts/build.sh`.
-
-    cmake -Bbuild -H. \
-      -DBOOST_ROOT=../deps/boost_1_69_0 \
-      -DGTEST_ROOT=../deps/googletest-release-1.8.1/build \
-      -DCMAKE_BUILD_TYPE=debug \
-      -DCMAKE_INSTALL_PREFIX=.
-    make -C build all test
