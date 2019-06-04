@@ -3,3 +3,7 @@ build-*
 .vscode
 CMakeLists.txt.user
 deps
+WebRPC.config
+WebRPC.creator
+WebRPC.files
+WebRPC.includes

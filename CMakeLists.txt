@@ -161,3 +161,20 @@ add_custom_command(
 add_custom_target(beautify
 	DEPENDS clang-format
 )
+
+set(FIND_OPTS -path ./deps -prune -o -path ./build -prune -o)
+
+add_custom_command(
+	OUTPUT creator
+	COMMAND echo "[General]" > ${CMAKE_PROJECT_NAME}.creator
+	COMMAND touch ${CMAKE_PROJECT_NAME}.config
+	COMMAND echo "./include" > ${CMAKE_PROJECT_NAME}.includes
+	COMMAND echo "${BOOST_ROOT}/include" >> ${CMAKE_PROJECT_NAME}.includes
+	COMMAND echo "${GTEST_ROOT}/include" >> ${CMAKE_PROJECT_NAME}.includes
+	COMMAND find . ${FIND_OPTS} -name *.cpp -o -name *.h -o -name CMakeLists.txt > ${CMAKE_PROJECT_NAME}.files
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
+add_custom_target(qtcreator
+	DEPENDS creator
+)
