@@ -9,6 +9,7 @@ DEPS_DIR=${SCRIPT_DIR}/../deps
 
 # ARCHIVE=~/Downloads/boost_1_68_0.tar.gz
 ARCHIVE=~/Downloads/boost_1_69_0.tar.gz
+# ARCHIVE=~/Downloads/boost_1_70_0.tar.gz
 LIB_ROOT=$(basename ${ARCHIVE} .tar.gz)
 
 pushd .
