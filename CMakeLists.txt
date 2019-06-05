@@ -4,10 +4,12 @@ project(WebRPC)
 
 ## dependencies ###############################################################
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-set(BOOST_ROOT ${CONAN_BOOST_ROOT})
-set(GTEST_ROOT ${CONAN_GTEST_ROOT})
+if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+	include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+	conan_basic_setup()
+	set(BOOST_ROOT ${CONAN_BOOST_ROOT})
+	set(GTEST_ROOT ${CONAN_GTEST_ROOT})
+endif()
 
 find_package(Boost COMPONENTS program_options filesystem REQUIRED)
 find_package(Threads REQUIRED)
