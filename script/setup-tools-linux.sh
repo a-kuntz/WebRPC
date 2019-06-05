@@ -8,5 +8,7 @@ set -x
 
 sudo apt install -y \
 	cmake \
-	conan \
+	python-pip \
 	clang-format
+
+sudo pip install conan
