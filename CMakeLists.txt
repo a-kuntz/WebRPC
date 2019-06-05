@@ -4,12 +4,21 @@ project(WebRPC)
 
 ## dependencies ###############################################################
 
-if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+option(USE_CONAN "use conan to install dependencies" ON)
+message(STATUS "option: USE_CONAN=${USE_CONAN}")
+
+if(USE_CONAN STREQUAL ON)
+	execute_process(
+		COMMAND conan install ..
+		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+	)
+
 	include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 	conan_basic_setup()
 	set(BOOST_ROOT ${CONAN_BOOST_ROOT})
 	set(GTEST_ROOT ${CONAN_GTEST_ROOT})
 endif()
+
 
 find_package(Boost COMPONENTS program_options filesystem REQUIRED)
 find_package(Threads REQUIRED)

@@ -6,15 +6,8 @@ set -x
 
 BUILD_DIR=build
 
-mkdir -p ${BUILD_DIR}
-cd ${BUILD_DIR}
-
-conan install ..
-
-cmake .. \
+cmake -B${BUILD_DIR} -H. \
 	-DCMAKE_BUILD_TYPE=debug \
 	-DCMAKE_INSTALL_PREFIX=.
 
-CTEST_OUTPUT_ON_FAILURE=1 make all test
-
-cd -
+CTEST_OUTPUT_ON_FAILURE=1 make -C ${BUILD_DIR} all test

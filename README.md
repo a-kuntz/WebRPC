@@ -38,14 +38,8 @@ Introspection allows to list the available methods of a server
     git clone https://github.com/a-kuntz/WebRPC.git
     cd WebRPC
 
-    mkdir -p build
-    cd build
-
-    conan install ..
-    cmake ..
-    make all test
-
-    cd -
+    cmake -Bbuild -H.
+    make -C build all test
 
 ## Dependencies
 
@@ -62,7 +56,7 @@ The productive code of the library depends only on Boost libraries. WebRPC unit 
 
 ### Build Tools
 
-WebRPC is build using `cmake`. Dependencies are managed by `conan`. WebRPC compiles and is tested on the following platforms and compilers:
+WebRPC is build using `cmake`. Dependencies are managed by `conan` and are installed automatically at cmake configure time. WebRPC compiles and is tested on the following platforms and compilers:
 
 | OS            | Compiler           |
 | ------------- | ------------------ |
