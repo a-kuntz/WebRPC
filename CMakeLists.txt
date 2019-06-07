@@ -4,27 +4,23 @@ project(WebRPC)
 
 ## dependencies ###############################################################
 
-option(USE_CONAN "use conan to install dependencies" ON)
-message(STATUS "option: USE_CONAN=${USE_CONAN}")
+execute_process(
+	COMMAND conan install ..
+	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
 
-if(USE_CONAN STREQUAL ON)
-	execute_process(
-		COMMAND conan install ..
-		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-	)
-
-	include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-	conan_basic_setup()
-	set(BOOST_ROOT ${CONAN_BOOST_ROOT})
-	set(GTEST_ROOT ${CONAN_GTEST_ROOT})
+set(CONAN_BUILDINFO ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+if(NOT EXISTS ${CONAN_BUILDINFO})
+	message(FATAL "${CONAN_BUILDINFO} missing. Probably conan install failed")
 endif()
 
-
-find_package(Boost COMPONENTS program_options filesystem REQUIRED)
-find_package(Threads REQUIRED)
+include(${CONAN_BUILDINFO})
+conan_basic_setup(TARGETS)
+# CONAN_PKG::boost
+# CONAN_LIB::<package_name>_<library_name>
+# CONAN_LIB::boost_boost_program_options
 
 enable_testing()
-find_package(GTest REQUIRED)
 
 ## global settings ############################################################
 
@@ -77,7 +73,7 @@ add_library(webrpcdata
 	src/Value.cpp
 )
 
-target_link_libraries(webrpcdata PUBLIC Boost::boost)
+target_link_libraries(webrpcdata PUBLIC CONAN_PKG::boost)
 
 target_include_directories(webrpcdata PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
@@ -89,7 +85,7 @@ add_library(webrpcclient
 	src/Client.cpp
 )
 
-target_link_libraries(webrpcclient Boost::boost Threads::Threads webrpcdata)
+target_link_libraries(webrpcclient CONAN_PKG::boost webrpcdata)
 
 target_include_directories(webrpcclient PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
@@ -102,7 +98,7 @@ add_library(webrpcserver
 	src/Server.cpp
 )
 
-target_link_libraries(webrpcserver PUBLIC webrpcdata Boost::boost Threads::Threads)
+target_link_libraries(webrpcserver PUBLIC webrpcdata CONAN_PKG::boost)
 
 target_include_directories(webrpcserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
@@ -120,7 +116,7 @@ add_executable(sampleserver
 	examples/SampleServer.cpp
 )
 
-target_link_libraries(sampleserver PRIVATE webrpcserver Boost::boost Boost::program_options Threads::Threads)
+target_link_libraries(sampleserver PRIVATE webrpcserver CONAN_PKG::boost)
 
 target_compile_features(sampleserver PRIVATE cxx_std_14)
 
@@ -130,7 +126,7 @@ add_executable(sampleclient
 	examples/SampleClient.cpp
 )
 
-target_link_libraries(sampleclient PRIVATE webrpcclient Boost::boost Boost::program_options Threads::Threads)
+target_link_libraries(sampleclient PRIVATE webrpcclient CONAN_PKG::boost)
 
 target_compile_features(sampleclient PRIVATE cxx_std_14)
 
@@ -148,7 +144,7 @@ add_executable(parsertest
 	test/ParserTest.cpp
 )
 
-target_link_libraries(parsertest PRIVATE webrpcdata GTest::GTest GTest::Main Boost::boost)
+target_link_libraries(parsertest PRIVATE webrpcdata CONAN_PKG::gtest CONAN_PKG::boost)
 
 target_compile_features(parsertest PRIVATE cxx_variadic_macros)
 
@@ -182,8 +178,8 @@ add_custom_command(
 	COMMAND echo "[General]" > ${CMAKE_PROJECT_NAME}.creator
 	COMMAND touch ${CMAKE_PROJECT_NAME}.config
 	COMMAND echo "./include" > ${CMAKE_PROJECT_NAME}.includes
-	COMMAND echo "${BOOST_ROOT}/include" >> ${CMAKE_PROJECT_NAME}.includes
-	COMMAND echo "${GTEST_ROOT}/include" >> ${CMAKE_PROJECT_NAME}.includes
+	COMMAND echo "${CONAN_BOOST_ROOT}/include" >> ${CMAKE_PROJECT_NAME}.includes
+	COMMAND echo "${CONAN_GTEST_ROOT}/include" >> ${CMAKE_PROJECT_NAME}.includes
 	COMMAND find . ${FIND_OPTS} -name *.cpp -o -name *.h -o -name CMakeLists.txt > ${CMAKE_PROJECT_NAME}.files
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )

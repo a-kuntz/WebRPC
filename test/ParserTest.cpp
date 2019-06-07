@@ -8,15 +8,15 @@
 
 using namespace boost::spirit;
 
-TEST(BoostSpirit, basic)
-{
-	auto g = +qi::char_("A-Za-z._-") >> '/' >> +qi::char_("0-9a-zA-Z._-");
+// TEST(BoostSpirit, basic)
+// {
+// 	auto g = +qi::char_("A-Za-z._-") >> '/' >> +qi::char_("0-9a-zA-Z._-");
 
-	for (const std::string input : {"abc-def_ghi.jkl/4", "abc/5"})
-	{
-		EXPECT_EQ(true, qi::phrase_parse(input.begin(), input.end(), g, ascii::space)) << "input: " << input;
-	}
-}
+// 	for (const std::string input : {"abc-def_ghi.jkl/4", "abc/5"})
+// 	{
+// 		EXPECT_EQ(true, qi::phrase_parse(input.begin(), input.end(), g, ascii::space)) << "input: " << input;
+// 	}
+// }
 
 void check(const std::string& in, const value_t::type_info type = value_t::type_info::null_type)
 {
