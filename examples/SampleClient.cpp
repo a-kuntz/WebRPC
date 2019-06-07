@@ -59,9 +59,7 @@ int main(int argc, char** argv)
 				  << "URI example:\n"
 				  << "    http://localhost:8080/system.list_methods\n"
 				  << "\n"
-				  << "WebRPC Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "."
-				  << WEBRPC_VERSION_PATCH << " (" << GIT_BRANCH << " @ " << GIT_COMMIT_HASH << " "
-				  << (GIT_WORKING_COPY_MODIFIED ? "+" : "") << ")" << std::endl;
+				  << "WebRPC Version: " << WEBRPC_VERSION_STRING << std::endl;
 		return EXIT_SUCCESS;
 	}
 
@@ -75,14 +73,14 @@ int main(int argc, char** argv)
 		//		if (false)
 		{
 			c.async_call(uri, [](const std::string& res) { std::cout << "--" << res << "--\n"; });
-			c.async_call(uri, [](const std::string& res) { std::cout << "--" << res << "--\n"; });
+			// c.async_call(uri, [](const std::string& res) { std::cout << "--" << res << "--\n"; });
 			ioc.run();
 		}
 
 		if (false)
 		{
 			c.async_call(uri, [](const std::string& res) { std::cout << "--" << res << "--\n"; });
-			c.async_call(uri, [](const std::string& res) { std::cout << "--" << res << "--\n"; });
+			// c.async_call(uri, [](const std::string& res) { std::cout << "--" << res << "--\n"; });
 			std::thread t([&]() { ioc.run(); });
 			t.join();
 		}
@@ -95,10 +93,10 @@ int main(int argc, char** argv)
 				std::cout << "--" << res << "--\n";
 				guard.reset();
 			});
-			c.async_call(uri, [&](const std::string& res) {
-				std::cout << "--" << res << "--\n";
-				guard.reset();
-			});
+			// c.async_call(uri, [&](const std::string& res) {
+			// 	std::cout << "--" << res << "--\n";
+			// 	guard.reset();
+			// });
 			t.join();
 		}
 
@@ -109,17 +107,17 @@ int main(int argc, char** argv)
 				std::cout << "--" << res << "--\n";
 				guard.reset();
 			});
-			c.async_call(uri, [&](const std::string& res) {
-				std::cout << "--" << res << "--\n";
-				guard.reset();
-			});
+			// c.async_call(uri, [&](const std::string& res) {
+			// 	std::cout << "--" << res << "--\n";
+			// 	guard.reset();
+			// });
 		}
 
 		// call(.)
 		if (false)
 		{
 			std::cout << "==" << c.call(uri) << "==\n";
-			std::cout << "==" << c.call(uri) << "==\n";
+			// std::cout << "==" << c.call(uri) << "==\n";
 		}
 
 		return EXIT_SUCCESS;

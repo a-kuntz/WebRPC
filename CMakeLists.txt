@@ -30,31 +30,15 @@ set(WEBRPC_VERSION_MAJOR 0)
 set(WEBRPC_VERSION_MINOR 0)
 set(WEBRPC_VERSION_PATCH 1)
 
-# Get the current working branch
+# get version string from tag
 execute_process(
-	COMMAND git rev-parse --abbrev-ref HEAD
+	COMMAND git describe --tags --always
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	OUTPUT_VARIABLE GIT_BRANCH
+	OUTPUT_VARIABLE WEBRPC_VERSION_STRING
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# Get the latest abbreviated commit hash of the working branch
-execute_process(
-	COMMAND git log -1 --format=%H
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	OUTPUT_VARIABLE GIT_COMMIT_HASH
-	OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-# Get working copy state: 0=clean 1=modified
-execute_process(
-	COMMAND git diff-index --quiet HEAD --
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	RESULT_VARIABLE GIT_WORKING_COPY_MODIFIED
-)
-
-
-message("--- GIT_COMMIT_HASH=${GIT_COMMIT_HASH} GIT_BRANCH=${GIT_BRANCH} GIT_WORKING_COPY_MODIFIED=${GIT_WORKING_COPY_MODIFIED}")
+message(STATUS WEBRPC_VERSION_STRING=${WEBRPC_VERSION_STRING})
 
 configure_file (
 	${PROJECT_SOURCE_DIR}/include/webrpc/Version.h.in

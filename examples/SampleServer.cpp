@@ -175,9 +175,7 @@ int main(int argc, char** argv)
 		std::cout << "sampleserver [options]\n"
 				  << "\n"
 				  << desc << "\n"
-				  << "WebRPC Version: " << WEBRPC_VERSION_MAJOR << "." << WEBRPC_VERSION_MINOR << "."
-				  << WEBRPC_VERSION_PATCH << " (" << GIT_BRANCH << " @ " << GIT_COMMIT_HASH << " "
-				  << (GIT_WORKING_COPY_MODIFIED ? "+" : "") << ")" << std::endl;
+				  << "WebRPC Version: " << WEBRPC_VERSION_STRING << std::endl;
 		return EXIT_SUCCESS;
 	}
 
