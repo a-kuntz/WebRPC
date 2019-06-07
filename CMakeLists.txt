@@ -26,10 +26,6 @@ enable_testing()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(WEBRPC_VERSION_MAJOR 0)
-set(WEBRPC_VERSION_MINOR 0)
-set(WEBRPC_VERSION_PATCH 1)
-
 # get version string from tag
 execute_process(
 	COMMAND git describe --tags --always
