@@ -1,6 +1,0 @@
-[requires]
-boost/1.69.0@conan/stable
-gtest/1.8.1@bincrafters/stable
-
-[generators]
-cmake

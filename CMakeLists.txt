@@ -4,25 +4,30 @@ project(WebRPC)
 
 ## dependencies ###############################################################
 
-execute_process(
-	COMMAND conan install ..
-	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-)
-
-set(CONAN_BUILDINFO ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-if(NOT EXISTS ${CONAN_BUILDINFO})
-	message(FATAL "${CONAN_BUILDINFO} missing. Probably conan install failed")
-endif()
-
-include(${CONAN_BUILDINFO})
-conan_basic_setup(TARGETS)
+## conan target structure
 # CONAN_PKG::boost
 # CONAN_LIB::<package_name>_<library_name>
 # CONAN_LIB::boost_boost_program_options
 
-enable_testing()
+# Download automatically, you can also just copy the conan.cmake file
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+   message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+   file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake"
+                 "${CMAKE_BINARY_DIR}/conan.cmake")
+endif()
+
+include(${CMAKE_BINARY_DIR}/conan.cmake)
+
+conan_cmake_run(REQUIRES
+		boost/1.69.0@conan/stable
+		gtest/1.8.1@bincrafters/stable
+	BASIC_SETUP CMAKE_TARGETS
+	BUILD missing
+)
 
 ## global settings ############################################################
+
+enable_testing()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
