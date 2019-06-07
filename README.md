@@ -47,11 +47,12 @@ Introspection allows to list the available methods of a server
 
 The productive code of the library depends only on Boost libraries. WebRPC unit tests depend on Google Test. Thus WebRPC is lightweight in terms of library dependencies.
 
-- Boost (v 1.69.0)
-  - Boost.Spirit X3
+- Boost (v. 1.69.0)
   - Boost.Asio
+  - Boost.Beast
   - Boost.Filesystem
   - Boost.Program_options
+  - Boost.Spirit X3
 - GTest (v. 1.8.1) - for unit tests
 
 ### Build Tools
