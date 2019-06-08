@@ -42,98 +42,24 @@ execute_process(
 message(STATUS WEBRPC_VERSION_STRING=${WEBRPC_VERSION_STRING})
 
 configure_file (
-	${PROJECT_SOURCE_DIR}/include/webrpc/Version.h.in
-	${PROJECT_BINARY_DIR}/include/webrpc/Version.h
+	${PROJECT_SOURCE_DIR}/lib/include/webrpc/Version.h.in
+	${PROJECT_BINARY_DIR}/lib/include/webrpc/Version.h
 )
+include_directories(${PROJECT_BINARY_DIR}/lib/include)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/include)
 
 add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable -fvisibility=hidden)
 #add_compile_options(-g -fsanitize=address -fno-omit-frame-pointer)
 #add_compile_definitions()
-include_directories(${PROJECT_BINARY_DIR}/include)
 
-## Webrpc::webrpcdata #########################################################
+## sources ####################################################################
 
-add_library(webrpcdata
-	src/Parser.cpp
-	src/Value.cpp
-)
+add_subdirectory(lib)
+add_subdirectory(examples)
+add_subdirectory(test)
 
-target_link_libraries(webrpcdata PUBLIC CONAN_PKG::boost)
-
-target_include_directories(webrpcdata PUBLIC ${PROJECT_SOURCE_DIR}/include)
-
-target_compile_features(webrpcdata PUBLIC cxx_std_17)
-
-## Webrpc::webrpcclient #######################################################
-
-add_library(webrpcclient
-	src/Client.cpp
-)
-
-target_link_libraries(webrpcclient CONAN_PKG::boost webrpcdata)
-
-target_include_directories(webrpcclient PUBLIC ${PROJECT_SOURCE_DIR}/include)
-
-target_compile_features(webrpcclient PUBLIC cxx_std_17)
-
-## Webrpc::webrpcserver #######################################################
-
-add_library(webrpcserver
-	src/AbstractMethod.cpp
-	src/Server.cpp
-)
-
-target_link_libraries(webrpcserver PUBLIC webrpcdata CONAN_PKG::boost)
-
-target_include_directories(webrpcserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
-
-target_compile_features(webrpcserver
-	PUBLIC
-		cxx_deleted_functions
-	PRIVATE
-		cxx_nonstatic_member_init
-		cxx_std_14	# std::make_unique<.>()
-)
-
-## sample-server ##############################################################
-
-add_executable(sampleserver
-	examples/SampleServer.cpp
-)
-
-target_link_libraries(sampleserver PRIVATE webrpcserver CONAN_PKG::boost)
-
-target_compile_features(sampleserver PRIVATE cxx_std_14)
-
-## sample-client ##############################################################
-
-add_executable(sampleclient
-	examples/SampleClient.cpp
-)
-
-target_link_libraries(sampleclient PRIVATE webrpcclient CONAN_PKG::boost)
-
-target_compile_features(sampleclient PRIVATE cxx_std_14)
-
-## sample-parser ##############################################################
-
-add_executable(sampleparser
-	examples/SampleParser.cpp
-)
-
-target_link_libraries(sampleparser PRIVATE webrpcdata)
-
-## tests ######################################################################
-
-add_executable(parsertest
-	test/ParserTest.cpp
-)
-
-target_link_libraries(parsertest PRIVATE webrpcdata CONAN_PKG::gtest CONAN_PKG::boost)
-
-target_compile_features(parsertest PRIVATE cxx_variadic_macros)
-
-add_test(NAME parsertest COMMAND parsertest)
+## install targets ############################################################
 
 #install(TARGETS webrpcserver EXPORT webrpcserver-targets
 #	LIBRARY DESTINATION lib
@@ -147,6 +73,8 @@ add_test(NAME parsertest COMMAND parsertest)
 #	DESTINATION lib/cmake/Webrpc
 #)
 
+## clang-format ###############################################################
+
 add_custom_command(
 	OUTPUT clang-format
 	COMMAND find . -name *.cpp -o -name *.h | xargs clang-format -i
@@ -155,6 +83,8 @@ add_custom_command(
 add_custom_target(beautify
 	DEPENDS clang-format
 )
+
+## qtcreator ##################################################################
 
 set(FIND_OPTS -path ./deps -prune -o -path ./build -prune -o)
 
