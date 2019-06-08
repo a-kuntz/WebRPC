@@ -37,11 +37,12 @@ class IocThreadGuard
 int main(int argc, char** argv)
 {
 	std::string uri;
-	bool		verbose = false;
 
 	po::options_description desc("Options");
-	desc.add_options()("uri,u", po::value<std::string>(&uri)->value_name("URI"), "WebRPC uri")("verbose,v",
-		po::value<bool>(&verbose)->implicit_value(true), "verbose")("help,h", "print help message and exit");
+	desc.add_options()
+		("uri,u", po::value<std::string>(&uri)->value_name("URI"), "WebRPC uri")
+		("verbose,v", "verbose")
+		("help,h", "print help message and exit");
 
 	po::positional_options_description pos_desc;
 	pos_desc.add("uri", -1);
@@ -62,6 +63,8 @@ int main(int argc, char** argv)
 				  << "WebRPC Version: " << WEBRPC_VERSION_STRING << std::endl;
 		return EXIT_SUCCESS;
 	}
+
+	bool verbose = vm.count("verbose") > 0;
 
 	try
 	{

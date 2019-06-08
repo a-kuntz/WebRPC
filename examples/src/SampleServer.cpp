@@ -155,15 +155,15 @@ struct GetSetValue : public AbstractMethod
 
 int main(int argc, char** argv)
 {
-	std::string	host_name{"127.0.0.1"};
-	unsigned short port{8080};
-	bool		   verbose = false;
+	std::string    host_name;
+	unsigned short port;
 
 	po::options_description desc("Options");
-	desc.add_options()("host,h", po::value<std::string>(&host_name)->value_name("HOST")->default_value("127.0.0.1"),
-		"host name or ip address to bind to")(
-		"port,p", po::value<unsigned short>(&port)->value_name("PORT")->default_value(8080), "port number")(
-		"verbose,v", po::value<bool>(&verbose)->implicit_value(true), "verbose")("help", "print help message and exit");
+	desc.add_options()
+		("host,h", po::value<std::string>(&host_name)->value_name("HOST")->default_value("127.0.0.1"), "host name or ip address to bind to")
+		("port,p", po::value<unsigned short>(&port)->value_name("PORT")->default_value(8080), "port number")
+		("verbose,v", "verbose")
+		("help", "print help message and exit");
 
 	// parse and compare for required options
 	po::variables_map vm;
@@ -178,6 +178,8 @@ int main(int argc, char** argv)
 				  << "WebRPC Version: " << WEBRPC_VERSION_STRING << std::endl;
 		return EXIT_SUCCESS;
 	}
+
+	bool verbose = vm.count("verbose") >0;
 
 	try
 	{
