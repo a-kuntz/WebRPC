@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 	desc.add_options()
 		("async,a", "make asynchronous calls")
 		("uri,u", po::value(&uris), "WebRPC uri")
-		("verbose,v", "be verbose")
+		("verbose,v", "make verbose output")
 		("help,h", "print help message and exit");
 
 	auto pos_desc = po::positional_options_description{};
@@ -55,27 +55,27 @@ int main(int argc, char** argv)
 
 			std::thread t([&]() { ioc.run(); });
 
-			auto id = 0;
+			auto idx = 0;
 			for (const auto& uri: uris)
 			{
-				std::cout <<id << "< " << uri << std::endl;
-				c.async_call(uri, [&, id=id](const std::string& res) {
-					std::cout << id << "> " << res << "\n";
+				std::cout <<idx << "< " << uri << std::endl;
+				c.async_call(uri, [&, idx=idx](const std::string& res) {
+					std::cout << idx << "> " << res << "\n";
 					guard.reset();
 				});
-				++id;
+				++idx;
 			}
 			t.join();
 		}
 		else
 		{ // make synchronous call(s)
 
-			auto id = 0;
+			auto idx = 0;
 			for (const auto& uri: uris)
 			{
-				std::cout << id << "< "<< uri << std::endl;
-				std::cout << id << "> "<< c.call(uri) << std::endl;
-				++id;
+				std::cout << idx << "< "<< uri << std::endl;
+				std::cout << idx << "> "<< c.call(uri) << std::endl;
+				++idx;
 			}
 		}
 
