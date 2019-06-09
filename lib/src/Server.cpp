@@ -218,8 +218,9 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 
 		if (!_verbose)
 		{
-			std::cout << "exec: " << method->first << "(" << target->args << ")"
-					  << " => " << result << std::endl;
+			static auto idx = 0;
+			std::cout << idx << "> " << trg << std::endl << idx << "< " << result << std::endl;
+			++idx;
 		}
 
 		send_message(result);
