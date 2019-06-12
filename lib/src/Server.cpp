@@ -6,7 +6,7 @@
 #include <boost/asio.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
-#include <boost/beast/version.hpp>
+// #include <boost/beast/version.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/optional/optional_io.hpp>
 
@@ -89,7 +89,7 @@ class HttpWorker
 	boost::beast::flat_static_buffer<8192> _buffer;
 
 	// The allocator used for the fields in the request and reply.
-	alloc_t _alloc{8192};
+	alloc_t _alloc{8*8192};
 
 	// The parser for reading the requests
 	boost::optional<http::request_parser<request_body_t, alloc_t>> _parser;
@@ -194,41 +194,46 @@ void HttpWorker::process_request(http::request<request_body_t, http::basic_field
 
 void HttpWorker::process_target(const boost::beast::string_view trg)
 {
-	const auto target = Parser::parse_target(std::string(trg));
+	// remove leading '/' if present
+	const auto trg_str = (trg[0] == '/' ? std::string(std::string{trg}, 1) : std::string{trg});
+	std::cout << "trg_str: " << trg_str << std::endl;
+	const auto target = Parser::parse_target(std::string(trg_str));
 
 	if (!target)
 	{
 		send_bad_response(http::status::bad_request, "Invalid webrpc request '" + trg.to_string() + "'\r\n");
 	}
-
-	const auto method = _registry.find(target->method);
-
-	if (method == _registry.end())
+	else
 	{
-		send_bad_response(http::status::bad_request, "Invalid webrpc request '" + trg.to_string() + "'\r\n");
-	}
+		const auto method = _registry.find(target->method);
 
-	try
-	{
-		const auto oval = target->args ? Parser::parse_value(*target->args) : boost::none;
-		//			const auto oval = Parser::parse_value(target->args.value_or("")); // todo: enable when parsing empty
-		// strings is supported
-		const auto ores   = method->second->execute(oval);
-		const auto result = ores.value_or(null_t{}).to_string();
-
-		if (!_verbose)
+		if (method == _registry.end())
 		{
-			static auto idx = 0;
-			std::cout << idx << "> " << trg << std::endl << idx << "< " << result << std::endl;
-			++idx;
+			send_bad_response(http::status::bad_request, "Invalid webrpc request '" + trg.to_string() + "'\r\n");
 		}
 
-		send_message(result);
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << "caught exception: " << e.what() << std::endl;
-		send_bad_response(http::status::bad_request, "Invalid webrpc request '" + std::string(e.what()) + "'\r\n");
+		try
+		{
+			const auto oval = target->args ? Parser::parse_value(*target->args) : boost::none;
+			//			const auto oval = Parser::parse_value(target->args.value_or("")); // todo: enable when parsing empty
+			// strings is supported
+			const auto ores   = method->second->execute(oval);
+			const auto result = ores.value_or(null_t{}).to_string();
+
+			if (!_verbose)
+			{
+				static auto idx = 0;
+				std::cout << idx << "> " << trg << std::endl << idx << "< " << result << std::endl;
+				++idx;
+			}
+
+			send_message(result);
+		}
+		catch (const std::exception& e)
+		{
+			std::cout << "caught exception: " << e.what() << std::endl;
+			send_bad_response(http::status::bad_request, "Invalid webrpc request '" + std::string(e.what()) + "'\r\n");
+		}
 	}
 }
 
