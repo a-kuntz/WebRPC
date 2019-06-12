@@ -4,6 +4,10 @@ project(WebRPC)
 
 ## dependencies ###############################################################
 
+if(NOT CMAKE_BUILD_TYPE)
+set(CMAKE_BUILD_TYPE debug)
+endif()
+
 ## conan target structure
 # CONAN_PKG::boost
 # CONAN_LIB::<package_name>_<library_name>
