@@ -32,12 +32,12 @@ TEST(ClientServer, Echo)
 
 	auto received_reply = false;
 	auto client = Client{ioc, false};
-	// client.async_call("http://127.0.0.1:8080/system.list_methods", [&](const std::string& res) {
-	// 	received_reply = true;
-	// 	// std::cout << res << std::endl;
-	// 	ASSERT_EQ("\"Echo\"", res);
-	// 	ioc.stop();
-	// });
+	client.async_call("http://127.0.0.1:8080/system.list_methods", [&](const std::string& res) {
+		received_reply = true;
+		// std::cout << res << std::endl;
+		ASSERT_EQ("[\"Echo\",\"system.list_methods\"]", res);
+		ioc.stop();
+	});
 
 	client.async_call("http://127.0.0.1:8080/Echo/Echo", [&](const std::string& res) {
 		received_reply = true;
