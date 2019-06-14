@@ -2,22 +2,20 @@ cmake_minimum_required(VERSION 3.10)
 
 project(WebRPC)
 
+## options ####################################################################
+
+option(WEBRPC_COVERAGE "enable coverage analysis" ON)
+message(STATUS WEBRPC_COVERAGE=${WEBRPC_COVERAGE})
+
 ## dependencies ###############################################################
 
 if(NOT CMAKE_BUILD_TYPE)
-set(CMAKE_BUILD_TYPE debug)
+	set(CMAKE_BUILD_TYPE debug)
 endif()
 
-## conan target structure
-# CONAN_PKG::boost
-# CONAN_LIB::<package_name>_<library_name>
-# CONAN_LIB::boost_boost_program_options
-
-# Download automatically, you can also just copy the conan.cmake file
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-   file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake"
-                 "${CMAKE_BINARY_DIR}/conan.cmake")
+   file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
@@ -54,6 +52,12 @@ include_directories(${PROJECT_BINARY_DIR}/lib/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/include)
 
 add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable -fvisibility=hidden)
+
+if(WEBRPC_COVERAGE)
+	add_compile_options(-g -O0 -fprofile-arcs -ftest-coverage)
+	add_link_options(-fprofile-arcs -ftest-coverage)
+endif()
+
 #add_compile_options(-g -fsanitize=address -fno-omit-frame-pointer)
 #add_compile_definitions()
 
