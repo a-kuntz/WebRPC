@@ -28,6 +28,7 @@ target_compile_features(webrpcclient PUBLIC cxx_std_17)
 add_library(webrpcserver
 	src/AbstractMethod.cpp
 	src/Server.cpp
+	src/detail/HttpWorker.cpp
 )
 
 target_link_libraries(webrpcserver PUBLIC webrpcdata CONAN_PKG::boost)

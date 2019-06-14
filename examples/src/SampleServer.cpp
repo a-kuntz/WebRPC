@@ -199,7 +199,9 @@ int main(int argc, char** argv)
 
 		method::SomeStruct globalValue;
 
-		Server server({host, port});
+		auto ioc = boost::asio::io_context{1};
+
+		Server server(ioc, {host, port});
 		server.set_verbose(verbose);
 		server.register_method(std::make_unique<method::Echo>());
 		server.register_method(std::make_unique<method::Revert>());
@@ -207,7 +209,8 @@ int main(int argc, char** argv)
 		server.register_method(std::make_unique<method::Sum>());
 		server.register_method(std::make_unique<method::DateTime>());
 		server.register_method(std::make_unique<method::GetSetValue>(globalValue));
-		server.run();
+		server.start();
+		ioc.run();
 
 		return EXIT_SUCCESS;
 	}
