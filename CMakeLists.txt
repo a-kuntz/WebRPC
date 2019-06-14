@@ -4,7 +4,7 @@ project(WebRPC)
 
 ## options ####################################################################
 
-option(WEBRPC_COVERAGE "enable coverage analysis" ON)
+option(WEBRPC_COVERAGE "enable coverage analysis" OFF)
 message(STATUS WEBRPC_COVERAGE=${WEBRPC_COVERAGE})
 
 ## dependencies ###############################################################
