@@ -4,8 +4,11 @@ project(WebRPC)
 
 ## options ####################################################################
 
-option(WEBRPC_COVERAGE "enable coverage analysis" OFF)
-message(STATUS WEBRPC_COVERAGE=${WEBRPC_COVERAGE})
+option(WEBRPC_USE_COVERAGE_ANALYSIS "enable coverage analysis" OFF)
+message(STATUS WEBRPC_USE_COVERAGE_ANALYSIS=${WEBRPC_USE_COVERAGE_ANALYSIS})
+
+option(WEBRPC_USE_ADDRESS_SANITIZER "enable address sanitizer" OFF)
+message(STATUS WEBRPC_USE_ADDRESS_SANITIZER=${WEBRPC_USE_ADDRESS_SANITIZER})
 
 ## dependencies ###############################################################
 
@@ -53,13 +56,15 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/include)
 
 add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable -fvisibility=hidden)
 
-if(WEBRPC_COVERAGE)
+if(WEBRPC_USE_COVERAGE_ANALYSIS)
 	add_compile_options(-g -O0 -fprofile-arcs -ftest-coverage)
 	add_link_options(-fprofile-arcs -ftest-coverage)
 endif()
 
-# add_compile_options(-g -fsanitize=address -fno-omit-frame-pointer)
-# add_link_options(-fsanitize=address -fno-omit-frame-pointer)
+if(WEBRPC_USE_ADDRESS_SANITIZER)
+	add_compile_options(-g -fsanitize=address -fno-omit-frame-pointer)
+	add_link_options(-fsanitize=address -fno-omit-frame-pointer)
+endif()
 
 ## sources ####################################################################
 
