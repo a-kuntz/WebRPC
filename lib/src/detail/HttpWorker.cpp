@@ -114,8 +114,7 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 {
 	// remove leading '/' if present
 	const auto trg_str = (trg[0] == '/' ? std::string(std::string{trg}, 1) : std::string{trg});
-	std::cout << "trg_str: " << trg_str << std::endl;
-	const auto target = Parser::parse_target(std::string(trg_str));
+	const auto target = Parser::parse_target(decode_url(trg_str));
 
 	if (!target)
 	{
