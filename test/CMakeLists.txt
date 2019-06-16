@@ -11,8 +11,9 @@ target_compile_features(webrpctest PRIVATE cxx_variadic_macros)
 
 add_test(NAME webrpctest COMMAND webrpctest)
 
-if(WEBRPC_COVERAGE)
+if(WEBRPC_COVERAGE_ANALYSIS)
 add_custom_target(coverage
+    COMMAND find . -name *.gcda | xargs rm
     COMMAND ${CMAKE_MAKE_PROGRAM} test
     COMMAND lcov --capture --directory . --output-file coverage.info
     COMMAND genhtml coverage.info --output-directory coverage
