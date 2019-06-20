@@ -7,7 +7,11 @@ add_library(webrpcdata
 
 target_link_libraries(webrpcdata PUBLIC CONAN_PKG::boost)
 
-target_include_directories(webrpcdata PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(webrpcdata
+	PUBLIC
+		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+		$<INSTALL_INTERFACE:include/webrpc>
+)
 
 target_compile_features(webrpcdata PUBLIC cxx_std_17)
 
@@ -19,7 +23,11 @@ add_library(webrpcclient
 
 target_link_libraries(webrpcclient CONAN_PKG::boost webrpcdata)
 
-target_include_directories(webrpcclient PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(webrpcclient
+	PUBLIC
+		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+		$<INSTALL_INTERFACE:include/webrpc>
+)
 
 target_compile_features(webrpcclient PUBLIC cxx_std_17)
 
@@ -33,7 +41,11 @@ add_library(webrpcserver
 
 target_link_libraries(webrpcserver PUBLIC webrpcdata CONAN_PKG::boost)
 
-target_include_directories(webrpcserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(webrpcserver
+	PUBLIC
+		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+		$<INSTALL_INTERFACE:include/webrpc>
+)
 
 target_compile_features(webrpcserver
 	PUBLIC

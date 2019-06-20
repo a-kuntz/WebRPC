@@ -13,7 +13,7 @@ message(STATUS WEBRPC_ADDRESS_SANITIZER=${WEBRPC_ADDRESS_SANITIZER})
 ## dependencies ###############################################################
 
 if(NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE debug)
+	set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
@@ -74,17 +74,30 @@ add_subdirectory(test)
 
 ## install targets ############################################################
 
-#install(TARGETS webrpcserver EXPORT webrpcserver-targets
-#	LIBRARY DESTINATION lib
-#	ARCHIVE DESTINATION lib
-#	RUNTIME DESTINATION bin
-#	INCLUDES DESTINATION include
-#)
-#install(EXPORT webrpcserver-targets
-#	FILE webrpcserver-targets.cmake
-#	NAMESPACE Webrpc::
-#	DESTINATION lib/cmake/Webrpc
-#)
+# todo: install headers
+install(TARGETS webrpcdata webrpcclient webrpcserver
+	EXPORT WebRPCTargets
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
+	RUNTIME DESTINATION bin
+	INCLUDES DESTINATION include
+)
+
+install(EXPORT WebRPCTargets
+	FILE WebRPCTargets.cmake
+	NAMESPACE WebRPC::
+	DESTINATION lib/cmake/WebRPC
+)
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file("WebRPCConfigVersion.cmake"
+	VERSION ${WEBRPC_VERSION_STRING}
+	COMPATIBILITY SameMajorVersion
+)
+
+install(FILES "WebRPCConfig.cmake" "${CMAKE_BINARY_DIR}/WebRPCConfigVersion.cmake"
+	DESTINATION lib/cmake/WebRPC
+)
 
 ## clang-format ###############################################################
 
