@@ -3,6 +3,7 @@
 add_executable(webrpctest
     src/ParserTest.cpp
     src/ClientServerTest.cpp
+    src/RegistryTest.cpp
 )
 
 target_link_libraries(webrpctest PRIVATE webrpcdata webrpcserver webrpcclient CONAN_PKG::gtest CONAN_PKG::boost)
