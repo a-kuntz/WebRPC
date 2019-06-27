@@ -19,7 +19,18 @@ struct Echo : public AbstractMethod
 };
 }
 
-void test_server_async_call(const std::string& request, const std::string& expected)
+using Testcase = std::pair<std::string, std::string>;
+using Testcases = std::vector<Testcase>;
+
+static const auto testcases = Testcases{
+	{"http://127.0.0.1:8080/system.list_methods", "[\"Echo\",\"system.list_methods\"]"}
+	, {"http://localhost:8080/Echo/[{foo:bar},[a,b,c,1,2,3,true,false],<11,12,ab>]", "[{foo:\"bar\"},[\"a\",\"b\",\"c\",1,2,3,true,false],<0x11,0x12,0xAB>]"}
+	, {"http://127.0.0.1:8080/Echo/{syntax-error}", "null_t"}
+	, {"http://127.0.0.1:8080/Echo/%7Bkey:val%7D", "{key:\"val\"}"}
+	, {"http://127.0.0.1:8080/favicon.ico", "Invalid webrpc request 'favicon.ico'\r"}
+};
+
+void test_server_async_call(const Testcases& args)
 {
 	auto ioc = boost::asio::io_context{};
 
@@ -31,14 +42,21 @@ void test_server_async_call(const std::string& request, const std::string& expec
 	server.set_verbose(true);
 	server.start();
 
-	const auto reply_expected = 1;
+	auto reply_expected = 0;
 	auto reply_cnt = 0;
 	auto client = Client{ioc, false};
 
+	for (const auto& item : args)
+	{
+		const auto& request = item.first;
+		const auto& expected = item.second;
+		std::cout << request << " => " << expected << std::endl;
+		++reply_expected;
 	client.async_call(request, [&](const std::string& res) {
 		ASSERT_EQ(expected, res);
 		if (reply_expected == ++reply_cnt) {ioc.stop();}
 	});
+	}
 
 	ioc.run_for(boost::asio::chrono::seconds(3));
 	ASSERT_EQ(reply_expected, reply_cnt);
@@ -46,11 +64,14 @@ void test_server_async_call(const std::string& request, const std::string& expec
 
 TEST(ClientServer, AsyncSingleCalls)
 {
-	test_server_async_call("http://127.0.0.1:8080/system.list_methods", "[\"Echo\",\"system.list_methods\"]");
-	test_server_async_call("http://localhost:8080/Echo/[{foo:bar},[a,b,c,1,2,3,true,false],<11,12,ab>]", "[{foo:\"bar\"},[\"a\",\"b\",\"c\",1,2,3,true,false],<0x11,0x12,0xAB>]");
-	test_server_async_call("http://127.0.0.1:8080/Echo/{syntax-error}", "null_t");
-	test_server_async_call("http://127.0.0.1:8080/Echo/%7Bkey:val%7D", "{key:\"val\"}");
-	test_server_async_call("http://127.0.0.1:8080/favicon.ico", "Invalid webrpc request 'favicon.ico'\r");
-	// test_server_async_call();
+	for (const auto& testcase : testcases)
+	{
+		test_server_async_call({testcase});
+	}
+}
+
+TEST(ClientServer, AsyncMultipleCalls)
+{
+	test_server_async_call(testcases);
 }
 
