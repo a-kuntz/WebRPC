@@ -123,11 +123,6 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 	}
 	else
 	{
-		// for (const auto& item : _registry)
-		// {
-		// 	std::cout << item.first << "->" << item.second->get_name() << std::endl;
-		// }
-
 		const auto method = _registry.find(target->method);
 
 		if (method == _registry.cend())
