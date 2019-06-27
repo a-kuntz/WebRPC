@@ -43,7 +43,7 @@ void test_async_call(const std::string& request, const std::string& expected)
 		ioc.stop();
 	});
 
-	ioc.run_for(boost::asio::chrono::seconds(3));
+	ioc.run_for(boost::asio::chrono::seconds(1));
 	ASSERT_EQ(1, reply_cnt);
 }
 

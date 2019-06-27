@@ -13,7 +13,7 @@ class SystemListMethods : public AbstractMethod
 	SystemListMethods() = delete;
 
 	SystemListMethods(const Registry& registry)
-		: AbstractMethod("system.list_methods")
+		: AbstractMethod("?")
 		, _registry(registry){};
 
 	boost::optional<value_t> execute(const boost::optional<value_t> /*arg*/) override

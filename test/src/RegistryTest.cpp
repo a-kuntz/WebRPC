@@ -25,7 +25,7 @@ TEST(Registry, ExistingKey)
     registry.emplace(std::make_pair("Revert", std::make_unique<Method>()));
     registry.emplace(std::make_pair("Shuffle", std::make_unique<Method>()));
     registry.emplace(std::make_pair("Sum", std::make_unique<Method>()));
-    registry.emplace(std::make_pair("system.list_methods", std::make_unique<Method>()));
+    registry.emplace(std::make_pair("?", std::make_unique<Method>()));
 
     {
         const auto res = registry.find("Echo");
@@ -34,7 +34,7 @@ TEST(Registry, ExistingKey)
     }
 
     {
-        const auto res = registry.find("system.list_methods");
+        const auto res = registry.find("?");
         ASSERT_TRUE(res != registry.cend());
     }
 

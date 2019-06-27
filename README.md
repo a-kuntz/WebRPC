@@ -31,7 +31,7 @@ Call method `Sum` with an array of integer and double values `[1,2.3,4e-5,-6]`
 
 Introspection allows to list the available methods of a server
 
-    $ ./build/sampleclient http://localhost:8080/system.list_methods
+    $ ./build/sampleclient http://localhost:8080/?
 
 ## Cloning and building WebRPC
 

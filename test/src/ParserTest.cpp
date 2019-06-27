@@ -101,6 +101,10 @@ TEST(UriParser, BasicValues)
 	check("http://localhost/request", Uri{"localhost", 8080, "request"});
 	check("http://127.0.0.1:5678/request", Uri{"127.0.0.1", 5678, "request"});
 	check("http://192.168.0.1/request", Uri{"192.168.0.1", 8080, "request"});
+	check("http://192.168.0.1/list", Uri{"192.168.0.1", 8080, "list"});
+	check("http://192.168.0.1/???", Uri{"192.168.0.1", 8080, "???"});
+	check("http://192.168.0.1/??", Uri{"192.168.0.1", 8080, "??"});
+	check("http://192.168.0.1/?", Uri{"192.168.0.1", 8080, "?"});
 }
 
 void check(const std::string& in, const Target& trg)
@@ -113,9 +117,10 @@ void check(const std::string& in, const Target& trg)
 
 TEST(TargetParser, BasicValues)
 {
+	check("?", Target{"?", {}});
 	check("method", Target{"method", {}});
-	check("system.list_methods", Target{"system.list_methods", {}});
-	check("system.list-methods", Target{"system.list-methods", {}});
+	check("prefix.name_with_underscore", Target{"prefix.name_with_underscore", {}});
+	check("prefix.name-with-dash", Target{"prefix.name-with-dash", {}});
 	check("Sum/[1,2,3,4,5]", Target{"Sum", boost::optional<std::string>{"[1,2,3,4,5]"}});
 }
 

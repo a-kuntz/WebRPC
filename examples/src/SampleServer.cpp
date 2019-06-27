@@ -195,7 +195,7 @@ int main(int argc, char** argv)
 		const boost::asio::ip::address host = boost::asio::ip::make_address(host_name);
 
 		std::cout << "SampleServer listening on " << host << " " << port << std::endl;
-		std::cout << " - http://" << host << ":" << port << "/system.list_methods" << std::endl;
+		std::cout << " - http://" << host << ":" << port << "/?" << std::endl;
 
 		method::SomeStruct globalValue;
 

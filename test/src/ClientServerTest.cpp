@@ -23,7 +23,7 @@ using Testcase = std::pair<std::string, std::string>;
 using Testcases = std::vector<Testcase>;
 
 static const auto testcases = Testcases{
-	{"http://127.0.0.1:8080/system.list_methods", "[\"Echo\",\"system.list_methods\"]"}
+	{"http://127.0.0.1:8080/?", "[\"?\",\"Echo\"]"}
 	, {"http://localhost:8080/Echo/[{foo:bar},[a,b,c,1,2,3,true,false],<11,12,ab>]", "[{foo:\"bar\"},[\"a\",\"b\",\"c\",1,2,3,true,false],<0x11,0x12,0xAB>]"}
 	, {"http://127.0.0.1:8080/Echo/{syntax-error}", "null_t"}
 	, {"http://127.0.0.1:8080/Echo/%7Bkey:val%7D", "{key:\"val\"}"}
@@ -58,7 +58,7 @@ void test_server_async_call(const Testcases& args)
 	});
 	}
 
-	ioc.run_for(boost::asio::chrono::seconds(3));
+	ioc.run_for(boost::asio::chrono::seconds(1));
 	ASSERT_EQ(reply_expected, reply_cnt);
 }
 

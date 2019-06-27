@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 				  << "\n"
 				  << desc << "\n"
 				  << "URI example:\n"
-				  << "    http://localhost:8080/system.list_methods\n"
+				  << "    http://localhost:8080/?\n"
 				  << "\n"
 				  << "WebRPC Version: " << WEBRPC_VERSION_STRING << std::endl;
 		return EXIT_SUCCESS;

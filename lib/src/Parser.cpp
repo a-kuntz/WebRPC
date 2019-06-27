@@ -137,7 +137,7 @@ template <typename Iterator, typename Skipper> struct target_grammar : qi::gramm
 
 		// rules initialization
 		target_rule = method_rule >> -('/' >> args_rule);
-		method_rule = lexeme[+chr("a-zA-Z0-9_.-")];
+		method_rule = lexeme[+chr("a-zA-Z0-9_.?-")];
 		//		method_rule	= lexeme[+chr >> !chr("/")];
 		args_rule = lexeme[*qi::char_];
 
