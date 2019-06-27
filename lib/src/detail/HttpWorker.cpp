@@ -118,6 +118,7 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 
 	if (!target)
 	{
+		std::cout << "Ignoring invalid webrpc request '" + trg.to_string() << "'" << std::endl;
 		send_bad_response(http::status::bad_request, "Invalid webrpc request '" + trg.to_string() + "'\r\n");
 	}
 	else
@@ -156,8 +157,8 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 		}
 		catch (const std::exception& e)
 		{
-			std::cout << "caught exception: " << e.what() << std::endl;
-			send_bad_response(http::status::bad_request, "Invalid webrpc request '" + std::string(e.what()) + "'\r\n");
+			std::cout << "Ignoring invalid webrpc request '" + trg.to_string() << "'" << std::endl;
+			send_bad_response(http::status::bad_request, "Invalid webrpc request '" + trg.to_string() + "'\r\n");
 		}
 	}
 }
