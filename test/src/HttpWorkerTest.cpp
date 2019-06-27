@@ -2,7 +2,6 @@
 #include <webrpc/Client.h>
 #include <webrpc/detail/HttpWorker.h>
 #include <webrpc/Registry.h>
-// #include <webrpc/Server.h>
 
 #include <gtest/gtest.h>
 
