@@ -74,7 +74,7 @@ add_subdirectory(test)
 
 ## install targets ############################################################
 
-# todo: install headers
+# todo: install header files
 install(TARGETS webrpcdata webrpcclient webrpcserver
 	EXPORT WebRPCTargets
 	LIBRARY DESTINATION lib
@@ -89,6 +89,7 @@ install(EXPORT WebRPCTargets
 	DESTINATION lib/cmake/WebRPC
 )
 
+# todo: fix version string to fit major.minor.patch
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file("WebRPCConfigVersion.cmake"
 	VERSION ${WEBRPC_VERSION_STRING}

@@ -122,12 +122,20 @@ void HttpWorker::process_target(const boost::beast::string_view trg)
 	}
 	else
 	{
+		// for (const auto& item : _registry)
+		// {
+		// 	std::cout << item.first << "->" << item.second->get_name() << std::endl;
+		// }
+
 		const auto method = _registry.find(target->method);
 
-		if (method == _registry.end())
+		if (method == _registry.cend())
 		{
 			send_bad_response(http::status::bad_request, "Invalid webrpc request '" + trg.to_string() + "'\r\n");
+			return;
 		}
+
+		assert(method != _registry.cend());
 
 		try
 		{

@@ -19,7 +19,7 @@ struct Echo : public AbstractMethod
 };
 }
 
-TEST(ClientServer, Async)
+void test_server_async_call(const std::string& request, const std::string& expected)
 {
 	auto ioc = boost::asio::io_context{};
 
@@ -31,29 +31,26 @@ TEST(ClientServer, Async)
 	server.set_verbose(true);
 	server.start();
 
-	const auto reply_expected = 4;
+	const auto reply_expected = 1;
 	auto reply_cnt = 0;
 	auto client = Client{ioc, false};
-	client.async_call("http://127.0.0.1:8080/system.list_methods", [&](const std::string& res) {
-		ASSERT_EQ("[\"Echo\",\"system.list_methods\"]", res);
-		if (reply_expected == ++reply_cnt) {ioc.stop();}
-	});
 
-	client.async_call("http://localhost:8080/Echo/[{foo:bar},[a,b,c,1,2,3,true,false],<11,12,ab>]", [&](const std::string& res) {
-		ASSERT_EQ("[{foo:\"bar\"},[\"a\",\"b\",\"c\",1,2,3,true,false],<0x11,0x12,0xAB>]", res);
-		if (reply_expected == ++reply_cnt) {ioc.stop();}
-	});
-
-	client.async_call("http://127.0.0.1:8080/Echo/{syntax-error}", [&](const std::string& res) {
-		ASSERT_EQ("null_t", res);
-		if (reply_expected == ++reply_cnt) {ioc.stop();}
-	});
-
-	client.async_call("http://127.0.0.1:8080/Echo/%7Bkey:val%7D", [&](const std::string& res) {
-		ASSERT_EQ("{key:\"val\"}", res);
+	client.async_call(request, [&](const std::string& res) {
+		ASSERT_EQ(expected, res);
 		if (reply_expected == ++reply_cnt) {ioc.stop();}
 	});
 
 	ioc.run_for(boost::asio::chrono::seconds(3));
 	ASSERT_EQ(reply_expected, reply_cnt);
 }
+
+TEST(ClientServer, AsyncSingleCalls)
+{
+	test_server_async_call("http://127.0.0.1:8080/system.list_methods", "[\"Echo\",\"system.list_methods\"]");
+	test_server_async_call("http://localhost:8080/Echo/[{foo:bar},[a,b,c,1,2,3,true,false],<11,12,ab>]", "[{foo:\"bar\"},[\"a\",\"b\",\"c\",1,2,3,true,false],<0x11,0x12,0xAB>]");
+	test_server_async_call("http://127.0.0.1:8080/Echo/{syntax-error}", "null_t");
+	test_server_async_call("http://127.0.0.1:8080/Echo/%7Bkey:val%7D", "{key:\"val\"}");
+	test_server_async_call("http://127.0.0.1:8080/favicon.ico", "Invalid webrpc request 'favicon.ico'\r");
+	// test_server_async_call();
+}
+

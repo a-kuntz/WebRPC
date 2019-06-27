@@ -15,6 +15,8 @@ void Server::register_method(IMethodUP&& method)
 
 void Server::start()
 {
+	// todo: make HttpWorker : public std::enable_shared_from_this<HttpWorker>
+	// and create workers via std::make_shared<detail::HttpWorker>
 	for (int i = 0; i < _num_workers; ++i)
 	{
 		_workers.emplace_back(_acceptor, _registry);
