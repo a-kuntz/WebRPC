@@ -11,7 +11,7 @@
 - [x] remove quotes from quoted strings
 - [ ] enable parse_value to parse empty strings
 - [ ] enable client.call() to return result string
-- [ ] enable client.call_async() to register an event handler
+- [x] enable client.call_async() to register an event handler
 - [ ] add tree representation for struct serialization
 - [ ] refactor Target to SimpleTarget, which represents targets of the form `method/optional<value_t>`
 - [ ] create StructTarget class to parse targets as struct_t like `{method:name,args:value_t}`

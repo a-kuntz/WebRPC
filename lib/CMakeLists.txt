@@ -55,3 +55,12 @@ target_compile_features(webrpcserver
 		cxx_std_14	# std::make_unique<.>()
 )
 
+## VERSION ####################################################################
+
+set_target_properties(
+	webrpcdata webrpcclient webrpcserver webrpcdataso
+	PROPERTIES
+		VERSION ${WEBRPC_VERSION}
+		SOVERSION ${WEBRPC_SOVERSION}
+)
+

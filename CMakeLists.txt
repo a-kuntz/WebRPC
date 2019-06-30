@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(WebRPC)
+include(GNUInstallDirs)
 
 ## options ####################################################################
 
@@ -44,7 +45,12 @@ execute_process(
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+STRING(REGEX MATCH "[0-9]+\.[0-9]+\.[0-9]+" WEBRPC_VERSION ${WEBRPC_VERSION_STRING})
+STRING(REGEX MATCH "[0-9]+\.[0-9]+" WEBRPC_SOVERSION ${WEBRPC_VERSION_STRING})
+
 message(STATUS WEBRPC_VERSION_STRING=${WEBRPC_VERSION_STRING})
+message(STATUS WEBRPC_VERSION=${WEBRPC_VERSION})
+message(STATUS WEBRPC_SOVERSION=${WEBRPC_SOVERSION})
 
 configure_file (
 	${PROJECT_SOURCE_DIR}/lib/include/webrpc/Version.h.in
@@ -66,6 +72,8 @@ if(WEBRPC_ADDRESS_SANITIZER)
 	add_link_options(-fsanitize=address -fno-omit-frame-pointer)
 endif()
 
+set(BUILD_SHARED_LIBS OFF)
+
 ## sources ####################################################################
 
 add_subdirectory(lib)
@@ -74,19 +82,26 @@ add_subdirectory(test)
 
 ## install targets ############################################################
 
-# todo: install header files
-install(TARGETS webrpcdata webrpcclient webrpcserver
+install(
+	TARGETS webrpcdata webrpcclient webrpcserver sampleserver sampleclient webrpcdataso
 	EXPORT WebRPCTargets
-	LIBRARY DESTINATION lib
-	ARCHIVE DESTINATION lib
-	RUNTIME DESTINATION bin
-	INCLUDES DESTINATION include
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	# INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-install(EXPORT WebRPCTargets
+install(
+	DIRECTORY lib/include/
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+	FILES_MATCHING PATTERN "*.h"
+)
+
+install(
+	EXPORT WebRPCTargets
 	FILE WebRPCTargets.cmake
 	NAMESPACE WebRPC::
-	DESTINATION lib/cmake/WebRPC
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/WebRPC
 )
 
 # todo: fix version string to fit major.minor.patch
