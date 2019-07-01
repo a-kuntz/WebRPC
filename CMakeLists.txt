@@ -83,7 +83,7 @@ add_subdirectory(test)
 ## install targets ############################################################
 
 install(
-	TARGETS webrpcdata webrpcclient webrpcserver sampleserver sampleclient webrpcdataso
+	TARGETS webrpcdata webrpcclient webrpcserver sampleserver sampleclient
 	EXPORT WebRPCTargets
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

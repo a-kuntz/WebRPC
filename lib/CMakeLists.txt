@@ -58,7 +58,7 @@ target_compile_features(webrpcserver
 ## VERSION ####################################################################
 
 set_target_properties(
-	webrpcdata webrpcclient webrpcserver webrpcdataso
+	webrpcdata webrpcclient webrpcserver
 	PROPERTIES
 		VERSION ${WEBRPC_VERSION}
 		SOVERSION ${WEBRPC_SOVERSION}
