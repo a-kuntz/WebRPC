@@ -104,10 +104,9 @@ install(
 	DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/WebRPC
 )
 
-# todo: fix version string to fit major.minor.patch
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file("WebRPCConfigVersion.cmake"
-	VERSION ${WEBRPC_VERSION_STRING}
+	VERSION ${WEBRPC_VERSION}
 	COMPATIBILITY SameMajorVersion
 )
 
