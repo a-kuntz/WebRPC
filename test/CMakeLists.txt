@@ -5,11 +5,17 @@ add_executable(webrpctest
 	src/ParserTest.cpp
 	src/HttpWorkerTest.cpp
 	src/ClientServerTest.cpp
+	src/Testcase.cpp
 )
 
 target_link_libraries(webrpctest PRIVATE webrpcdata webrpcserver webrpcclient CONAN_PKG::gtest CONAN_PKG::boost)
 
 target_compile_features(webrpctest PRIVATE cxx_variadic_macros)
+
+target_include_directories(webrpctest
+	PRIVATE
+		include
+)
 
 add_test(NAME webrpctest COMMAND webrpctest)
 
