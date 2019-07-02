@@ -32,6 +32,11 @@ HttpWorker::HttpWorker(tcp::acceptor& acceptor, Registry& registry)
 	, _registry(registry)
 {}
 
+HttpWorker::~HttpWorker()
+{
+	_alloc.~fields_alloc();
+}
+
 void HttpWorker::start()
 {
 	accept();

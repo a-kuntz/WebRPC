@@ -21,6 +21,8 @@ class HttpWorker
 
 	HttpWorker(tcp::acceptor& acceptor, Registry& registry);
 
+	~HttpWorker();
+
 	void start();
 
 	void set_verbose(bool verbose);

@@ -1,11 +1,12 @@
 ## tests ######################################################################
 
 add_executable(webrpctest
+	src/AllocatorTest.cpp
 	src/RegistryTest.cpp
 	src/ParserTest.cpp
+	src/Testcase.cpp
 	src/HttpWorkerTest.cpp
 	src/ClientServerTest.cpp
-	src/Testcase.cpp
 )
 
 target_link_libraries(webrpctest PRIVATE webrpcdata webrpcserver webrpcclient CONAN_PKG::gtest CONAN_PKG::boost)
