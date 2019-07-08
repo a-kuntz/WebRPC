@@ -18,7 +18,15 @@ target_include_directories(webrpctest
 		include
 )
 
-add_test(NAME webrpctest COMMAND webrpctest)
+add_test(
+	NAME webrpctest
+	COMMAND webrpctest
+)
+
+set_tests_properties(webrpctest
+	PROPERTIES
+	ENVIRONMENT LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/lib:$ENV{LD_LIBRARY_PATH}
+)
 
 if(WEBRPC_COVERAGE_ANALYSIS)
 add_custom_target(coverage

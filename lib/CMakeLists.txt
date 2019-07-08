@@ -21,7 +21,8 @@ add_library(webrpcclient
 	src/Client.cpp
 )
 
-target_link_libraries(webrpcclient CONAN_PKG::boost webrpcdata)
+target_link_libraries(webrpcclient PUBLIC webrpcdata)
+target_link_libraries(webrpcclient PUBLIC CONAN_PKG::boost)
 
 target_include_directories(webrpcclient
 	PUBLIC
@@ -39,7 +40,8 @@ add_library(webrpcserver
 	src/detail/HttpWorker.cpp
 )
 
-target_link_libraries(webrpcserver PUBLIC webrpcdata CONAN_PKG::boost)
+target_link_libraries(webrpcserver PUBLIC webrpcdata)
+target_link_libraries(webrpcserver PUBLIC CONAN_PKG::boost)
 
 target_include_directories(webrpcserver
 	PUBLIC

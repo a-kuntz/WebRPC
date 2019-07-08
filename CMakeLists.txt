@@ -18,22 +18,20 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-    file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake")
+	message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+	file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
 conan_cmake_run(REQUIRES
-		boost/1.69.0@conan/stable
-		gtest/1.8.1@bincrafters/stable
+	boost/1.69.0@conan/stable
+	gtest/1.8.1@bincrafters/stable
 	BASIC_SETUP CMAKE_TARGETS
 	BUILD missing
 )
 
 ## global settings ############################################################
-
-enable_testing()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -56,11 +54,13 @@ configure_file (
 	${PROJECT_SOURCE_DIR}/lib/include/webrpc/Version.h.in
 	${PROJECT_BINARY_DIR}/lib/include/webrpc/Version.h
 )
-include_directories(${PROJECT_BINARY_DIR}/lib/include)
 
+enable_testing()
+
+include_directories(${PROJECT_BINARY_DIR}/lib/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/include)
 
-add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable -fvisibility=hidden)
+add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable)
 
 if(WEBRPC_COVERAGE_ANALYSIS)
 	add_compile_options(-g -O0 -fprofile-arcs -ftest-coverage)
@@ -72,7 +72,7 @@ if(WEBRPC_ADDRESS_SANITIZER)
 	add_link_options(-fsanitize=address -fno-omit-frame-pointer)
 endif()
 
-set(BUILD_SHARED_LIBS OFF)
+set(BUILD_SHARED_LIBS ON)
 
 ## sources ####################################################################
 
