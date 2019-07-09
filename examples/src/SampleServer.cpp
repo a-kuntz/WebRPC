@@ -151,6 +151,57 @@ struct GetSetValue : public AbstractMethod
 	SomeStruct& _val;
 };
 
+// see https://www.fluentcpp.com/2019/05/24/how-to-fill-a-cpp-collection-with-random-values/
+namespace ranges
+{
+	template<typename Range, typename Generator>
+	void generate(Range& range, Generator generator)
+	{
+		return std::generate(begin(range), end(range), generator);
+	}
+}
+
+class RandomUniform
+{
+	public:
+	RandomUniform(int low, int high)
+		: _distribution{low, high}
+	{}
+
+	int operator()()
+	{
+		return _distribution(_random_engine);
+	}
+
+	private:
+	static inline std::mt19937 _random_engine{std::random_device{}()};
+	std::uniform_int_distribution<int> _distribution;
+};
+
+template<typename T>
+class Random : public AbstractMethod
+{
+	public:
+	Random(const std::string suffix)
+		: AbstractMethod("Random"+suffix)
+		, _distribution{4, 64}
+	{}
+
+	boost::optional<value_t> execute(const boost::optional<value_t> /*arg*/) override
+	{
+		std::vector<int> numbers(_distribution(_random_engine));
+		ranges::generate(numbers, RandomUniform(_value_range.first, _value_range.second));
+		return value_t{T{begin(numbers), end(numbers)}};
+	}
+	private:
+	std::pair<int,int> value_range(const string_t&) {return {32,126};};
+	std::pair<int,int> value_range(const array_t&) {return {0,1024};};
+	std::pair<int,int> value_range(const bytestring_t&) {return {0,255};};
+	std::pair<int,int> _value_range = value_range(T{});
+	static inline std::mt19937 _random_engine{std::random_device{}()};
+	std::uniform_int_distribution<int> _distribution;
+};
+
 } // namespace method
 
 int main(int argc, char** argv)
@@ -209,6 +260,10 @@ int main(int argc, char** argv)
 		server.register_method(std::make_unique<method::Sum>());
 		server.register_method(std::make_unique<method::DateTime>());
 		server.register_method(std::make_unique<method::GetSetValue>(globalValue));
+		server.register_method(std::make_unique<method::Random<bytestring_t>>(""));
+		server.register_method(std::make_unique<method::Random<string_t>>("String"));
+		server.register_method(std::make_unique<method::Random<array_t>>("Array"));
+		server.register_method(std::make_unique<method::Random<bytestring_t>>("Bytes"));
 		server.start();
 		ioc.run();
 
