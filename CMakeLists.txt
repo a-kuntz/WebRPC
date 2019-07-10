@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(WebRPC)
 include(GNUInstallDirs)
 
-## options ####################################################################
+## options and global settings ################################################
 
 option(WEBRPC_COVERAGE_ANALYSIS "enable coverage analysis" OFF)
 message(STATUS WEBRPC_COVERAGE_ANALYSIS=${WEBRPC_COVERAGE_ANALYSIS})
@@ -11,31 +11,35 @@ message(STATUS WEBRPC_COVERAGE_ANALYSIS=${WEBRPC_COVERAGE_ANALYSIS})
 option(WEBRPC_ADDRESS_SANITIZER "enable address sanitizer" OFF)
 message(STATUS WEBRPC_ADDRESS_SANITIZER=${WEBRPC_ADDRESS_SANITIZER})
 
-## dependencies ###############################################################
+set(BUILD_SHARED_LIBS OFF)
+message(STATUS BUILD_SHARED_LIBS=${BUILD_SHARED_LIBS})
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-	message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-	file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake")
+## configuration ##############################################################
+
+add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable)
+
+include_directories(${PROJECT_BINARY_DIR}/lib/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/include)
+
+if(WEBRPC_COVERAGE_ANALYSIS)
+	add_compile_options(-g -O0 -fprofile-arcs -ftest-coverage)
+	add_link_options(-fprofile-arcs -ftest-coverage)
 endif()
 
-include(${CMAKE_BINARY_DIR}/conan.cmake)
+if(WEBRPC_ADDRESS_SANITIZER)
+	add_compile_options(-g -fsanitize=address -fno-omit-frame-pointer)
+	add_link_options(-fsanitize=address -fno-omit-frame-pointer)
+endif()
 
-conan_cmake_run(REQUIRES
-	boost/1.69.0@conan/stable
-	gtest/1.8.1@bincrafters/stable
-	BASIC_SETUP CMAKE_TARGETS
-	BUILD missing
-)
+enable_testing()
 
-## global settings ############################################################
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# get version string from tag
+# get version string from git tag
 execute_process(
 	COMMAND git describe --tags --always
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -50,29 +54,26 @@ message(STATUS WEBRPC_VERSION_STRING=${WEBRPC_VERSION_STRING})
 message(STATUS WEBRPC_VERSION=${WEBRPC_VERSION})
 message(STATUS WEBRPC_SOVERSION=${WEBRPC_SOVERSION})
 
-configure_file (
+configure_file(
 	${PROJECT_SOURCE_DIR}/lib/include/webrpc/Version.h.in
 	${PROJECT_BINARY_DIR}/lib/include/webrpc/Version.h
 )
 
-enable_testing()
+## dependencies ###############################################################
 
-include_directories(${PROJECT_BINARY_DIR}/lib/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/include)
-
-add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable)
-
-if(WEBRPC_COVERAGE_ANALYSIS)
-	add_compile_options(-g -O0 -fprofile-arcs -ftest-coverage)
-	add_link_options(-fprofile-arcs -ftest-coverage)
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+	message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+	file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
 
-if(WEBRPC_ADDRESS_SANITIZER)
-	add_compile_options(-g -fsanitize=address -fno-omit-frame-pointer)
-	add_link_options(-fsanitize=address -fno-omit-frame-pointer)
-endif()
+include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-set(BUILD_SHARED_LIBS ON)
+conan_cmake_run(REQUIRES
+	boost/1.69.0@conan/stable
+	gtest/1.8.1@bincrafters/stable
+	BASIC_SETUP CMAKE_TARGETS
+	BUILD missing
+)
 
 ## sources ####################################################################
 
