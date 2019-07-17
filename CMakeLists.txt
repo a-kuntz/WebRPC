@@ -8,7 +8,7 @@ include(GNUInstallDirs)
 option(WEBRPC_COVERAGE_ANALYSIS "enable coverage analysis" OFF)
 message(STATUS WEBRPC_COVERAGE_ANALYSIS=${WEBRPC_COVERAGE_ANALYSIS})
 
-option(WEBRPC_ADDRESS_SANITIZER "enable address sanitizer" OFF)
+option(WEBRPC_ADDRESS_SANITIZER "enable address sanitizer" ON)
 message(STATUS WEBRPC_ADDRESS_SANITIZER=${WEBRPC_ADDRESS_SANITIZER})
 
 set(BUILD_SHARED_LIBS OFF)
@@ -73,6 +73,11 @@ conan_cmake_run(REQUIRES
 	gtest/1.8.1@bincrafters/stable
 	BASIC_SETUP CMAKE_TARGETS
 	BUILD missing
+	OPTIONS boost:shared=False
+	IMPORTS
+		"bin, *.dll -> ./bin" # Copies all dll files from packages bin folder to my "bin" folder
+		"lib, *.dylib* -> ./bin" # Copies all dylib files from packages lib folder to my "bin" folder
+		"lib, *.so* -> ./bin" # Copies all dylib files from packages lib folder to my "bin" folder
 )
 
 ## sources ####################################################################
