@@ -13,7 +13,7 @@ struct value_t;
 // primitive types
 struct null_t
 {};
-using bool_t   = bool;
+using bool_t = bool;
 using int_t	= int;
 using double_t = double;
 using string_t = std::string;

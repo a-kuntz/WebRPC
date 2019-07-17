@@ -1,5 +1,7 @@
 #include <webrpc/Value.h>
 
+#include <boost/algorithm/string.hpp>
+
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -71,7 +73,10 @@ struct serializer : public boost::static_visitor<>
 	}
 	void operator()(const string_t& v) const
 	{
-		_out << '\"' << v << '\"';
+		auto str{v};
+		boost::replace_all(str, "\\", "\\\\");
+		boost::replace_all(str, "\"", "\\\"");
+		_out << '\"' << str << '\"';
 	}
 	void operator()(const value_t& v) const
 	{
