@@ -61,12 +61,16 @@ configure_file(
 
 ## dependencies ###############################################################
 
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+set(CONAN_CMAKE ${CMAKE_BINARY_DIR}/conan.cmake)
+if(NOT EXISTS ${CONAN_CMAKE})
 	message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-	file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake")
+	file(
+		DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake" "${CONAN_CMAKE}"
+		EXPECTED_HASH SHA1=bbf5e71b3847ff5b6f2a6cdc29dcb547d835c2b4
+	)
 endif()
 
-include(${CMAKE_BINARY_DIR}/conan.cmake)
+include(${CONAN_CMAKE})
 
 conan_cmake_run(REQUIRES
 	boost/1.69.0@conan/stable
