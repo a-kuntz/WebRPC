@@ -14,10 +14,10 @@ sudo apt-get install -y \
     libcurl4-openssl-dev \
     libncurses5-dev
 
-wget https://github.com/Kitware/CMake/releases/download/v${VERSION}/${ARCHIVE} -O ~/Downloads/${ARCHIVE}
 mkdir -p ${DESTDIR}
 pushd ${DESTDIR}
-tar -xzf ~/Downloads/${ARCHIVE}
+wget https://github.com/Kitware/CMake/releases/download/v${VERSION}/${ARCHIVE} -O ${ARCHIVE}
+tar -xzf ${ARCHIVE}
 
 pushd cmake-${VERSION}
 cmake . -DCMAKE_USE_SYSTEM_CURL=ON -DBUILD_CursesDialog=ON
