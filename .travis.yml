@@ -1,0 +1,16 @@
+os: linux
+language:
+  - python
+  - cpp
+python: "3.7"
+dist: bionic
+compiler:
+  - clang
+install:
+# Install conan
+  - pip install conan
+# Automatic detection of your arch, compiler, etc.
+  - conan user
+script:
+   - cmake -Bbuild -H.
+   - make -C build all test

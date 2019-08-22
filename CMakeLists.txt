@@ -28,13 +28,13 @@ include_directories(${PROJECT_BINARY_DIR}/lib/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/include)
 
 if(WEBRPC_COVERAGE_ANALYSIS)
-	add_compile_options(-g -O0 -fprofile-arcs -ftest-coverage)
-	add_link_options(-fprofile-arcs -ftest-coverage)
+	#add_compile_options(-g -O0 -fprofile-arcs -ftest-coverage)
+	#add_link_options(-fprofile-arcs -ftest-coverage)
 endif()
 
 if(WEBRPC_ADDRESS_SANITIZER)
-	add_compile_options(-g -fsanitize=address -fno-omit-frame-pointer)
-	add_link_options(-fsanitize=address -fno-omit-frame-pointer)
+	#add_compile_options(-g -fsanitize=address -fno-omit-frame-pointer)
+	#add_link_options(-fsanitize=address -fno-omit-frame-pointer)
 endif()
 
 enable_testing()
