@@ -92,37 +92,37 @@ add_subdirectory(test)
 
 ## install targets ############################################################
 
-install(
-	TARGETS webrpcdata webrpcclient webrpcserver sampleserver sampleclient
-	EXPORT WebRPCTargets
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-	# INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
+# install(
+# 	TARGETS webrpcdata webrpcclient webrpcserver sampleserver sampleclient
+# 	EXPORT WebRPCTargets
+# 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+# 	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+# 	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+# 	# INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+# )
 
-install(
-	DIRECTORY lib/include/
-	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-	FILES_MATCHING PATTERN "*.h"
-)
+# install(
+# 	DIRECTORY lib/include/
+# 	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+# 	FILES_MATCHING PATTERN "*.h"
+# )
 
-install(
-	EXPORT WebRPCTargets
-	FILE WebRPCTargets.cmake
-	NAMESPACE WebRPC::
-	DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/WebRPC
-)
+# install(
+# 	EXPORT WebRPCTargets
+# 	FILE WebRPCTargets.cmake
+# 	NAMESPACE WebRPC::
+# 	DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/WebRPC
+# )
 
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file("WebRPCConfigVersion.cmake"
-	VERSION ${WEBRPC_VERSION}
-	COMPATIBILITY SameMajorVersion
-)
+# include(CMakePackageConfigHelpers)
+# write_basic_package_version_file("WebRPCConfigVersion.cmake"
+# 	VERSION ${WEBRPC_VERSION}
+# 	COMPATIBILITY SameMajorVersion
+# )
 
-install(FILES "WebRPCConfig.cmake" "${CMAKE_BINARY_DIR}/WebRPCConfigVersion.cmake"
-	DESTINATION lib/cmake/WebRPC
-)
+# install(FILES "WebRPCConfig.cmake" "${CMAKE_BINARY_DIR}/WebRPCConfigVersion.cmake"
+# 	DESTINATION lib/cmake/WebRPC
+# )
 
 ## clang-format ###############################################################
 
