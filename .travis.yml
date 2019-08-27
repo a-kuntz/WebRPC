@@ -39,6 +39,11 @@ matrix:
     - os: osx
       osx_image: xcode11
       language: cpp
+      addons:
+        homebrew:
+          packages:
+          - conan
+          - cmake
 
   allow_failures:
     - os: osx
@@ -50,6 +55,7 @@ install:
   # - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install cmake; fi
   # - if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip install conan; fi
 # Automatic detection of your arch, compiler, etc.
+  - which conan
   - conan user
 script:
    - cmake --version
