@@ -129,7 +129,7 @@ struct serializer : public boost::static_visitor<>
 
 value_t::type_info value_t::type() const
 {
-	return boost::apply_visitor(detail::get_type{}, *this);
+	return boost::apply_visitor(detail::get_type(), *this);
 }
 
 std::ostream& value_t::serialize(std::ostream& out) const
