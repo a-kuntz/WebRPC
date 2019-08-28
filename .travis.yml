@@ -2,6 +2,9 @@ language:
   - python
   - cpp
 
+git:
+  depth: false
+
 matrix:
   fast_finish: false
   include:
