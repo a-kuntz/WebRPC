@@ -9,7 +9,9 @@ add_executable(webrpctest
 	src/ClientServerTest.cpp
 )
 
-target_link_libraries(webrpctest PRIVATE webrpcdata webrpcserver webrpcclient CONAN_PKG::gtest CONAN_PKG::boost)
+target_link_libraries(webrpctest PRIVATE webrpcdata webrpcserver webrpcclient)
+target_link_libraries(webrpctest PRIVATE GTest::Main)
+target_link_libraries(webrpctest PRIVATE Boost::boost)
 
 target_compile_features(webrpctest PRIVATE cxx_variadic_macros)
 

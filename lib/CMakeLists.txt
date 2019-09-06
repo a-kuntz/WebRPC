@@ -5,7 +5,7 @@ add_library(webrpcdata
 	src/Value.cpp
 )
 
-target_link_libraries(webrpcdata PUBLIC CONAN_PKG::boost)
+target_link_libraries(webrpcdata PUBLIC Boost::boost)
 
 target_include_directories(webrpcdata
 	PUBLIC
@@ -22,7 +22,7 @@ add_library(webrpcclient
 )
 
 target_link_libraries(webrpcclient PUBLIC webrpcdata)
-target_link_libraries(webrpcclient PUBLIC CONAN_PKG::boost)
+target_link_libraries(webrpcclient PUBLIC Boost::boost)
 
 target_include_directories(webrpcclient
 	PUBLIC
@@ -41,7 +41,7 @@ add_library(webrpcserver
 )
 
 target_link_libraries(webrpcserver PUBLIC webrpcdata)
-target_link_libraries(webrpcserver PUBLIC CONAN_PKG::boost)
+target_link_libraries(webrpcserver PUBLIC Boost::boost)
 
 target_include_directories(webrpcserver
 	PUBLIC

@@ -61,21 +61,14 @@ configure_file(
 
 ## dependencies ###############################################################
 
-set(CONAN_CMAKE ${CMAKE_BINARY_DIR}/conan.cmake)
-if(NOT EXISTS ${CONAN_CMAKE})
-	message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-	file(
-		DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake" "${CONAN_CMAKE}"
-		EXPECTED_HASH SHA1=bbf5e71b3847ff5b6f2a6cdc29dcb547d835c2b4
-	)
-endif()
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
-include(${CONAN_CMAKE})
+find_package(Conan)
 
 conan_cmake_run(REQUIRES
 	boost/1.69.0@conan/stable
 	gtest/1.8.1@bincrafters/stable
-	BASIC_SETUP CMAKE_TARGETS
+	BASIC_SETUP
 	BUILD missing
 	OPTIONS boost:shared=False
 	IMPORTS
@@ -83,6 +76,9 @@ conan_cmake_run(REQUIRES
 		"lib, *.dylib* -> ./bin" # Copies all dylib files from packages lib folder to my "bin" folder
 		"lib, *.so* -> ./bin" # Copies all dylib files from packages lib folder to my "bin" folder
 )
+
+find_package(Boost REQUIRED COMPONENTS filesystem program_options)
+find_package(Gtest REQUIRED)
 
 ## sources ####################################################################
 
