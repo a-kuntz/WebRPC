@@ -66,7 +66,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 find_package(Conan)
 
 conan_cmake_run(REQUIRES
-	boost/1.69.0@conan/stable
+	boost/1.70.0@conan/stable
 	gtest/1.8.1@bincrafters/stable
 	BASIC_SETUP
 	BUILD missing

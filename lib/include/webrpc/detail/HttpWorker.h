@@ -51,7 +51,7 @@ class HttpWorker
 	tcp::acceptor& _acceptor;
 
 	// The socket for the currently connected client.
-	tcp::socket _socket{_acceptor.get_executor().context()};
+	tcp::socket _socket{_acceptor.get_executor()};
 
 	// The buffer for performing reads
 	boost::beast::flat_static_buffer<8192> _buffer;
@@ -64,7 +64,7 @@ class HttpWorker
 
 	// The timer putting a time limit on requests.
 	boost::asio::basic_waitable_timer<std::chrono::steady_clock> request_deadline_{
-		_acceptor.get_executor().context(), (std::chrono::steady_clock::time_point::max)()};
+		_acceptor.get_executor(), (std::chrono::steady_clock::time_point::max)()};
 
 	// The string-based response message.
 	boost::optional<http::response<http::string_body, http::basic_fields<alloc_t>>> _string_response;
