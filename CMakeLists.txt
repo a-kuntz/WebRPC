@@ -22,7 +22,8 @@ endif()
 
 ## configuration ##############################################################
 
-add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable)
+# add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable)
+add_compile_options(-Wall -Wextra -Werror -Wno-error=unused-variable)
 
 include_directories(${PROJECT_BINARY_DIR}/lib/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/include)
@@ -66,7 +67,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 find_package(Conan)
 
 conan_cmake_run(REQUIRES
-	boost/1.70.0@conan/stable
+	boost/1.71.0@conan/stable
 	gtest/1.8.1@bincrafters/stable
 	BASIC_SETUP
 	BUILD missing
