@@ -78,7 +78,8 @@ conan_cmake_run(REQUIRES
 )
 
 find_package(Boost REQUIRED COMPONENTS filesystem program_options)
-find_package(Gtest REQUIRED)
+find_package(Threads REQUIRED)
+find_package(GTest REQUIRED)
 
 ## sources ####################################################################
 
