@@ -1,6 +1,6 @@
 ## tests ######################################################################
 
-add_executable(webrpctest
+add_executable(testwebrpc
 	src/TestMain.cpp
 	src/TestAllocator.cpp
 	src/TestRegistry.cpp
@@ -10,17 +10,17 @@ add_executable(webrpctest
 	src/TestClientServer.cpp
 )
 
-target_link_libraries(webrpctest PRIVATE webrpcdata webrpcserver webrpcclient)
-target_link_libraries(webrpctest PRIVATE GTest::Main)
-target_link_libraries(webrpctest PRIVATE Boost::boost)
+target_link_libraries(testwebrpc PRIVATE webrpcdata webrpcserver webrpcclient)
+target_link_libraries(testwebrpc PRIVATE GTest::Main)
+target_link_libraries(testwebrpc PRIVATE Boost::boost)
 
-target_include_directories(webrpctest PRIVATE include)
+target_include_directories(testwebrpc PRIVATE include)
 
-target_compile_features(webrpctest PRIVATE cxx_variadic_macros)
+target_compile_features(testwebrpc PRIVATE cxx_variadic_macros)
 
-add_test(NAME webrpctest COMMAND webrpctest)
+add_test(NAME testwebrpc COMMAND testwebrpc)
 
-set_tests_properties(webrpctest
+set_tests_properties(testwebrpc
 	PROPERTIES
 	ENVIRONMENT LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/lib:$ENV{LD_LIBRARY_PATH}
 )
@@ -57,7 +57,7 @@ add_custom_target(coverage
 	COMMAND lcov --capture --directory . --output-file coverage.info
 	COMMAND genhtml coverage.info --output-directory coverage
 	COMMAND echo "Coverage report written to ${CMAKE_BINARY_DIR}/coverage/index.htlm"
-	DEPENDS webrpctest
+	DEPENDS testwebrpc
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 endif()
