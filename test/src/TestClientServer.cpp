@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 namespace webrpctest
-	{
+{
 
 void test_server_async_call(const Testcases& args)
 {
@@ -32,10 +32,10 @@ void test_server_async_call(const Testcases& args)
 		const auto& expected = item.second;
 		std::cout << "request=" << request << " => expected=" << expected << std::endl;
 		++reply_expected;
-	client.async_call(request, [&](const std::string& res) {
-		ASSERT_EQ(expected, res);
-		if (reply_expected == ++reply_cnt) {ioc.stop();}
-	});
+		client.async_call(request, [&,expected=expected](const std::string& observed) {
+			ASSERT_EQ(expected, observed);
+			if (reply_expected == ++reply_cnt) {ioc.stop();}
+		});
 	}
 
 	ioc.run_for(boost::asio::chrono::seconds(1));
@@ -54,6 +54,5 @@ TEST(ClientServer, AsyncMultipleCalls)
 {
 	test_server_async_call(testcases);
 }
-
 
 }

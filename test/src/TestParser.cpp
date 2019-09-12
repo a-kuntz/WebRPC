@@ -123,9 +123,3 @@ TEST(TargetParser, BasicValues)
 	check("prefix.name-with-dash", Target{"prefix.name-with-dash", {}});
 	check("Sum/[1,2,3,4,5]", Target{"Sum", boost::optional<std::string>{"[1,2,3,4,5]"}});
 }
-
-int main(int argc, char** argv)
-{
-	::testing::InitGoogleTest(&argc, argv);
-	return RUN_ALL_TESTS();
-}
