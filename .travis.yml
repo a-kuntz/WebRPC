@@ -65,4 +65,4 @@ install:
   - cmake --version
 script:
    - cmake -Bbuild -H.
-   - make -C build all test
+   - CTEST_OUTPUT_ON_FAILURE=1 make -C build all test
