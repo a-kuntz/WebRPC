@@ -61,7 +61,8 @@ install:
 # Automatic detection of your arch, compiler, etc.
   - which conan
   - conan user
+  - which cmake
+  - cmake --version
 script:
-   - cmake --version
    - cmake -Bbuild -H.
    - make -C build all test
