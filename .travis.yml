@@ -11,24 +11,24 @@ matrix:
     - os: linux
       dist: bionic
       compiler: clang
-      addons:
-        apt:
-          packages:
-            - cmake
-          sources:
-            - sourceline: 'deb https://apt.kitware.com/ubuntu/ bionic main'
-            - key_url: 'https://apt.kitware.com/keys/kitware-archive-latest.asc'
+      # addons:
+      #   apt:
+      #     packages:
+      #       - cmake
+      #     sources:
+      #       - sourceline: 'deb https://apt.kitware.com/ubuntu/ bionic main'
+      #       - key_url: 'https://apt.kitware.com/keys/kitware-archive-latest.asc'
 
     - os: linux
       dist: bionic
       compiler: gcc
-      addons:
-        apt:
-          packages:
-            - cmake
-          sources:
-            - sourceline: 'deb https://apt.kitware.com/ubuntu/ bionic main'
-            - key_url: 'https://apt.kitware.com/keys/kitware-archive-latest.asc'
+      # addons:
+      #   apt:
+      #     packages:
+      #       - cmake
+      #     sources:
+      #       - sourceline: 'deb https://apt.kitware.com/ubuntu/ bionic main'
+      #       - key_url: 'https://apt.kitware.com/keys/kitware-archive-latest.asc'
 
     - os: osx
       osx_image: xcode10.3
@@ -57,6 +57,7 @@ install:
   # - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install conan; fi
   # - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install cmake; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip install conan; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then mkdir -p cmake-3.15 && wget -qO- "https://cmake.org/files/v3.15/cmake-3.15.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake-3.15; export PATH=`pwd`/cmake-3.15/bin:$PATH; fi
 # Automatic detection of your arch, compiler, etc.
   - which conan
   - conan user
