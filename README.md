@@ -7,12 +7,12 @@ WebRPC implements the idea of providing a call to a remote library as a simple c
 ## Key features
 
 - make your remote library functionality accessible through the abstraction of a simple URL
-    - call a remote library from your browser via http(s) (and soon via websocket)
-    - WebRPC provides a JSON RPC inspired transfer encoding
+  - call a remote library from your browser via http(s) (and soon via websocket)
+  - WebRPC provides a JSON RPC inspired transfer encoding
 - simple build
-    - modern and clean C++ 17 code
-    - cmake based build
-    - little dependencies (Boost and GTest only)
+  - modern and clean C++ 17 code
+  - cmake based build
+  - little dependencies (Boost and GTest only)
 
 ## Sample Session
 
@@ -20,11 +20,11 @@ E.g. a remote method `DateTime` may be called via `http://localhost/DateTime` fr
 
 Start sampleserver which is located in the build folder
 
-    $ ./build/sampleserver
+    ./build/sampleserver
 
 Call method `DateTime` through URL `http://localhost:8080/DateTime`. You can use your browser or sampleclient, which is also located in the build folder
 
-    $ ./build/sampleclient http://localhost:8080/DateTime
+    ./build/sampleclient http://localhost:8080/DateTime
 
 Call method `Sum` with an array of integer and double values `[1,2.3,4e-5,-6]`
 
@@ -33,7 +33,7 @@ Call method `Sum` with an array of integer and double values `[1,2.3,4e-5,-6]`
 
 Introspection allows to list the available methods of a server
 
-    $ ./build/sampleclient http://localhost:8080/?
+    ./build/sampleclient http://localhost:8080/?
 
 ## Cloning and building WebRPC
 
@@ -65,4 +65,3 @@ WebRPC is build using `cmake`. Dependencies are managed by `conan` and are insta
 | ------------- | ------------------ |
 | Ubuntu 18.04  | gcc                |
 | macOS 10.13.x | clang-1000.11.45.5 |
-
