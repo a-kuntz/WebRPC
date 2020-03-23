@@ -2,7 +2,8 @@
 
 WebRPC implements the idea of providing a call to a remote library as a simple call to an URL. In other words, it is a web based remote procedure call (RPC) library.
 
-[![Build Status](https://travis-ci.com/a-kuntz/WebRPC.svg?token=rACsAp9z9QiemmDDSs5p&branch=master)](https://travis-ci.com/a-kuntz/WebRPC)
+[![Build Status](https://travis-ci.org/a-kuntz/WebRPC.svg?branch=master)](https://travis-ci.org/a-kuntz/WebRPC)
+
 ## Key features
 
 - make your remote library functionality accessible through the abstraction of a simple URL
