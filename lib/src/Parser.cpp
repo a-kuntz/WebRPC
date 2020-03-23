@@ -5,7 +5,6 @@
 #include <boost/spirit/include/qi.hpp>
 
 #include <boost/fusion/adapted/std_tuple.hpp>
-#include <boost/fusion/include/adapt_struct.hpp>
 
 #include <iostream>
 
