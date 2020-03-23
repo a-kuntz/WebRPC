@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+set -u
+set -x
+
+BUILD_DIR=build
+
+cmake -B${BUILD_DIR} -H. \
+	-DWEBRPC_COVERAGE_ANALYSIS=OFF \
+	-DWEBRPC_ADDRESS_SANITIZER=ON \
+	-DCMAKE_BUILD_TYPE=Debug \
+	-DCMAKE_INSTALL_PREFIX=./fsroot/
+
+CTEST_OUTPUT_ON_FAILURE=1 make -C ${BUILD_DIR} all test

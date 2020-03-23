@@ -1,0 +1,7 @@
+#ifndef __VERSION_H__
+#define __VERSION_H__
+
+// the configured options and settings for Tutorial
+#cmakedefine WEBRPC_VERSION_STRING "@WEBRPC_VERSION_STRING@"
+
+#endif
