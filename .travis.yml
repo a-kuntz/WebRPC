@@ -37,9 +37,9 @@ addons:
 
 install:
   - python3 --version
-  - pip3 --version
+  - pip --version
 # Install conan
-  - pip3 install conan
+  - pip install conan
   - which conan
   - conan --version
   - conan user
