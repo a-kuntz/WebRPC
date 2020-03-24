@@ -12,8 +12,6 @@ addons:
     packages:
       - "python"
       - "python-pip"
-#      - "python3"
-#      - "python3-pip"
 
 # jobs:
 #   fast_finish: true
@@ -40,8 +38,6 @@ addons:
 install:
   - python --version
   - pip --version
-#  - python3 --version
-#  - pip3 --version
 # Install conan
   - pip install conan
   - which conan
