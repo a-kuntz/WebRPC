@@ -1,7 +1,6 @@
 language: cpp
 dist: bionic
-os:
-  - linux
+os: linux
 
 compiler:
   - gcc
@@ -13,27 +12,21 @@ addons:
       - "python"
       - "python-pip"
 
-# jobs:
-#   fast_finish: true
-#   include:
-#     - os: linux
-#       dist: bionic
-#       addons:
-#         apt:
-#           packages:
-#             - "python3"
-#             - "python3-pip"
+jobs:
+   fast_finish: true
+   include:
+     - os: linux
 
-#     - os: osx
-#       osx_image: xcode11
-#       addons:
-#         homebrew:
-#           packages:
-#           - conan
-#           - cmake
+     - os: osx
+       osx_image: xcode11
+       addons:
+         homebrew:
+           packages:
+           - conan
+           - cmake
 
-#   allow_failures:
-#     - os: osx
+   allow_failures:
+     - os: osx
 
 install:
   - python --version
