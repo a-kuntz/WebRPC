@@ -1,11 +1,8 @@
 language:
   - cpp
 
-# git:
-#   depth: false
-
 matrix:
-  fast_finish: false
+  fast_finish: true
   include:
     - os: linux
       dist: bionic
@@ -38,7 +35,6 @@ install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then mkdir -p cmake-3.17 && wget -qO- "https://cmake.org/files/v3.17/cmake-3.17.0-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake-3.17; export PATH=`pwd`/cmake-3.17/bin:$PATH; fi
   - which cmake
   - cmake --version
-
-  script:
+script:
    - cmake -Bbuild -H.
    - CTEST_OUTPUT_ON_FAILURE=1 make -C build all test
