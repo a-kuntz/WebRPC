@@ -1,5 +1,8 @@
 language:
-  - cpp
+  - generic
+
+python:
+  - "3.7"
 
 matrix:
   fast_finish: true
@@ -14,7 +17,6 @@ matrix:
 
     - os: osx
       osx_image: xcode11
-      language: cpp
       addons:
         homebrew:
           packages:
@@ -25,14 +27,15 @@ matrix:
     - os: osx
 
 install:
+  - python3 --version
 # Install conan
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip install conan; fi
+  - pip install conan
   - which conan
   - conan user
 # install cmake 3.17
 # recipe adopted from https://cliutils.gitlab.io/modern-cmake/chapters/intro/installing.html
-#  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then mkdir -p cmake-3.15 && wget -qO- "https://cmake.org/files/v3.15/cmake-3.15.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake-3.15; export PATH=`pwd`/cmake-3.15/bin:$PATH; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then mkdir -p cmake-3.17 && wget -qO- "https://cmake.org/files/v3.17/cmake-3.17.0-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake-3.17; export PATH=`pwd`/cmake-3.17/bin:$PATH; fi
+#  - mkdir -p cmake-3.15 && wget -qO- "https://cmake.org/files/v3.15/cmake-3.15.3-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake-3.15; export PATH=$(pwd)/cmake-3.15/bin:$PATH
+  - mkdir -p cmake-3.17 && wget -qO- "https://cmake.org/files/v3.17/cmake-3.17.0-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake-3.17; export PATH=$(pwd)/cmake-3.17/bin:$PATH
   - which cmake
   - cmake --version
 script:
