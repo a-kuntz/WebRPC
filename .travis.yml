@@ -28,9 +28,11 @@ matrix:
 
 install:
   - python3 --version
+  - pip3 --version
 # Install conan
-  - pip install conan
+  - pip3 install conan
   - which conan
+  - conan --version
   - conan user
 # install cmake 3.17
 # recipe adopted from https://cliutils.gitlab.io/modern-cmake/chapters/intro/installing.html
