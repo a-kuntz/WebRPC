@@ -24,6 +24,7 @@ jobs:
            packages:
            - conan
            - cmake
+           update: true
 
    allow_failures:
      - os: osx
