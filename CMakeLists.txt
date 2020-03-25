@@ -23,7 +23,7 @@ endif()
 ## configuration ##############################################################
 
 # add_compile_options(-Wall -pedantic -Wextra -Werror -Wno-error=unused-variable)
-add_compile_options(-Wall -Wextra -Werror -Wno-error=unused-variable)
+add_compile_options(-Wall -Wextra -Werror -Wno-error=unused-variable -Wno-error=unused-parameter)
 
 include_directories(${PROJECT_BINARY_DIR}/lib/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/include)
