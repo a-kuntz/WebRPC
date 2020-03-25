@@ -11,6 +11,11 @@ addons:
     packages:
       - "python"
       - "python-pip"
+  homebrew:
+    packages:
+    - conan
+    - cmake
+    update: true
 
 jobs:
    fast_finish: true
@@ -19,12 +24,6 @@ jobs:
 
      - os: osx
        osx_image: xcode11
-       addons:
-         homebrew:
-           packages:
-           - conan
-           - cmake
-           update: true
 
    allow_failures:
      - os: osx
