@@ -31,9 +31,8 @@ jobs:
 
 install:
   - python --version
-  - pip --version
 # Install conan
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip install conan; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip --version; pip install conan; fi
   - which conan
   - conan --version
   - conan user
